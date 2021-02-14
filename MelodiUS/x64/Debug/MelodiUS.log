@@ -1,0 +1,3 @@
+﻿  MelodiUS.cpp
+E:\GitHub\MelodiUS\MelodiUS\MelodiUS.cpp(6,15): warning C4101: 'pInt': unreferenced local variable
+LINK : fatal error LNK1104: cannot open file 'python310_d.lib'
