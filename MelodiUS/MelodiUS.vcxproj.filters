@@ -24,5 +24,13 @@
     <ClCompile Include="portaudio\write_wav.c">
       <Filter>Portaudio</Filter>
     </ClCompile>
+    <ClCompile Include="source\recorder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\recorder.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
