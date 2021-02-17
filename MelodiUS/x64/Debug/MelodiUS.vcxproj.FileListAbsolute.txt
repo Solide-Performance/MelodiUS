@@ -1,0 +1,4 @@
+E:\GitHub\MelodiUS\MelodiUSTestC\MelodiUS\x64\Debug\MelodiUS.exe
+E:\GitHub\MelodiUS\MelodiUSTestC\MelodiUS\x64\Debug\MelodiUS.pdb
+E:\GitHub\MelodiUS\MelodiUS\x64\Debug\MelodiUS.exe
+E:\GitHub\MelodiUS\MelodiUS\x64\Debug\MelodiUS.pdb

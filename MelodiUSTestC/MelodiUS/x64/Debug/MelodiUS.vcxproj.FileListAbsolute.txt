@@ -1,2 +1,0 @@
-E:\GitHub\MelodiUS\MelodiUSTestC\MelodiUS\x64\Debug\MelodiUS.exe
-E:\GitHub\MelodiUS\MelodiUSTestC\MelodiUS\x64\Debug\MelodiUS.pdb
