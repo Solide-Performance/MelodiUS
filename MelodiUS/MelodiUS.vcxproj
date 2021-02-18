@@ -19,12 +19,14 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="portaudio\write_wav.c" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\recorder.cpp" />
+    <ClCompile Include="source\write_wav.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\recorder.h" />
+    <ClInclude Include="include\recording.h" />
+    <ClInclude Include="include\write_wav.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
