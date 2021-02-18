@@ -27,6 +27,9 @@
     <ClCompile Include="source\write_wav.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\recording.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\recorder.h">

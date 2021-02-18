@@ -93,10 +93,7 @@ static void errorHandler(PaError err, SAMPLE** dataBlock);
 
 /*****************************************************************************/
 /* Non-static function definitions ----------------------------------------- */
-std::vector<SAMPLE> Record(size_t numSeconds,
-                           size_t sampleRate,
-                           size_t framesPerBuffer,
-                           size_t numChannels)
+Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, size_t numChannels)
 {
     PaStreamParameters inputParameters, outputParameters;
     PaStream*          stream;
@@ -268,24 +265,27 @@ std::vector<SAMPLE> Record(size_t numSeconds,
         fflush(stdout);
     }
 
-    std::vector<SAMPLE> samples{&data.recordedSamples[0],
-                                &data.recordedSamples[data.maxFrameIndex]};
+    Recording recording{&data.recordedSamples[0],
+                        &data.recordedSamples[data.maxFrameIndex],
+                        sampleRate,
+                        framesPerBuffer,
+                        numChannels};
 
     g_numChannels = -1;
     free(data.recordedSamples);
 
-    return samples;
+    return recording;
 }
 
 #include <algorithm>
-void SaveToWav(const char* filename, const std::vector<SAMPLE>& records, size_t sampleRate)
+void SaveToWav(const char* filename, const Recording& recording)
 {
     WAV_Writer writer;
 
-    std::vector<short> shortData         = Samples_FloatToShort(records);
+    std::vector<short> shortData = Samples_FloatToShort(recording.getSamples());
 
     // 2x sample rate for some reason, might be causing a bug
-    int result = Audio_WAV_OpenWriter(&writer, "Bon matin.wav", sampleRate * 2, 1);
+    int result = Audio_WAV_OpenWriter(&writer, "Bon matin.wav", recording.getSampleRate() * 2, 1);
     if(result < 0)
     {
         errorHandler(result, nullptr);

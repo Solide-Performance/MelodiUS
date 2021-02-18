@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\recorder.cpp" />
+    <ClCompile Include="source\recording.cpp" />
     <ClCompile Include="source\write_wav.c" />
   </ItemGroup>
   <ItemGroup>

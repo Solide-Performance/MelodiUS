@@ -27,14 +27,12 @@ using recorderException = std::exception;
 
 /*****************************************************************************/
 /* Function declarations --------------------------------------------------- */
-std::vector<SAMPLE> Record(size_t numSeconds      = NUM_SECONDS,
+Recording Record(size_t numSeconds      = NUM_SECONDS,
                            size_t sampleRate      = SAMPLE_RATE,
                            size_t framesPerBuffer = FRAMES_PER_BUFFER,
                            size_t numChannels     = NUM_CHANNELS);
 
-void SaveToWav(const char*                filename,
-               const std::vector<SAMPLE>& records,
-               size_t                     sampleRate = SAMPLE_RATE);
+void SaveToWav(const char* filename, const Recording& recording);
 
 std::vector<short> Samples_FloatToShort(const std::vector<float> inVec);
 std::vector<float> Samples_ShortToFloat(const std::vector<short> inVec);
