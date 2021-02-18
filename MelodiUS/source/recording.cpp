@@ -24,6 +24,14 @@ Recording::Recording(SAMPLE* samplesBegin,
 
 
 /* --------------------------------- */
+#pragma region Operators
+SAMPLE Recording::operator[](size_t index)
+{
+    return m_samples[index];
+}
+#pragma endregion
+
+/* --------------------------------- */
 #pragma region Accessors
 const std::vector<SAMPLE>& Recording::getSamples() const
 {
@@ -33,6 +41,12 @@ size_t Recording::getSampleRate() const
 {
     return m_sampleRate;
 }
+
+size_t Recording::getNumberOfSamples() const
+{
+    return m_samples.size();
+}
+
 size_t Recording::getFramesPerBuffer() const
 {
     return m_framesPerBuffer;

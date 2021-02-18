@@ -28,9 +28,9 @@ using recorderException = std::exception;
 /*****************************************************************************/
 /* Function declarations --------------------------------------------------- */
 Recording Record(size_t numSeconds      = NUM_SECONDS,
-                           size_t sampleRate      = SAMPLE_RATE,
-                           size_t framesPerBuffer = FRAMES_PER_BUFFER,
-                           size_t numChannels     = NUM_CHANNELS);
+                 size_t sampleRate      = SAMPLE_RATE,
+                 size_t framesPerBuffer = FRAMES_PER_BUFFER,
+                 size_t numChannels     = NUM_CHANNELS);
 
 void SaveToWav(const char* filename, const Recording& recording);
 

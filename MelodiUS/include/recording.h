@@ -46,9 +46,14 @@ public:
               size_t  numChannels);
 
     /* --------------------------------- */
+    /* Operators                         */
+    SAMPLE operator[](size_t index);
+
+    /* --------------------------------- */
     /* Accessors                         */
     const std::vector<SAMPLE>& getSamples() const;
     size_t                     getSampleRate() const;
+    size_t                     getNumberOfSamples() const;
     size_t                     getFramesPerBuffer() const;
     size_t                     getNumChannels() const;
 };

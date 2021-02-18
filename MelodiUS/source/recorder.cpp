@@ -108,9 +108,6 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
 
     g_numChannels = numChannels;
 
-    printf("patest_record.c\n");
-    fflush(stdout);
-
     data.maxFrameIndex = totalFrames = numSeconds * sampleRate; /* Record for a few seconds. */
     data.frameIndex                  = 0;
     numSamples                       = totalFrames * numChannels;
@@ -266,7 +263,7 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
     }
 
     Recording recording{&data.recordedSamples[0],
-                        &data.recordedSamples[data.maxFrameIndex],
+                        &data.recordedSamples[numSeconds * sampleRate * numChannels],
                         sampleRate,
                         framesPerBuffer,
                         numChannels};
@@ -277,15 +274,14 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
     return recording;
 }
 
-#include <algorithm>
 void SaveToWav(const char* filename, const Recording& recording)
 {
     WAV_Writer writer;
 
     std::vector<short> shortData = Samples_FloatToShort(recording.getSamples());
 
-    // 2x sample rate for some reason, might be causing a bug
-    int result = Audio_WAV_OpenWriter(&writer, "Bon matin.wav", recording.getSampleRate() * 2, 1);
+    int result = Audio_WAV_OpenWriter(
+      &writer, filename, recording.getSampleRate() * recording.getNumChannels(), 1);
     if(result < 0)
     {
         errorHandler(result, nullptr);

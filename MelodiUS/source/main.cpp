@@ -7,8 +7,9 @@
 /* Entry point ------------------------------------------------------------- */
 int main()
 {
-    Recording samples = Record();
-    SaveToWav("bon matin.wav", samples);
+    Recording recordedBonMatin = Record();
+
+    SaveToWav("bon matin.wav", recordedBonMatin);
 
     return 1;
 }
