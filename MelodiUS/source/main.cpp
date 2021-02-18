@@ -1,16 +1,17 @@
 /*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
 #include "recorder.h"
-
+#include "recording.h"
 
 /*****************************************************************************/
 /* Entry point ------------------------------------------------------------- */
 int main()
 {
-    std::vector<SAMPLE> samples = Record();
-    SaveToWav("bon matin.wav", samples);
+    Recording recordedBonMatin = Record();
 
-    return samples.size();
+    SaveToWav("bon matin.wav", recordedBonMatin);
+
+    return 1;
 }
 
 /*****************************************************************************/

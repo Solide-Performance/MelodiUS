@@ -49,8 +49,14 @@
 
 
 /*****************************************************************************/
+/* Defines ----------------------------------------------------------------- */
+#define EPSILON 0.0005
+
+
+/*****************************************************************************/
 /* Macros ------------------------------------------------------------------ */
-#define CALL_ERROR_HANDLER() errorHandler(err, &data.recordedSamples)
+#define CALL_ERROR_HANDLER()   errorHandler(err, &data.recordedSamples)
+#define COMPARE_FLOATS(f1, f2) (std::abs(f1 - f2) <= EPSILON)
 
 
 /*****************************************************************************/
@@ -87,10 +93,7 @@ static void errorHandler(PaError err, SAMPLE** dataBlock);
 
 /*****************************************************************************/
 /* Non-static function definitions ----------------------------------------- */
-std::vector<SAMPLE> Record(size_t numSeconds,
-                           size_t sampleRate,
-                           size_t framesPerBuffer,
-                           size_t numChannels)
+Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, size_t numChannels)
 {
     PaStreamParameters inputParameters, outputParameters;
     PaStream*          stream;
@@ -104,9 +107,6 @@ std::vector<SAMPLE> Record(size_t numSeconds,
     double             average;
 
     g_numChannels = numChannels;
-
-    printf("patest_record.c\n");
-    fflush(stdout);
 
     data.maxFrameIndex = totalFrames = numSeconds * sampleRate; /* Record for a few seconds. */
     data.frameIndex                  = 0;
@@ -262,29 +262,26 @@ std::vector<SAMPLE> Record(size_t numSeconds,
         fflush(stdout);
     }
 
-    std::vector<SAMPLE> samples{&data.recordedSamples[0],
-                                &data.recordedSamples[data.maxFrameIndex]};
+    Recording recording{&data.recordedSamples[0],
+                        &data.recordedSamples[numSeconds * sampleRate * numChannels],
+                        sampleRate,
+                        framesPerBuffer,
+                        numChannels};
 
     g_numChannels = -1;
     free(data.recordedSamples);
 
-    return samples;
+    return recording;
 }
 
-void SaveToWav(const char* filename, const std::vector<SAMPLE>& records, size_t sampleRate)
+void SaveToWav(const char* filename, const Recording& recording)
 {
-    WAV_Writer         writer;
-    std::vector<short> shortData = std::vector<short>(records.size());
+    WAV_Writer writer;
 
-    // https://stackoverflow.com/a/56213245/10827197
-    for(int i = 0; i < records.size(); i++)
-    {
-        float floatData = records[i] * 32767;
-        shortData[i]    = (short)floatData;
-    }
+    std::vector<short> shortData = Samples_FloatToShort(recording.getSamples());
 
-    // 2x sample rate for some reason, might be causing a bug
-    int result = Audio_WAV_OpenWriter(&writer, "Bon matin.wav", sampleRate * 2, 1);
+    int result = Audio_WAV_OpenWriter(
+      &writer, filename, recording.getSampleRate() * recording.getNumChannels(), 1);
     if(result < 0)
     {
         errorHandler(result, nullptr);
@@ -317,6 +314,34 @@ void SaveToWav(const char* filename, const std::vector<SAMPLE>& records, size_t 
         }
     }
 #endif
+}
+
+
+std::vector<short> Samples_FloatToShort(const std::vector<float> inVec)
+{
+    std::vector<short> shortData = std::vector<short>(inVec.size());
+
+    // https://stackoverflow.com/a/56213245/10827197
+    for(int i = 0; i < inVec.size(); i++)
+    {
+        float floatData = inVec[i] * 32767;
+        shortData[i]    = (short)floatData;
+    }
+
+    return shortData;
+}
+
+std::vector<float> Samples_ShortToFloat(const std::vector<short> inVec)
+{
+    std::vector<float> floatData = std::vector<float>(inVec.size());
+
+    for(int i = 0; i < inVec.size(); i++)
+    {
+        float shortData = (float)inVec[i] / 32767;
+        floatData[i]    = shortData;
+    }
+
+    return floatData;
 }
 
 
