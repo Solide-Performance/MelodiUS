@@ -39,8 +39,8 @@ public:
     Recording(const Recording&) = default;
     Recording(Recording&&)      = default;
 
-    Recording(SAMPLE* samplesBegin,
-              SAMPLE* samplesEnd,
+    Recording(const SAMPLE* samplesBegin,
+              const SAMPLE* samplesEnd,
               size_t  sampleRate,
               size_t  framesPerBuffer,
               size_t  numChannels);

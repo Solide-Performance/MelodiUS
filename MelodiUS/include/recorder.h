@@ -33,6 +33,7 @@ Recording Record(size_t numSeconds      = NUM_SECONDS,
                  size_t numChannels     = NUM_CHANNELS);
 
 void SaveToWav(const char* filename, const Recording& recording);
+Recording LoadFromWav(const char* filename);
 
 std::vector<short> Samples_FloatToShort(const std::vector<float> inVec);
 std::vector<float> Samples_ShortToFloat(const std::vector<short> inVec);
