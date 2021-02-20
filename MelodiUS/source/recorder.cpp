@@ -43,7 +43,7 @@
 #include <cstdlib>
 
 #include "portaudio.h"
-#include "write_wav.h"
+#include "readwrite_wav.h"
 
 #include "recorder.h"
 
@@ -276,44 +276,23 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
 
 void SaveToWav(const char* filename, const Recording& recording)
 {
-    WAV_Writer writer;
-
     std::vector<short> shortData = Samples_FloatToShort(recording.getSamples());
 
-    int result = Audio_WAV_OpenWriter(
-      &writer, filename, recording.getSampleRate() * recording.getNumChannels(), 1);
-    if(result < 0)
-    {
-        errorHandler(result, nullptr);
-    }
-    result = Audio_WAV_WriteShorts(&writer, shortData.data(), shortData.size());
-    if(result < 0)
-    {
-        errorHandler(result, nullptr);
-    }
+    WAV_Writer writer{filename, unsigned long(recording.getSampleRate() * recording.getNumChannels()), 1};
 
-    result = Audio_WAV_CloseWriter(&writer);
-    if(result < 0)
-    {
-        errorHandler(result, nullptr);
-    }
+    writer.Write(shortData.data(), shortData.size());
+}
 
-#if 0    // Default example
-    {
-        FILE* fid;
-        fid = fopen("recorded.raw", "wb");
-        if(fid == nullptr)
-        {
-            printf("Could not open file.");
-        }
-        else
-        {
-            fwrite(data.recordedSamples, numChannels * sizeof(SAMPLE), totalFrames, fid);
-            fclose(fid);
-            printf("Wrote data to 'recorded.raw'\n");
-        }
-    }
-#endif
+Recording LoadFromWav(const char* filename)
+{
+    WAV_Reader reader{filename};
+    reader.Read();
+
+    std::vector<float> floatData = Samples_ShortToFloat(reader.get_Data());
+
+    // @todo
+    // HARDCODED '2' & '1' !!!!!!! TO REMOVE
+    return {&floatData.front(), &floatData.back(), (size_t)(reader.get_FrameRate() / 2), 1, 2};
 }
 
 
@@ -333,7 +312,7 @@ std::vector<short> Samples_FloatToShort(const std::vector<float> inVec)
 
 std::vector<float> Samples_ShortToFloat(const std::vector<short> inVec)
 {
-    std::vector<float> floatData = std::vector<float>(inVec.size());
+    std::vector<float> floatData(inVec.size());
 
     for(int i = 0; i < inVec.size(); i++)
     {

@@ -8,8 +8,8 @@
 
 /* --------------------------------- */
 #pragma region Constructors
-Recording::Recording(SAMPLE* samplesBegin,
-                     SAMPLE* samplesEnd,
+Recording::Recording(const SAMPLE* samplesBegin,
+                     const SAMPLE* samplesEnd,
                      size_t  sampleRate,
                      size_t  framesPerBuffer,
                      size_t  numChannels)

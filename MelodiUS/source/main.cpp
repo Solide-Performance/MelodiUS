@@ -11,6 +11,9 @@ int main()
 
     SaveToWav("bon matin.wav", recordedBonMatin);
 
+    Recording recordedBonMatin2 = LoadFromWav("bon matin.wav");
+    SaveToWav("bon matin2.wav", recordedBonMatin2);
+
     return 1;
 }
 
