@@ -200,7 +200,7 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
     return recording;
 }
 
-void SaveToWav(const char* filename, const Recording& recording)
+void SaveToWav(std::string_view filename, const Recording& recording)
 {
     std::vector<short> shortData = Samples_FloatToShort(recording.getSamples());
 
@@ -210,7 +210,7 @@ void SaveToWav(const char* filename, const Recording& recording)
     writer.Write(shortData.data(), shortData.size());
 }
 
-Recording LoadFromWav(const char* filename)
+Recording LoadFromWav(std::string_view filename)
 {
     WAV_Reader reader{filename};
     reader.Read();

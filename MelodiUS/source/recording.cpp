@@ -72,6 +72,13 @@ size_t Recording::getNumChannels() const
     return m_numChannels;
 }
 
+
+bool Recording::isValid() const
+{
+    return !m_samples.empty();
+}
+
+
 std::vector<SAMPLE>::const_iterator Recording::begin() const
 {
     return m_samples.cbegin();

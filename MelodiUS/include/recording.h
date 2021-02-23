@@ -27,7 +27,7 @@ typedef short SAMPLE;
 class Recording
 {
 private:
-    std::vector<SAMPLE> m_samples;
+    std::vector<SAMPLE> m_samples{};
     size_t              m_sampleRate      = -1;
     size_t              m_framesPerBuffer = -1;
     size_t              m_numChannels     = -1;
@@ -38,6 +38,8 @@ public:
     Recording()                 = default;
     Recording(const Recording&) = default;
     Recording(Recording&&)      = default;
+    Recording& operator=(const Recording&) = default;
+    Recording& operator=(Recording&&) = default;
 
     Recording(const SAMPLE* samplesBegin,
               const SAMPLE* samplesEnd,
@@ -59,6 +61,7 @@ public:
     size_t                     getFramesPerBuffer() const;
     size_t                     getMaxFrameIndex() const;
     size_t                     getNumChannels() const;
+    bool                       isValid() const;
 
     std::vector<SAMPLE>::const_iterator begin() const;
     std::vector<SAMPLE>::const_iterator end() const;

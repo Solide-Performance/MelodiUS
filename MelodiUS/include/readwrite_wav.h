@@ -86,7 +86,7 @@ public:
      * The header includes the DATA chunk type and size.
      * Returns number of bytes written to file or negative error code.
      */
-    WAV_Writer(const char* fileName, unsigned long frameRate, unsigned short samplesPerFrame);
+    WAV_Writer(std::string_view fileName, unsigned long frameRate, unsigned short samplesPerFrame);
     /*********************************************************************************
      * Close WAV file.
      * Update chunk sizes so it can be read by audio applications.
@@ -130,7 +130,7 @@ public:
      * The header includes the DATA chunk type and size.
      * Returns number of bytes written to file or negative error code.
      */
-    WAV_Reader(const char* fileName);
+    WAV_Reader(std::string_view fileName);
 
 
     /*********************************************************************************
