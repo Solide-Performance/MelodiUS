@@ -1,8 +1,8 @@
 #pragma once
 /*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
+#include <concepts>
 #include <vector>
-
 
 
 /*****************************************************************************/
@@ -41,11 +41,19 @@ public:
     Recording& operator=(const Recording&) = default;
     Recording& operator=(Recording&&) = default;
 
-    Recording(const SAMPLE* samplesBegin,
-              const SAMPLE* samplesEnd,
-              size_t        sampleRate,
-              size_t        framesPerBuffer,
-              size_t        numChannels);
+    template<typename InputIterator>
+    Recording(const InputIterator samplesBegin,
+              const InputIterator samplesEnd,
+              size_t              sampleRate,
+              size_t              framesPerBuffer,
+              size_t              numChannels)
+    : m_samples{samplesBegin, samplesEnd},
+      m_sampleRate{sampleRate},
+      m_framesPerBuffer{framesPerBuffer},
+      m_numChannels{numChannels}
+    {
+    }
+
 
     /* --------------------------------- */
     /* Operators                         */

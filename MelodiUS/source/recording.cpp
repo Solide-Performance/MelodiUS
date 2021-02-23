@@ -7,23 +7,6 @@
 /* Public methods definitions ---------------------------------------------- */
 
 /* --------------------------------- */
-#pragma region Constructors
-Recording::Recording(const SAMPLE* samplesBegin,
-                     const SAMPLE* samplesEnd,
-                     size_t        sampleRate,
-                     size_t        framesPerBuffer,
-                     size_t        numChannels)
-: m_samples{samplesBegin, samplesEnd},
-  m_sampleRate{sampleRate},
-  m_framesPerBuffer{framesPerBuffer},
-  m_numChannels{numChannels}
-{
-}
-
-#pragma endregion
-
-
-/* --------------------------------- */
 #pragma region Operators
 const SAMPLE& Recording::operator[](size_t index) const
 {

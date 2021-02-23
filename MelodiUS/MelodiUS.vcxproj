@@ -137,6 +137,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\generator.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\playback.cpp" />
     <ClCompile Include="source\readwrite_wav.cpp" />
@@ -144,6 +145,7 @@
     <ClCompile Include="source\recording.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\generator.h" />
     <ClInclude Include="include\playback.h" />
     <ClInclude Include="include\readwrite_wav.h" />
     <ClInclude Include="include\recorder.h" />
