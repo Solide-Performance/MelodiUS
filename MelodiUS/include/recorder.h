@@ -3,6 +3,7 @@
 /*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
 #include <stdexcept>
+#include <string_view>
 #include <vector>
 
 #include "recording.h"
@@ -37,8 +38,8 @@ Recording Record(size_t numSeconds      = NUM_SECONDS,
                  size_t framesPerBuffer = FRAMES_PER_BUFFER,
                  size_t numChannels     = NUM_CHANNELS);
 
-void SaveToWav(const char* filename, const Recording& recording);
-Recording LoadFromWav(const char* filename);
+void      SaveToWav(std::string_view filename, const Recording& recording);
+Recording LoadFromWav(std::string_view filename);
 
 std::vector<short> Samples_FloatToShort(const std::vector<float> inVec);
 std::vector<float> Samples_ShortToFloat(const std::vector<short> inVec);

@@ -133,7 +133,7 @@ void WAV_Reader::ReadChunkType(unsigned char** addrPtr, unsigned long* cktyp)
  * The header includes the DATA chunk type and size.
  * Returns number of bytes written to file or negative error code.
  */
-WAV_Writer::WAV_Writer(const char*    fileName,
+WAV_Writer::WAV_Writer(std::string_view    fileName,
                        unsigned long  frameRate,
                        unsigned short samplesPerFrame)
 {
@@ -143,7 +143,8 @@ WAV_Writer::WAV_Writer(const char*    fileName,
     dataSize       = 0;
     dataSizeOffset = 0;
 
-    fid = fopen(fileName, "wb");
+    std::string file{fileName};
+    fid = fopen(file.c_str(), "wb");
     if(fid == nullptr)
     {
         throw nullptr;
@@ -241,7 +242,7 @@ void WAV_Writer::Write(short* samples, size_t numSamples)
 /*****************************************************************************/
 
 
-WAV_Reader::WAV_Reader(const char* fileName)
+WAV_Reader::WAV_Reader(std::string_view fileName)
 {
     unsigned char  header[WAV_HEADER_SIZE];
     unsigned char* addr = header;
@@ -250,7 +251,8 @@ WAV_Reader::WAV_Reader(const char* fileName)
     int long unsigned  long_bidon;
 
     /* Opening file for reading */
-    fid = fopen(fileName, "rb");
+    std::string file{fileName};
+    fid = fopen(file.c_str(), "rb");
     if(fid == nullptr)
     {
         throw nullptr;
