@@ -1,5 +1,6 @@
 /*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
+#include "generator.h"
 #include "playback.h"
 #include "readwrite_wav.h"
 #include "recorder.h"
@@ -16,7 +17,9 @@ int main()
 {
     Recording rec;
 
+    Generate_Sine(1000, 3);
 
+    return 0;
     while(true)
     {
         std::cout << std::endl;

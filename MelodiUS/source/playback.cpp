@@ -15,7 +15,7 @@
 struct PlaybackStruct
 {
     Recording& rec;
-    size_t           index = 0;
+    size_t     index = 0;
 };
 
 
@@ -40,6 +40,12 @@ void Playback(const Recording& rec)
     paTestData         data;
 
     /* Playback recorded data.  -------------------------------------------- */
+    err = Pa_Initialize();
+    if(err != paNoError)
+    {
+        CALL_ERROR_HANDLER();
+    }
+
     outputParameters.device = Pa_GetDefaultOutputDevice(); /* default output device */
     if(outputParameters.device == paNoDevice)
     {
@@ -54,7 +60,7 @@ void Playback(const Recording& rec)
     printf("\n=== Now playing back. ===\n");
     fflush(stdout);
 
-    PlaybackStruct ps {const_cast<Recording&>(rec)};
+    PlaybackStruct ps{const_cast<Recording&>(rec)};
 
     err = Pa_OpenStream(
       &stream,
@@ -118,10 +124,10 @@ static int playCallback(const void*                     inputBuffer,
                         PaStreamCallbackFlags           statusFlags,
                         void*                           userData)
 {
-    PlaybackStruct& ps = *static_cast<PlaybackStruct*>(userData);
-    SAMPLE*      rptr = &ps.rec[ps.index * g_numChannels];
-    SAMPLE*      wptr = (SAMPLE*)outputBuffer;
-    unsigned int framesLeft = ps.rec.getMaxFrameIndex() - ps.index;
+    PlaybackStruct& ps         = *static_cast<PlaybackStruct*>(userData);
+    SAMPLE*         rptr       = &ps.rec[ps.index * g_numChannels];
+    SAMPLE*         wptr       = (SAMPLE*)outputBuffer;
+    unsigned int    framesLeft = ps.rec.getMaxFrameIndex() - ps.index;
 
     (void)inputBuffer; /* Prevent unused variable warnings. */
     (void)timeInfo;
