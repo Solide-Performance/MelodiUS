@@ -47,7 +47,8 @@ public:
 
     /* --------------------------------- */
     /* Operators                         */
-    SAMPLE operator[](size_t index) const;
+    const SAMPLE& operator[](size_t index) const;
+    SAMPLE&       operator[](size_t index);
 
     /* --------------------------------- */
     /* Accessors                         */
@@ -56,6 +57,7 @@ public:
     size_t                     getNumSamples() const;
     float                      getNumSeconds() const;
     size_t                     getFramesPerBuffer() const;
+    size_t                     getMaxFrameIndex() const;
     size_t                     getNumChannels() const;
 
     std::vector<SAMPLE>::const_iterator begin() const;

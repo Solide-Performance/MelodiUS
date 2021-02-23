@@ -11,6 +11,15 @@
 
 
 /*****************************************************************************/
+/* Type definitions -------------------------------------------------------- */
+struct PlaybackStruct
+{
+    Recording& rec;
+    size_t           index = 0;
+};
+
+
+/*****************************************************************************/
 /* Static function declarations -------------------------------------------- */
 static void errorHandler(PaError err);
 static int  playCallback(const void*                     inputBuffer,
@@ -30,21 +39,6 @@ void Playback(const Recording& rec)
     PaError            err = paNoError;
     paTestData         data;
 
-    data.maxFrameIndex   = rec.getNumSeconds() * rec.getSampleRate();
-    data.frameIndex      = 0;
-    data.recordedSamples = (SAMPLE*)malloc(
-      static_cast<size_t>(rec.getNumSeconds()) * rec.getSampleRate() * rec.getNumChannels()
-      * sizeof(SAMPLE));
-    if(data.recordedSamples == nullptr)
-    {
-        printf("Could not allocate record array.\n");
-        CALL_ERROR_HANDLER();
-    }
-    for(int i = 0; i < rec.getNumSamples(); i++)
-    {
-        data.recordedSamples[i] = rec[i];
-    }
-
     /* Playback recorded data.  -------------------------------------------- */
     outputParameters.device = Pa_GetDefaultOutputDevice(); /* default output device */
     if(outputParameters.device == paNoDevice)
@@ -60,6 +54,8 @@ void Playback(const Recording& rec)
     printf("\n=== Now playing back. ===\n");
     fflush(stdout);
 
+    PlaybackStruct ps {const_cast<Recording&>(rec)};
+
     err = Pa_OpenStream(
       &stream,
       nullptr, /* no input */
@@ -68,7 +64,7 @@ void Playback(const Recording& rec)
       rec.getFramesPerBuffer(),
       paClipOff, /* we won't output out of range samples so don't bother clipping them */
       playCallback,
-      &data);
+      &ps);
     if(err != paNoError)
     {
         CALL_ERROR_HANDLER();
@@ -122,12 +118,10 @@ static int playCallback(const void*                     inputBuffer,
                         PaStreamCallbackFlags           statusFlags,
                         void*                           userData)
 {
-    paTestData*  data = (paTestData*)userData;
-    SAMPLE*      rptr = &data->recordedSamples[data->frameIndex * g_numChannels];
+    PlaybackStruct& ps = *static_cast<PlaybackStruct*>(userData);
+    SAMPLE*      rptr = &ps.rec[ps.index * g_numChannels];
     SAMPLE*      wptr = (SAMPLE*)outputBuffer;
-    unsigned int i;
-    int          finished;
-    unsigned int framesLeft = data->maxFrameIndex - data->frameIndex;
+    unsigned int framesLeft = ps.rec.getMaxFrameIndex() - ps.index;
 
     (void)inputBuffer; /* Prevent unused variable warnings. */
     (void)timeInfo;
@@ -136,8 +130,9 @@ static int playCallback(const void*                     inputBuffer,
 
     if(framesLeft < framesPerBuffer)
     {
+        size_t i = 0;
         /* final buffer... */
-        for(i = 0; i < framesLeft; i++)
+        for(; i < framesLeft; i++)
         {
             *wptr++ = *rptr++; /* left */
             if(g_numChannels == 2)
@@ -153,12 +148,12 @@ static int playCallback(const void*                     inputBuffer,
                 *wptr++ = 0; /* right */
             }
         }
-        data->frameIndex += framesLeft;
-        finished = paComplete;
+        ps.index += framesLeft;
+        return paComplete;
     }
     else
     {
-        for(i = 0; i < framesPerBuffer; i++)
+        for(size_t i = 0; i < framesPerBuffer; i++)
         {
             *wptr++ = *rptr++; /* left */
             if(g_numChannels == 2)
@@ -166,10 +161,9 @@ static int playCallback(const void*                     inputBuffer,
                 *wptr++ = *rptr++; /* right */
             }
         }
-        data->frameIndex += framesPerBuffer;
-        finished = paContinue;
+        ps.index += framesPerBuffer;
+        return paContinue;
     }
-    return finished;
 }
 #pragma endregion
 

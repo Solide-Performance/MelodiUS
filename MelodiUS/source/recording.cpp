@@ -25,9 +25,14 @@ Recording::Recording(const SAMPLE* samplesBegin,
 
 /* --------------------------------- */
 #pragma region Operators
-SAMPLE Recording::operator[](size_t index) const
+const SAMPLE& Recording::operator[](size_t index) const
 {
     return m_samples[index];
+}
+
+SAMPLE& Recording::operator[](size_t index)
+{
+    return const_cast<SAMPLE&>(const_cast<const Recording*>(this)->operator[](index));
 }
 #pragma endregion
 
@@ -56,6 +61,12 @@ size_t Recording::getFramesPerBuffer() const
 {
     return m_framesPerBuffer;
 }
+
+size_t Recording::getMaxFrameIndex() const
+{
+    return getNumSamples() / getNumChannels();
+}
+
 size_t Recording::getNumChannels() const
 {
     return m_numChannels;
