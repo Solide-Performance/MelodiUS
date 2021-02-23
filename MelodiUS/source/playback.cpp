@@ -115,8 +115,6 @@ void Playback(const Recording& rec)
 ** that could mess up the system like calling malloc() or free().
 */
 #pragma region
-int g_numChannels = 2;
-
 static int playCallback(const void*                     inputBuffer,
                         void*                           outputBuffer,
                         unsigned long                   framesPerBuffer,
@@ -124,10 +122,16 @@ static int playCallback(const void*                     inputBuffer,
                         PaStreamCallbackFlags           statusFlags,
                         void*                           userData)
 {
-    PlaybackStruct& ps         = *static_cast<PlaybackStruct*>(userData);
-    SAMPLE*         rptr       = &ps.rec[ps.index * g_numChannels];
-    SAMPLE*         wptr       = (SAMPLE*)outputBuffer;
-    unsigned int    framesLeft = ps.rec.getMaxFrameIndex() - ps.index;
+    PlaybackStruct& ps = *static_cast<PlaybackStruct*>(userData);
+
+    if(ps.rec.getNumSamples() == ps.index * ps.rec.getNumChannels())
+    {
+        return paComplete;
+    }
+
+    SAMPLE* rptr       = &ps.rec[ps.index * ps.rec.getNumChannels()];
+    SAMPLE* wptr       = (SAMPLE*)outputBuffer;
+    size_t  framesLeft = ps.rec.getMaxFrameIndex() - ps.index;
 
     (void)inputBuffer; /* Prevent unused variable warnings. */
     (void)timeInfo;
@@ -141,7 +145,7 @@ static int playCallback(const void*                     inputBuffer,
         for(; i < framesLeft; i++)
         {
             *wptr++ = *rptr++; /* left */
-            if(g_numChannels == 2)
+            if(ps.rec.getNumChannels() == 2)
             {
                 *wptr++ = *rptr++; /* right */
             }
@@ -149,7 +153,7 @@ static int playCallback(const void*                     inputBuffer,
         for(; i < framesPerBuffer; i++)
         {
             *wptr++ = 0; /* left */
-            if(g_numChannels == 2)
+            if(ps.rec.getNumChannels() == 2)
             {
                 *wptr++ = 0; /* right */
             }
@@ -162,7 +166,7 @@ static int playCallback(const void*                     inputBuffer,
         for(size_t i = 0; i < framesPerBuffer; i++)
         {
             *wptr++ = *rptr++; /* left */
-            if(g_numChannels == 2)
+            if(ps.rec.getNumChannels() == 2)
             {
                 *wptr++ = *rptr++; /* right */
             }

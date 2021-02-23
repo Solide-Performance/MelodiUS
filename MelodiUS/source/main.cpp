@@ -12,14 +12,19 @@
 
 
 /*****************************************************************************/
+/* Defines ----------------------------------------------------------------- */
+#define SECONDS_MAX 60
+#define SECONDS_MIN 0
+#define FREQ_MAX    20000
+#define FREQ_MIN    50
+
+
+/*****************************************************************************/
 /* Entry point ------------------------------------------------------------- */
 int main()
 {
     Recording rec;
 
-    Generate_Sine(1000, 3);
-
-    return 0;
     while(true)
     {
         std::cout << std::endl;
@@ -43,7 +48,7 @@ int main()
                 int seconds = 0;
                 std::cin >> seconds;
 
-                if(seconds > 0 && seconds < 60)
+                if(seconds > SECONDS_MIN && seconds < SECONDS_MAX)
                 {
                     rec = Record(seconds);
                 }
@@ -52,8 +57,22 @@ int main()
 
             /* Generate sinus wave */
             case 2:
-                // TODO
-                break;
+            {
+                std::cout << " - Generating sine wave - \nSeconds:" << std::endl;
+                int seconds = 0;
+                std::cin >> seconds;
+
+                std::cout << "Frequency:" << std::endl;
+                int freq = 0;
+                std::cin >> freq;
+
+                if(seconds > SECONDS_MIN && seconds < SECONDS_MAX && freq > FREQ_MIN
+                   && freq < FREQ_MAX)
+                {
+                    rec = Generate_Sine(freq, seconds);
+                }
+            }
+            break;
 
             /* Playback recorded audio */
             case 3:
