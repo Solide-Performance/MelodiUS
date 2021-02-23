@@ -41,21 +41,25 @@ public:
 
     Recording(const SAMPLE* samplesBegin,
               const SAMPLE* samplesEnd,
-              size_t  sampleRate,
-              size_t  framesPerBuffer,
-              size_t  numChannels);
+              size_t        sampleRate,
+              size_t        framesPerBuffer,
+              size_t        numChannels);
 
     /* --------------------------------- */
     /* Operators                         */
-    SAMPLE operator[](size_t index);
+    SAMPLE operator[](size_t index) const;
 
     /* --------------------------------- */
     /* Accessors                         */
     const std::vector<SAMPLE>& getSamples() const;
     size_t                     getSampleRate() const;
-    size_t                     getNumberOfSamples() const;
+    size_t                     getNumSamples() const;
+    float                      getNumSeconds() const;
     size_t                     getFramesPerBuffer() const;
     size_t                     getNumChannels() const;
+
+    std::vector<SAMPLE>::const_iterator begin() const;
+    std::vector<SAMPLE>::const_iterator end() const;
 };
 
 

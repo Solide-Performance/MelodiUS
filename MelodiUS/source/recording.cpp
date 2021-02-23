@@ -10,9 +10,9 @@
 #pragma region Constructors
 Recording::Recording(const SAMPLE* samplesBegin,
                      const SAMPLE* samplesEnd,
-                     size_t  sampleRate,
-                     size_t  framesPerBuffer,
-                     size_t  numChannels)
+                     size_t        sampleRate,
+                     size_t        framesPerBuffer,
+                     size_t        numChannels)
 : m_samples{samplesBegin, samplesEnd},
   m_sampleRate{sampleRate},
   m_framesPerBuffer{framesPerBuffer},
@@ -25,7 +25,7 @@ Recording::Recording(const SAMPLE* samplesBegin,
 
 /* --------------------------------- */
 #pragma region Operators
-SAMPLE Recording::operator[](size_t index)
+SAMPLE Recording::operator[](size_t index) const
 {
     return m_samples[index];
 }
@@ -42,9 +42,14 @@ size_t Recording::getSampleRate() const
     return m_sampleRate;
 }
 
-size_t Recording::getNumberOfSamples() const
+size_t Recording::getNumSamples() const
 {
     return m_samples.size();
+}
+
+float Recording::getNumSeconds() const
+{
+    return getNumSamples() / static_cast<float>(getNumChannels() * getSampleRate());
 }
 
 size_t Recording::getFramesPerBuffer() const
@@ -54,6 +59,15 @@ size_t Recording::getFramesPerBuffer() const
 size_t Recording::getNumChannels() const
 {
     return m_numChannels;
+}
+
+std::vector<SAMPLE>::const_iterator Recording::begin() const
+{
+    return m_samples.cbegin();
+}
+std::vector<SAMPLE>::const_iterator Recording::end() const
+{
+    return m_samples.cend();
 }
 #pragma endregion
 
