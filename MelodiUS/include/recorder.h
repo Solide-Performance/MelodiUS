@@ -23,7 +23,12 @@
 /*****************************************************************************/
 /* Type definitions -------------------------------------------------------- */
 using recorderException = std::exception;
-
+typedef struct
+{
+    int     frameIndex; /* Index into sample array. */
+    int     maxFrameIndex;
+    SAMPLE* recordedSamples;
+} paTestData;
 
 /*****************************************************************************/
 /* Function declarations --------------------------------------------------- */

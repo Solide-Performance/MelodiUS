@@ -30,17 +30,23 @@
     <ClCompile Include="source\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\playback.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\readwrite_wav.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="source\recorder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\recording.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="source\readwrite_wav.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\playback.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="include\readwrite_wav.h">
       <Filter>Header Files</Filter>
     </ClInclude>
