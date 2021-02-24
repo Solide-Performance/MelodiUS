@@ -16,7 +16,7 @@
 template<typename floating>
 constexpr bool COMPARE_FLOATS(floating f1, floating f2)
 {
-    static_assert(std::is_floating_point<floating>::value);
+    static_assert(std::is_floating_point<floating>::value, "Argument must be a floating point type");
 
     constexpr double EPSILON = 0.0005; /* Margin for float comparison */
 

@@ -46,7 +46,7 @@ int main()
             case 1:
             {
                 std::cout << " - Recording - \nSeconds:" << std::endl;
-                int seconds = 0;
+                size_t seconds = 0;
                 std::cin >> seconds;
 
                 if(seconds > SECONDS_MIN && seconds < SECONDS_MAX)
@@ -60,11 +60,11 @@ int main()
             case 2:
             {
                 std::cout << " - Generating sine wave - \nSeconds:" << std::endl;
-                int seconds = 0;
+                size_t seconds = 0;
                 std::cin >> seconds;
 
                 std::cout << "Frequency:" << std::endl;
-                int freq = 0;
+                size_t freq = 0;
                 std::cin >> freq;
 
                 if(seconds > SECONDS_MIN && seconds < SECONDS_MAX && freq > FREQ_MIN
