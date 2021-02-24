@@ -1,6 +1,7 @@
 /*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
 #include "generator.h"
+#include "globaldef.h"
 #include "playback.h"
 #include "readwrite_wav.h"
 #include "recorder.h"
@@ -13,10 +14,10 @@
 
 /*****************************************************************************/
 /* Defines ----------------------------------------------------------------- */
-#define SECONDS_MAX 60
-#define SECONDS_MIN 0
-#define FREQ_MAX    20000
-#define FREQ_MIN    50
+constexpr size_t SECONDS_MAX = 60;
+constexpr size_t SECONDS_MIN = 0;
+constexpr size_t FREQ_MAX    = 20000;
+constexpr size_t FREQ_MIN    = 50;
 
 
 /*****************************************************************************/
@@ -45,7 +46,7 @@ int main()
             case 1:
             {
                 std::cout << " - Recording - \nSeconds:" << std::endl;
-                int seconds = 0;
+                size_t seconds = 0;
                 std::cin >> seconds;
 
                 if(seconds > SECONDS_MIN && seconds < SECONDS_MAX)
@@ -59,11 +60,11 @@ int main()
             case 2:
             {
                 std::cout << " - Generating sine wave - \nSeconds:" << std::endl;
-                int seconds = 0;
+                size_t seconds = 0;
                 std::cin >> seconds;
 
                 std::cout << "Frequency:" << std::endl;
-                int freq = 0;
+                size_t freq = 0;
                 std::cin >> freq;
 
                 if(seconds > SECONDS_MIN && seconds < SECONDS_MAX && freq > FREQ_MIN

@@ -36,38 +36,23 @@
  */
 #pragma once
 
-#include <cstdint>
-#include <cstdio>
-#include <cstdlib>
-#include <stdexcept>
+/*************************************************************************************************/
+/* Includes ------------------------------------------------------------------------------------ */
+#include "globaldef.h"
+#include "recording.h"
+#include <string_view>
 #include <vector>
 
-/*
- * WAV file writer.
- *
- * Author: Phil Burk
- */
+
+/*************************************************************************************************/
+/* Function declarations ----------------------------------------------------------------------- */
+void SaveToWav(std::string_view filename, const Recording& recording);
+
+[[nodiscard]] Recording LoadFromWav(std::string_view filename);
 
 
-/* Define WAV Chunk and FORM types as 4 byte integers. */
-#define RIFF_ID (('R' << 24) | ('I' << 16) | ('F' << 8) | 'F')
-#define WAVE_ID (('W' << 24) | ('A' << 16) | ('V' << 8) | 'E')
-#define FMT_ID  (('f' << 24) | ('m' << 16) | ('t' << 8) | ' ')
-#define DATA_ID (('d' << 24) | ('a' << 16) | ('t' << 8) | 'a')
-#define FACT_ID (('f' << 24) | ('a' << 16) | ('c' << 8) | 't')
-
-/* Errors returned by Audio_ParseSampleImage_WAV */
-#define WAV_ERR_CHUNK_SIZE    (-1) /* Chunk size is illegal or past file size. */
-#define WAV_ERR_FILE_TYPE     (-2) /* Not a WAV file. */
-#define WAV_ERR_ILLEGAL_VALUE (-3) /* Illegal or unsupported value. Eg. 927 bits/sample */
-#define WAV_ERR_FORMAT_TYPE   (-4) /* Unsupported format, eg. compressed. */
-#define WAV_ERR_TRUNCATED     (-5) /* End of file missing. */
-
-/* WAV PCM data format ID */
-#define WAVE_FORMAT_PCM       (1)
-#define WAVE_FORMAT_IMA_ADPCM (0x0011)
-
-
+/*************************************************************************************************/
+/* Classes definitions ------------------------------------------------------------------------- */
 class WAV_Writer
 {
     FILE* fid = nullptr;
@@ -79,6 +64,10 @@ class WAV_Writer
 public:
     WAV_Writer()                  = delete;
     WAV_Writer(const WAV_Writer&) = delete;
+    WAV_Writer(WAV_Writer&&)      = delete;
+
+    WAV_Writer& operator=(const WAV_Writer&) = delete;
+    WAV_Writer& operator=(WAV_Writer&&) = delete;
 
 
     /*********************************************************************************
@@ -112,7 +101,7 @@ class WAV_Reader
     std::vector<short> data;
 
     /* Offset in file for data size. */
-    size_t dataSizeOffset = 0;
+    size_t        dataSizeOffset = 0;
     unsigned long dataSize       = 0;
 
     unsigned long      frameRate       = 0;
@@ -123,6 +112,10 @@ class WAV_Reader
 public:
     WAV_Reader()                  = delete;
     WAV_Reader(const WAV_Reader&) = delete;
+    WAV_Reader(WAV_Reader&&)      = delete;
+
+    WAV_Reader& operator=(const WAV_Reader&) = delete;
+    WAV_Reader& operator=(WAV_Reader&&) = delete;
 
 
     /*********************************************************************************
@@ -130,7 +123,7 @@ public:
      * The header includes the DATA chunk type and size.
      * Returns number of bytes written to file or negative error code.
      */
-    WAV_Reader(std::string_view fileName);
+    explicit WAV_Reader(std::string_view fileName);
 
 
     /*********************************************************************************
@@ -149,31 +142,32 @@ public:
      */
     std::vector<short>& Read();
 
-
-    const std::vector<short>& get_Data() const
+#pragma region Accessors
+    [[nodiscard]] const std::vector<short>& get_Data() const
     {
         return data;
     }
 
-    unsigned long get_FrameRate() const
+    [[nodiscard]] unsigned long get_FrameRate() const
     {
         return frameRate;
     }
 
-    unsigned short get_SamplesPerFrame() const
+    [[nodiscard]] unsigned short get_SamplesPerFrame() const
     {
         return samplesPerFrame;
     }
 
-    long unsigned int get_BytesPerSecond() const
+    [[nodiscard]] long unsigned int get_BytesPerSecond() const
     {
         return bytesPerSecond;
     }
 
-    short unsigned int get_BytesPerBlock() const
+    [[nodiscard]] short unsigned int get_BytesPerBlock() const
     {
         return bytesPerBlock;
     }
+#pragma endregion
 
 private:
     static void ReadLongLE(unsigned char** addrPtr, unsigned long* data);

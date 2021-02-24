@@ -2,7 +2,10 @@
 /* Includes ---------------------------------------------------------------- */
 #include "generator.h"
 #include "portaudio.h"
+
 #include <cmath>
+#include <cstdlib>
+#include <numbers>
 
 
 /*****************************************************************************/
@@ -17,15 +20,15 @@ Recording Generate_Sine(size_t freq,
     size_t size   = numSeconds * sampleRate * numChannels;
     double cycles = static_cast<double>(numSeconds) / (1. / static_cast<double>(freq));
 
-    SAMPLE* data = (SAMPLE*)malloc(size * sizeof(SAMPLE));
+    std::vector<SAMPLE> data(size);
 
     /* initialise sinusoidal wavetable */
     for(size_t i = 0; i < size; i++)
     {
-        data[i] = (SAMPLE)(amplitude * sin((cycles / size) * 3.14159265358979 * 2. * i));
+        data[i] = static_cast<SAMPLE>(amplitude * sin((cycles / size) * std::numbers::pi * 2. * i));
     }
 
-    Recording rec{&data[0], &data[size - 1], sampleRate, framesPerBuffer, numChannels};
+    Recording rec{data.begin(), data.end(), sampleRate, framesPerBuffer, numChannels};
 
     return rec;
 }
