@@ -38,32 +38,23 @@
 
 /*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
-#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 
 #include "portaudio.h"
 #include "readwrite_wav.h"
-
 #include "recorder.h"
 
 
 /*****************************************************************************/
-/* Defines ----------------------------------------------------------------- */
-#define EPSILON 0.0005
-
-
-/*****************************************************************************/
 /* Macros ------------------------------------------------------------------ */
-#define CALL_ERROR_HANDLER()   errorHandler(err, &data.recordedSamples)
-#define COMPARE_FLOATS(f1, f2) (std::abs(f1 - f2) <= EPSILON)
+#define CALL_ERROR_HANDLER() errorHandler(err, &data.recordedSamples)
 
-#include "playback.h"
 
 
 /*****************************************************************************/
 /* Static variables -------------------------------------------------------- */
-static size_t g_numChannels = -1;
+static size_t g_numChannels = static_cast<size_t>(-1);
 
 
 /*****************************************************************************/
@@ -81,13 +72,13 @@ static void errorHandler(PaError err, SAMPLE** dataBlock);
 /* Non-static function definitions ----------------------------------------- */
 Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, size_t numChannels)
 {
-    PaStreamParameters inputParameters, outputParameters;
+    PaStreamParameters inputParameters;
     PaStream*          stream;
     PaError            err = paNoError;
     paTestData         data;
-    int                totalFrames;
-    int                numSamples;
-    int                numBytes;
+    size_t             totalFrames;
+    size_t             numSamples;
+    size_t             numBytes;
     SAMPLE             max, val;
     double             average;
 
@@ -132,8 +123,8 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
       &stream,
       &inputParameters,
       nullptr, /* &outputParameters, */
-      sampleRate,
-      framesPerBuffer,
+      static_cast<double>(sampleRate),
+      static_cast<unsigned long>(framesPerBuffer),
       paClipOff, /* we won't output out of range samples so don't bother clipping them */
       recordCallback,
       &data);
@@ -153,7 +144,7 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
     while((err = Pa_IsStreamActive(stream)) == 1)
     {
         Pa_Sleep(1000);
-        printf("index = %d\n", data.frameIndex);
+        printf("index = %zd\n", data.frameIndex);
         fflush(stdout);
     }
     if(err < 0)
@@ -192,10 +183,8 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
                         framesPerBuffer,
                         numChannels};
 
-    g_numChannels = -1;
+    g_numChannels = static_cast<size_t>(-1);
     free(data.recordedSamples);
-
-    Playback(recording);
 
     return recording;
 }
@@ -288,10 +277,9 @@ static int recordCallback(const void*                     inputBuffer,
     paTestData*   data = (paTestData*)userData;
     const SAMPLE* rptr = (const SAMPLE*)inputBuffer;
     SAMPLE*       wptr = &data->recordedSamples[data->frameIndex * g_numChannels];
-    long          framesToCalc;
-    long          i;
+    size_t        framesToCalc;
     int           finished;
-    unsigned long framesLeft = data->maxFrameIndex - data->frameIndex;
+    size_t        framesLeft = data->maxFrameIndex - data->frameIndex;
 
     (void)outputBuffer; /* Prevent unused variable warnings. */
     (void)timeInfo;
@@ -311,7 +299,7 @@ static int recordCallback(const void*                     inputBuffer,
 
     if(inputBuffer == nullptr)
     {
-        for(i = 0; i < framesToCalc; i++)
+        for(size_t i = 0; i < framesToCalc; i++)
         {
             *wptr++ = SAMPLE_SILENCE; /* left */
             if(g_numChannels == 2)
@@ -322,7 +310,7 @@ static int recordCallback(const void*                     inputBuffer,
     }
     else
     {
-        for(i = 0; i < framesToCalc; i++)
+        for(size_t i = 0; i < framesToCalc; i++)
         {
             *wptr++ = *rptr++; /* left */
             if(g_numChannels == 2)

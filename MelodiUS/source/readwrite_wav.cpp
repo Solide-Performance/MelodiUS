@@ -34,7 +34,11 @@
  * requested that these non-binding requests be included along with the
  * license above.
  */
-
+/*
+ * WAV file writer.
+ *
+ * Author: Phil Burk
+ */
 /**
  * Very simple WAV file writer for saving captured audio.
  */
@@ -42,7 +46,10 @@
 /*************************************************************************************************/
 /* Includes ------------------------------------------------------------------------------------ */
 #include "readwrite_wav.h"
+#include <cstdio>
+#include <iostream>
 #include <string>
+
 
 /*************************************************************************************************/
 /* Defines ------------------------------------------------------------------------------------- */
@@ -50,6 +57,24 @@
     (4 + 4 + 4 +  /* RIFF+size+WAVE */                                                             \
      4 + 4 + 16 + /* fmt chunk      */                                                             \
      4 + 4)       /* data chunk     */
+
+/* Define WAV Chunk and FORM types as 4 byte integers. */
+#define RIFF_ID (('R' << 24) | ('I' << 16) | ('F' << 8) | 'F')
+#define WAVE_ID (('W' << 24) | ('A' << 16) | ('V' << 8) | 'E')
+#define FMT_ID  (('f' << 24) | ('m' << 16) | ('t' << 8) | ' ')
+#define DATA_ID (('d' << 24) | ('a' << 16) | ('t' << 8) | 'a')
+#define FACT_ID (('f' << 24) | ('a' << 16) | ('c' << 8) | 't')
+
+/* Errors returned by Audio_ParseSampleImage_WAV */
+#define WAV_ERR_CHUNK_SIZE    (-1) /* Chunk size is illegal or past file size. */
+#define WAV_ERR_FILE_TYPE     (-2) /* Not a WAV file. */
+#define WAV_ERR_ILLEGAL_VALUE (-3) /* Illegal or unsupported value. Eg. 927 bits/sample */
+#define WAV_ERR_FORMAT_TYPE   (-4) /* Unsupported format, eg. compressed. */
+#define WAV_ERR_TRUNCATED     (-5) /* End of file missing. */
+
+/* WAV PCM data format ID */
+#define WAVE_FORMAT_PCM       (1)
+#define WAVE_FORMAT_IMA_ADPCM (0x0011)
 
 
 /*************************************************************************************************/
@@ -133,9 +158,9 @@ void WAV_Reader::ReadChunkType(unsigned char** addrPtr, unsigned long* cktyp)
  * The header includes the DATA chunk type and size.
  * Returns number of bytes written to file or negative error code.
  */
-WAV_Writer::WAV_Writer(std::string_view    fileName,
-                       unsigned long  frameRate,
-                       unsigned short samplesPerFrame)
+WAV_Writer::WAV_Writer(std::string_view fileName,
+                       unsigned long    frameRate,
+                       unsigned short   samplesPerFrame)
 {
     unsigned char  header[WAV_HEADER_SIZE];
     unsigned char* addr = header;
@@ -144,10 +169,10 @@ WAV_Writer::WAV_Writer(std::string_view    fileName,
     dataSizeOffset = 0;
 
     std::string file{fileName};
-    fid = fopen(file.c_str(), "wb");
-    if(fid == nullptr)
+    errno_t     err = fopen_s(&fid, file.c_str(), "wb");
+    if(fid == nullptr || err != 0)
     {
-        throw nullptr;
+        std::cerr << "Could not open file to write" << std::endl;
     }
 
     /* Write RIFF header. */
@@ -177,7 +202,7 @@ WAV_Writer::WAV_Writer(std::string_view    fileName,
     dataSizeOffset = addr - header;
     WriteLongLE(&addr, 0);
 
-    int numWritten = fwrite(header, 1, sizeof(header), fid);
+    size_t numWritten = fwrite(header, 1, sizeof(header), fid);
     if(numWritten != sizeof(header))
     {
         throw std::logic_error("Number of bytes written to file does not match");
@@ -195,20 +220,20 @@ WAV_Writer::~WAV_Writer()
     unsigned char buffer[4];
 
     /* Go back to beginning of file and update DATA size */
-    fseek(fid, dataSizeOffset, SEEK_SET);
+    fseek(fid, static_cast<long>(dataSizeOffset), SEEK_SET);
 
     unsigned char* bufferPtr = buffer;
-    WriteLongLE(&bufferPtr, dataSize);
+    WriteLongLE(&bufferPtr, static_cast<unsigned long>(dataSize));
 
     fwrite(buffer, 1, sizeof(buffer), fid);
 
     /* Update RIFF size */
     fseek(fid, 4, SEEK_SET);
 
-    int riffSize = dataSize + (WAV_HEADER_SIZE - 8);
-    bufferPtr    = buffer;
+    size_t riffSize = dataSize + (WAV_HEADER_SIZE - 8);
+    bufferPtr       = buffer;
 
-    WriteLongLE(&bufferPtr, riffSize);
+    WriteLongLE(&bufferPtr, static_cast<unsigned long>(riffSize));
 
     fwrite(buffer, 1, sizeof(buffer), fid);
 
@@ -228,7 +253,7 @@ void WAV_Writer::Write(short* samples, size_t numSamples)
         uint8_t* bufferPtr = buffer;
         WriteShortLE(&bufferPtr, *samples++);
 
-        int numWritten = fwrite(buffer, 1, sizeof(buffer), fid);
+        size_t numWritten = fwrite(buffer, 1, sizeof(buffer), fid);
         if(numWritten != sizeof(buffer))
         {
             throw std::logic_error("Number of bytes written to file does not match");
@@ -252,10 +277,10 @@ WAV_Reader::WAV_Reader(std::string_view fileName)
 
     /* Opening file for reading */
     std::string file{fileName};
-    fid = fopen(file.c_str(), "rb");
-    if(fid == nullptr)
+    errno_t err = fopen_s(&fid, file.c_str(), "rb");
+    if(fid == nullptr || err != 0)
     {
-        throw nullptr;
+        std::cerr << "Could not open file to read" << std::endl;
     }
     fread(header, 1, sizeof(header), fid);
 
@@ -327,8 +352,9 @@ std::vector<short>& WAV_Reader::Read()
     {
         uint8_t  buffer[2];
         uint8_t* bufferPtr = buffer;
-        int      wtf       = fread(buffer, 1, sizeof(buffer), fid);
-        if(wtf != sizeof(buffer))
+
+        size_t bytesRead = fread(buffer, 1, sizeof(buffer), fid);
+        if(bytesRead != sizeof(buffer))
         {
             throw std::logic_error{"fread did not read the right number of bytes"};
         }

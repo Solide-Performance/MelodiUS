@@ -7,6 +7,7 @@ INCLUDEPATH  += ./include ./portaudio ./source ./
 LIB          += ./portaudio_x64.lib
 QMAKE_LFLAGS += ./portaudio_x64.lib
 
+HEADERS      += ./include/globaldef.h
 HEADERS      += ./include/recorder.h ./include/recording.h
 HEADERS      += ./include/playback.h
 HEADERS      += ./include/readwrite_wav.h

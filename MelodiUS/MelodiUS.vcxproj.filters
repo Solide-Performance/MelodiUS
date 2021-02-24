@@ -50,6 +50,9 @@
     <ClInclude Include="include\generator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\globaldef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="include\playback.h">
       <Filter>Header Files</Filter>
     </ClInclude>

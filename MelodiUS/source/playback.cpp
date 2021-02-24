@@ -37,7 +37,6 @@ void Playback(const Recording& rec)
     PaStreamParameters outputParameters;
     PaStream*          stream;
     PaError            err = paNoError;
-    paTestData         data;
 
     /* Playback recorded data.  -------------------------------------------- */
     err = Pa_Initialize();
@@ -66,8 +65,8 @@ void Playback(const Recording& rec)
       &stream,
       nullptr, /* no input */
       &outputParameters,
-      rec.getSampleRate(),
-      rec.getFramesPerBuffer(),
+      static_cast<double>(rec.getSampleRate()),
+      static_cast<unsigned long>(rec.getFramesPerBuffer()),
       paClipOff, /* we won't output out of range samples so don't bother clipping them */
       playCallback,
       &ps);

@@ -1,6 +1,7 @@
 /*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
 #include "generator.h"
+#include "globaldef.h"
 #include "playback.h"
 #include "readwrite_wav.h"
 #include "recorder.h"
