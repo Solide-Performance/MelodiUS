@@ -9,14 +9,14 @@
 /* Type definition --------------------------------------------------------- */
 #pragma region Sample format selection
 #if 1
-#define PA_SAMPLE_TYPE paFloat32
-typedef float SAMPLE;
-#define SAMPLE_SILENCE  (0.0f)
-#define PRINTF_S_FORMAT "%.8f"
+#define PA_SAMPLE_TYPE paFloat32    // NOLINT
+using SAMPLE                    = float;
+constexpr SAMPLE SAMPLE_SILENCE = 0.0f;
+#define PRINTF_S_FORMAT "%.8f"    // NOLINT
 #else
 #define PA_SAMPLE_TYPE  paInt16
-typedef short SAMPLE;
-#define SAMPLE_SILENCE  (0)
+using SAMPLE                    = int16_t;
+constexpr SAMPLE SAMPLE_SILENCE = 0;
 #define PRINTF_S_FORMAT "%d"
 #endif
 #pragma endregion
@@ -36,6 +36,7 @@ public:
     /* --------------------------------- */
     /* Constructors                      */
     Recording()                 = default;
+    ~Recording()                = default;
     Recording(const Recording&) = default;
     Recording(Recording&&)      = default;
     Recording& operator=(const Recording&) = default;

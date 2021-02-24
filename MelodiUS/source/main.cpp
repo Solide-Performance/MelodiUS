@@ -14,10 +14,10 @@
 
 /*****************************************************************************/
 /* Defines ----------------------------------------------------------------- */
-#define SECONDS_MAX 60
-#define SECONDS_MIN 0
-#define FREQ_MAX    20000
-#define FREQ_MIN    50
+constexpr size_t SECONDS_MAX = 60;
+constexpr size_t SECONDS_MIN = 0;
+constexpr size_t FREQ_MAX    = 20000;
+constexpr size_t FREQ_MIN    = 50;
 
 
 /*****************************************************************************/

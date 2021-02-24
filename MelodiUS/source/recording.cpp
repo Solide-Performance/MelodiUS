@@ -15,7 +15,7 @@ const SAMPLE& Recording::operator[](size_t index) const
 
 SAMPLE& Recording::operator[](size_t index)
 {
-    return const_cast<SAMPLE&>(const_cast<const Recording*>(this)->operator[](index));
+    return const_cast<SAMPLE&>(const_cast<const Recording*>(this)->operator[](index));  // NOLINT
 }
 #pragma endregion
 

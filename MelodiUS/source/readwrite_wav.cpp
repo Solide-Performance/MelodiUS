@@ -46,6 +46,7 @@
 /*************************************************************************************************/
 /* Includes ------------------------------------------------------------------------------------ */
 #include "readwrite_wav.h"
+#include <array>
 #include <cstdio>
 #include <iostream>
 #include <string>
@@ -53,62 +54,68 @@
 
 /*************************************************************************************************/
 /* Defines ------------------------------------------------------------------------------------- */
-#define WAV_HEADER_SIZE                                                                            \
-    (4 + 4 + 4 +  /* RIFF+size+WAVE */                                                             \
-     4 + 4 + 16 + /* fmt chunk      */                                                             \
-     4 + 4)       /* data chunk     */
+constexpr size_t WAV_HEADER_SIZE = (4 + 4 + 4 +  /* RIFF+size+WAVE */
+                                    4 + 4 + 16 + /* fmt chunk      */
+                                    4 + 4);      /* data chunk     */
 
 /* Define WAV Chunk and FORM types as 4 byte integers. */
-#define RIFF_ID (('R' << 24) | ('I' << 16) | ('F' << 8) | 'F')
-#define WAVE_ID (('W' << 24) | ('A' << 16) | ('V' << 8) | 'E')
-#define FMT_ID  (('f' << 24) | ('m' << 16) | ('t' << 8) | ' ')
-#define DATA_ID (('d' << 24) | ('a' << 16) | ('t' << 8) | 'a')
-#define FACT_ID (('f' << 24) | ('a' << 16) | ('c' << 8) | 't')
-
-/* Errors returned by Audio_ParseSampleImage_WAV */
-#define WAV_ERR_CHUNK_SIZE    (-1) /* Chunk size is illegal or past file size. */
-#define WAV_ERR_FILE_TYPE     (-2) /* Not a WAV file. */
-#define WAV_ERR_ILLEGAL_VALUE (-3) /* Illegal or unsupported value. Eg. 927 bits/sample */
-#define WAV_ERR_FORMAT_TYPE   (-4) /* Unsupported format, eg. compressed. */
-#define WAV_ERR_TRUNCATED     (-5) /* End of file missing. */
+constexpr uint32_t RIFF_ID = static_cast<uint32_t>(u8'R' << 24U)
+                             | static_cast<uint32_t>(u8'I' << 16U)
+                             | static_cast<uint32_t>(u8'F' << 8U) | u8'F';
+constexpr uint32_t WAVE_ID = static_cast<uint32_t>(u8'W' << 24U)
+                             | static_cast<uint32_t>(u8'A' << 16U)
+                             | static_cast<uint32_t>(u8'V' << 8U) | u8'E';
+constexpr uint32_t FMT_ID = static_cast<uint32_t>(u8'f' << 24U)
+                            | static_cast<uint32_t>(u8'm' << 16U)
+                            | static_cast<uint32_t>(u8't' << 8U) | u8' ';
+constexpr uint32_t DATA_ID = static_cast<uint32_t>(u8'd' << 24U)
+                             | static_cast<uint32_t>(u8'a' << 16U)
+                             | static_cast<uint32_t>(u8't' << 8U) | u8'a';
 
 /* WAV PCM data format ID */
-#define WAVE_FORMAT_PCM       (1)
-#define WAVE_FORMAT_IMA_ADPCM (0x0011)
+constexpr short WAVE_FORMAT_PCM = 1;
+// constexpr uint32_t WAVE_FORMAT_IMA_ADPCM = 0x0011;
 
 
 /*************************************************************************************************/
-/* Private methods definitions ----------------------------------------------------------------- */
+/* Private methods definitions -----------------------------------------------------------------
+ */
 
 /* Write long word data to a little endian format byte array. */
 void WAV_Writer::WriteLongLE(unsigned char** addrPtr, unsigned long data)
 {
     unsigned char* addr = *addrPtr;
-    *addr++             = (unsigned char)data;
-    *addr++             = (unsigned char)(data >> 8);
-    *addr++             = (unsigned char)(data >> 16);
-    *addr++             = (unsigned char)(data >> 24);
-    *addrPtr            = addr;
+
+    *addr++ = (unsigned char)data;            // NOLINT
+    *addr++ = (unsigned char)(data >> 8);     // NOLINT
+    *addr++ = (unsigned char)(data >> 16);    // NOLINT
+    *addr++ = (unsigned char)(data >> 24);    // NOLINT
+
+    *addrPtr = addr;
 }
 
 /* Write short word data to a little endian format byte array. */
 void WAV_Writer::WriteShortLE(unsigned char** addrPtr, unsigned short data)
 {
     unsigned char* addr = *addrPtr;
-    *addr++             = (unsigned char)data;
-    *addr++             = (unsigned char)(data >> 8);
-    *addrPtr            = addr;
+
+    *addr++ = (unsigned char)data;           // NOLINT
+    *addr++ = (unsigned char)(data >> 8);    // NOLINT
+
+    *addrPtr = addr;
 }
 
 /* Write IFF ChunkType data to a byte array. */
 void WAV_Writer::WriteChunkType(unsigned char** addrPtr, unsigned long cktyp)
 {
     unsigned char* addr = *addrPtr;
-    *addr++             = (unsigned char)(cktyp >> 24);
-    *addr++             = (unsigned char)(cktyp >> 16);
-    *addr++             = (unsigned char)(cktyp >> 8);
-    *addr++             = (unsigned char)cktyp;
-    *addrPtr            = addr;
+
+    *addr++ = (unsigned char)(cktyp >> 24);    // NOLINT
+    *addr++ = (unsigned char)(cktyp >> 16);    // NOLINT
+    *addr++ = (unsigned char)(cktyp >> 8);     // NOLINT
+    *addr++ = (unsigned char)cktyp;            // NOLINT
+
+    *addrPtr = addr;
 }
 
 /* --------------------------------- */
@@ -118,10 +125,10 @@ void WAV_Reader::ReadLongLE(unsigned char** addrPtr, unsigned long* data)
     unsigned char* addr = *addrPtr;
 
     *data = 0;
-    *data |= ((unsigned long)(*addr++) << 0) & 0x000000FF;
-    *data |= ((unsigned long)(*addr++) << 8) & 0x0000FF00;
-    *data |= ((unsigned long)(*addr++) << 16) & 0x00FF0000;
-    *data |= ((unsigned long)(*addr++) << 24) & 0xFF000000;
+    *data |= ((unsigned long)(*addr++) << 0) & 0x000000FF;     // NOLINT
+    *data |= ((unsigned long)(*addr++) << 8) & 0x0000FF00;     // NOLINT
+    *data |= ((unsigned long)(*addr++) << 16) & 0x00FF0000;    // NOLINT
+    *data |= ((unsigned long)(*addr++) << 24) & 0xFF000000;    // NOLINT
 
     *addrPtr = addr;
 }
@@ -132,8 +139,8 @@ void WAV_Reader::ReadShortLE(unsigned char** addrPtr, unsigned short* data)
     unsigned char* addr = *addrPtr;
 
     *data = 0;
-    *data |= ((unsigned short)(*addr++) << 0) & 0x00FF;
-    *data |= ((unsigned short)(*addr++) << 8) & 0xFF00;
+    *data |= ((unsigned short)(*addr++) << 0) & 0x00FF;    // NOLINT
+    *data |= ((unsigned short)(*addr++) << 8) & 0xFF00;    // NOLINT
 
     *addrPtr = addr;
 }
@@ -144,10 +151,10 @@ void WAV_Reader::ReadChunkType(unsigned char** addrPtr, unsigned long* cktyp)
     unsigned char* addr = *addrPtr;
 
     *cktyp = 0;
-    *cktyp |= ((unsigned long)(*addr++) << 24) & 0xFF000000;
-    *cktyp |= ((unsigned long)(*addr++) << 16) & 0x00FF0000;
-    *cktyp |= ((unsigned long)(*addr++) << 8) & 0x0000FF00;
-    *cktyp |= ((unsigned long)(*addr++) << 0) & 0x000000FF;
+    *cktyp |= ((unsigned long)(*addr++) << 24) & 0xFF000000;    // NOLINT
+    *cktyp |= ((unsigned long)(*addr++) << 16) & 0x00FF0000;    // NOLINT
+    *cktyp |= ((unsigned long)(*addr++) << 8) & 0x0000FF00;     // NOLINT
+    *cktyp |= ((unsigned long)(*addr++) << 0) & 0x000000FF;     // NOLINT
 
     *addrPtr = addr;
 }
@@ -162,8 +169,8 @@ WAV_Writer::WAV_Writer(std::string_view fileName,
                        unsigned long    frameRate,
                        unsigned short   samplesPerFrame)
 {
-    unsigned char  header[WAV_HEADER_SIZE];
-    unsigned char* addr = header;
+    std::array<uint8_t, WAV_HEADER_SIZE> header{0};
+    uint8_t*                             addr = header.data();
 
     dataSize       = 0;
     dataSizeOffset = 0;
@@ -186,7 +193,7 @@ WAV_Writer::WAV_Writer(std::string_view fileName,
 
     /* Write format chunk based on AudioSample structure. */
     WriteChunkType(&addr, FMT_ID);
-    WriteLongLE(&addr, 16);
+    WriteLongLE(&addr, CHAR_BIT * sizeof(short));
     WriteShortLE(&addr, WAVE_FORMAT_PCM);
 
     uint32_t bytesPerSecond = frameRate * samplesPerFrame * sizeof(short);
@@ -194,15 +201,15 @@ WAV_Writer::WAV_Writer(std::string_view fileName,
     WriteLongLE(&addr, frameRate);
     WriteLongLE(&addr, bytesPerSecond);
     WriteShortLE(&addr, (samplesPerFrame * sizeof(short))); /* bytesPerBlock */
-    WriteShortLE(&addr, 16);                                /* bits per sample */
+    WriteShortLE(&addr, CHAR_BIT * sizeof(short));          /* bits per sample */
 
     /* Write ID and size for 'data' chunk. */
     WriteChunkType(&addr, DATA_ID);
     /* Save offset so we can patch it later. */
-    dataSizeOffset = addr - header;
+    dataSizeOffset = addr - header.data();
     WriteLongLE(&addr, 0);
 
-    size_t numWritten = fwrite(header, 1, sizeof(header), fid);
+    size_t numWritten = fwrite(header.data(), 1, header.size(), fid);
     if(numWritten != sizeof(header))
     {
         throw std::logic_error("Number of bytes written to file does not match");
@@ -217,25 +224,25 @@ WAV_Writer::WAV_Writer(std::string_view fileName,
  */
 WAV_Writer::~WAV_Writer()
 {
-    unsigned char buffer[4];
+    std::array<uint8_t, 4> buffer{0};
+    uint8_t*               bufferPtr = buffer.data();
 
     /* Go back to beginning of file and update DATA size */
     fseek(fid, static_cast<long>(dataSizeOffset), SEEK_SET);
 
-    unsigned char* bufferPtr = buffer;
     WriteLongLE(&bufferPtr, static_cast<unsigned long>(dataSize));
 
-    fwrite(buffer, 1, sizeof(buffer), fid);
+    fwrite(buffer.data(), 1, buffer.size(), fid);
 
     /* Update RIFF size */
     fseek(fid, 4, SEEK_SET);
 
-    size_t riffSize = dataSize + (WAV_HEADER_SIZE - 8);
-    bufferPtr       = buffer;
+    size_t riffSize = dataSize + (WAV_HEADER_SIZE - 8);     // NOLINT
+    bufferPtr       = buffer.data();
 
     WriteLongLE(&bufferPtr, static_cast<unsigned long>(riffSize));
 
-    fwrite(buffer, 1, sizeof(buffer), fid);
+    fwrite(buffer.data(), 1, buffer.size(), fid);
 
     fclose(fid);
 }
@@ -247,14 +254,14 @@ WAV_Writer::~WAV_Writer()
  */
 void WAV_Writer::Write(short* samples, size_t numSamples)
 {
-    for(int i = 0; i < numSamples; i++)
+    for(size_t i = 0; i < numSamples; i++)
     {
-        uint8_t  buffer[2];
-        uint8_t* bufferPtr = buffer;
-        WriteShortLE(&bufferPtr, *samples++);
+        std::array<uint8_t, 2> buffer{0};
+        uint8_t*               bufferPtr = buffer.data();
+        WriteShortLE(&bufferPtr, *samples++);    // NOLINT
 
-        size_t numWritten = fwrite(buffer, 1, sizeof(buffer), fid);
-        if(numWritten != sizeof(buffer))
+        size_t numWritten = fwrite(buffer.data(), 1, buffer.size(), fid);
+        if(numWritten != buffer.size())
         {
             throw std::logic_error("Number of bytes written to file does not match");
         }
@@ -269,20 +276,22 @@ void WAV_Writer::Write(short* samples, size_t numSamples)
 
 WAV_Reader::WAV_Reader(std::string_view fileName)
 {
-    unsigned char  header[WAV_HEADER_SIZE];
-    unsigned char* addr = header;
+    std::array<uint8_t, WAV_HEADER_SIZE> header{0};
+    uint8_t*                             addr = header.data();
 
-    int short unsigned short_bidon;
-    int long unsigned  long_bidon;
+
+    unsigned short short_bidon = 0;
+    unsigned long  long_bidon  = 0;
 
     /* Opening file for reading */
     std::string file{fileName};
-    errno_t err = fopen_s(&fid, file.c_str(), "rb");
+    errno_t     err = fopen_s(&fid, file.c_str(), "rb");
     if(fid == nullptr || err != 0)
     {
         std::cerr << "Could not open file to read" << std::endl;
+        throw std::exception("Could not open file to read");
     }
-    fread(header, 1, sizeof(header), fid);
+    fread(header.data(), 1, sizeof(header), fid);
 
     /* Write RIFF header. */
     ReadChunkType(&addr, &long_bidon);
@@ -308,7 +317,7 @@ WAV_Reader::WAV_Reader(std::string_view fileName)
         throw std::logic_error("Wrong FMT_ID");
     }
     ReadLongLE(&addr, &long_bidon);
-    if(long_bidon != 16)
+    if(long_bidon != CHAR_BIT * sizeof(short))
     {
         throw std::logic_error("Wrong it's 16 (" + std::to_string(long_bidon) + ")");
     }
@@ -325,7 +334,7 @@ WAV_Reader::WAV_Reader(std::string_view fileName)
     ReadLongLE(&addr, &bytesPerSecond);
     ReadShortLE(&addr, &bytesPerBlock); /* bytesPerBlock */
     ReadShortLE(&addr, &short_bidon);   /* bits per sample */
-    if(short_bidon != 16)
+    if(short_bidon != CHAR_BIT * sizeof(short))
     {
         throw std::logic_error("Wrong it's 16 (" + std::to_string(short_bidon) + ")");
     }
@@ -338,7 +347,7 @@ WAV_Reader::WAV_Reader(std::string_view fileName)
     }
 
     /* Save offset so we can patch it later. */
-    dataSizeOffset = addr - header;
+    dataSizeOffset = addr - header.data();
 
     ReadLongLE(&addr, &dataSize);
 }
@@ -348,12 +357,13 @@ std::vector<short>& WAV_Reader::Read()
 {
     data.reserve(dataSize / sizeof(short));
 
-    for(int i = 0; i < dataSize / sizeof(short); i++)
+    for(size_t i = 0; i < dataSize / sizeof(short); i++)
     {
-        uint8_t  buffer[2];
-        uint8_t* bufferPtr = buffer;
+        std::array<uint8_t, 2> buffer{0};
+        uint8_t*               bufferPtr = buffer.data();
+        ;
 
-        size_t bytesRead = fread(buffer, 1, sizeof(buffer), fid);
+        size_t bytesRead = fread(buffer.data(), 1, sizeof(buffer), fid);
         if(bytesRead != sizeof(buffer))
         {
             throw std::logic_error{"fread did not read the right number of bytes"};

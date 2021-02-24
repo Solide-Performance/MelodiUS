@@ -4,10 +4,12 @@
 #include "portaudio.h"
 #include "recorder.h"
 
+#include <iostream>
+
 
 /*****************************************************************************/
 /* Macros ------------------------------------------------------------------ */
-#define CALL_ERROR_HANDLER() errorHandler(err)
+#define CALL_ERROR_HANDLER() errorHandler(err)    // NOLINT
 
 
 /*****************************************************************************/
@@ -48,7 +50,7 @@ void Playback(const Recording& rec)
     outputParameters.device = Pa_GetDefaultOutputDevice(); /* default output device */
     if(outputParameters.device == paNoDevice)
     {
-        fprintf(stderr, "Error: No default output device.\n");
+        std::cerr << "Error: No default output device." << std::endl;
     }
     outputParameters.channelCount = 2; /* stereo output */
     outputParameters.sampleFormat = PA_SAMPLE_TYPE;
@@ -56,8 +58,7 @@ void Playback(const Recording& rec)
       Pa_GetDeviceInfo(outputParameters.device)->defaultLowOutputLatency;
     outputParameters.hostApiSpecificStreamInfo = nullptr;
 
-    printf("\n=== Now playing back. ===\n");
-    fflush(stdout);
+    std::cout << "\n=== Now playing back. ===" << std::endl;
 
     PlaybackStruct ps{const_cast<Recording&>(rec)};
 
@@ -75,7 +76,7 @@ void Playback(const Recording& rec)
         CALL_ERROR_HANDLER();
     }
 
-    if(stream)
+    if(stream != nullptr)
     {
         err = Pa_StartStream(stream);
         if(err != paNoError)
@@ -83,12 +84,11 @@ void Playback(const Recording& rec)
             CALL_ERROR_HANDLER();
         }
 
-        printf("Waiting for playback to finish.\n");
-        fflush(stdout);
+        std::cout << "Waiting for playback to finish." << std::endl;
 
         while((err = Pa_IsStreamActive(stream)) == 1)
         {
-            Pa_Sleep(100);
+            Pa_Sleep(100);  // NOLINT
         }
         if(err < 0)
         {
@@ -101,8 +101,7 @@ void Playback(const Recording& rec)
             CALL_ERROR_HANDLER();
         }
 
-        printf("Done.\n");
-        fflush(stdout);
+        std::cout << "Done." << std::endl;
     }
 }
 
@@ -129,7 +128,7 @@ static int playCallback(const void*                     inputBuffer,
     }
 
     SAMPLE* rptr       = &ps.rec[ps.index * ps.rec.getNumChannels()];
-    SAMPLE* wptr       = (SAMPLE*)outputBuffer;
+    SAMPLE* wptr       = static_cast<SAMPLE*>(outputBuffer);
     size_t  framesLeft = ps.rec.getMaxFrameIndex() - ps.index;
 
     (void)inputBuffer; /* Prevent unused variable warnings. */
@@ -143,18 +142,18 @@ static int playCallback(const void*                     inputBuffer,
         /* final buffer... */
         for(; i < framesLeft; i++)
         {
-            *wptr++ = *rptr++; /* left */
+            *wptr++ = *rptr++; /* left */    // NOLINT
             if(ps.rec.getNumChannels() == 2)
             {
-                *wptr++ = *rptr++; /* right */
+                *wptr++ = *rptr++; /* right */    // NOLINT
             }
         }
         for(; i < framesPerBuffer; i++)
         {
-            *wptr++ = 0; /* left */
+            *wptr++ = 0; /* left */    // NOLINT
             if(ps.rec.getNumChannels() == 2)
             {
-                *wptr++ = 0; /* right */
+                *wptr++ = 0; /* right */    // NOLINT
             }
         }
         ps.index += framesLeft;
@@ -164,10 +163,10 @@ static int playCallback(const void*                     inputBuffer,
     {
         for(size_t i = 0; i < framesPerBuffer; i++)
         {
-            *wptr++ = *rptr++; /* left */
+            *wptr++ = *rptr++; /* left */    // NOLINT
             if(ps.rec.getNumChannels() == 2)
             {
-                *wptr++ = *rptr++; /* right */
+                *wptr++ = *rptr++; /* right */    // NOLINT
             }
         }
         ps.index += framesPerBuffer;
@@ -182,10 +181,9 @@ static void errorHandler(PaError err)
 
     if(err != paNoError)
     {
-        fprintf(stderr, "An error occured while using the portaudio stream\n");
-        fprintf(stderr, "Error number: %d\n", err);
-        fprintf(stderr, "Error message: %s\n", Pa_GetErrorText(err));
-        // err = 1; /* Always return 0 or 1, but no other return codes. */
+        std::cerr << "An error occured while using the portaudio stream\n"
+                  << "Error number: " << static_cast<int>(err) << '\n'
+                  << "Error message: " << Pa_GetErrorText(err) << std::endl;
 
         throw recorderException();
     }

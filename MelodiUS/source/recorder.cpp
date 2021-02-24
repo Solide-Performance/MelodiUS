@@ -48,7 +48,7 @@
 
 /*****************************************************************************/
 /* Macros ------------------------------------------------------------------ */
-#define CALL_ERROR_HANDLER() errorHandler(err, &data.recordedSamples)
+#define CALL_ERROR_HANDLER() errorHandler(err, &data.recordedSamples)    // NOLINT
 
 
 
@@ -75,27 +75,26 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
     PaStreamParameters inputParameters;
     PaStream*          stream;
     PaError            err = paNoError;
-    paTestData         data;
-    size_t             totalFrames;
-    size_t             numSamples;
-    size_t             numBytes;
+    paTestData         data{};
     SAMPLE             max, val;
     double             average;
 
     g_numChannels = numChannels;
 
-    data.maxFrameIndex = totalFrames = numSeconds * sampleRate; /* Record for a few seconds. */
-    data.frameIndex                  = 0;
-    numSamples                       = totalFrames * numChannels;
-    numBytes                         = numSamples * sizeof(SAMPLE);
+    size_t totalFrames = data.maxFrameIndex =
+      numSeconds * sampleRate; /* Record for a few seconds. */
+
+    data.frameIndex   = 0;
+    size_t numSamples = totalFrames * numChannels;
+    size_t numBytes   = numSamples * sizeof(SAMPLE);
     data.recordedSamples =
-      (SAMPLE*)malloc(numBytes); /* From now on, recordedSamples is initialised. */
+      static_cast<SAMPLE*>(malloc(numBytes)); /* From now on, recordedSamples is initialised. */
     if(data.recordedSamples == nullptr)
     {
         printf("Could not allocate record array.\n");
         CALL_ERROR_HANDLER();
     }
-    for(int i = 0; i < numSamples; i++)
+    for(size_t i = 0; i < numSamples; i++)
     {
         data.recordedSamples[i] = 0;
     }
@@ -194,7 +193,9 @@ void SaveToWav(std::string_view filename, const Recording& recording)
     std::vector<short> shortData = Samples_FloatToShort(recording.getSamples());
 
     WAV_Writer writer{
-      filename, unsigned long(recording.getSampleRate() * recording.getNumChannels()), 1};
+      filename,
+      static_cast<unsigned long>(recording.getSampleRate() * recording.getNumChannels()),
+      1};
 
     writer.Write(shortData.data(), shortData.size());
 }
@@ -212,7 +213,7 @@ Recording LoadFromWav(std::string_view filename)
 }
 
 
-std::vector<short> Samples_FloatToShort(const std::vector<float> inVec)
+std::vector<short> Samples_FloatToShort(const std::vector<float>& inVec)
 {
     std::vector<short> shortData = std::vector<short>(inVec.size());
 
@@ -226,7 +227,7 @@ std::vector<short> Samples_FloatToShort(const std::vector<float> inVec)
     return shortData;
 }
 
-std::vector<float> Samples_ShortToFloat(const std::vector<short> inVec)
+std::vector<float> Samples_ShortToFloat(const std::vector<short>& inVec)
 {
     std::vector<float> floatData(inVec.size());
 

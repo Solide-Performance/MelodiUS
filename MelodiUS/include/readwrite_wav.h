@@ -56,6 +56,10 @@ class WAV_Writer
 public:
     WAV_Writer()                  = delete;
     WAV_Writer(const WAV_Writer&) = delete;
+    WAV_Writer(WAV_Writer&&)      = delete;
+
+    WAV_Writer& operator=(const WAV_Writer&) = delete;
+    WAV_Writer& operator=(WAV_Writer&&) = delete;
 
 
     /*********************************************************************************
@@ -100,6 +104,10 @@ class WAV_Reader
 public:
     WAV_Reader()                  = delete;
     WAV_Reader(const WAV_Reader&) = delete;
+    WAV_Reader(WAV_Reader&&)      = delete;
+
+    WAV_Reader& operator=(const WAV_Reader&) = delete;
+    WAV_Reader& operator=(WAV_Reader&&) = delete;
 
 
     /*********************************************************************************
@@ -107,7 +115,7 @@ public:
      * The header includes the DATA chunk type and size.
      * Returns number of bytes written to file or negative error code.
      */
-    WAV_Reader(std::string_view fileName);
+    explicit WAV_Reader(std::string_view fileName);
 
 
     /*********************************************************************************
