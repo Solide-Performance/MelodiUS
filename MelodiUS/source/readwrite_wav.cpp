@@ -78,8 +78,70 @@ constexpr short WAVE_FORMAT_PCM = 1;
 
 
 /*************************************************************************************************/
-/* Private methods definitions -----------------------------------------------------------------
- */
+/* Static functions declarations --------------------------------------------------------------- */
+[[nodiscard]] std::vector<short> Samples_FloatToShort(const std::vector<float>& inVec);
+[[nodiscard]] std::vector<float> Samples_ShortToFloat(const std::vector<short>& inVec);
+
+
+/*************************************************************************************************/
+/* Function definitions ------------------------------------------------------------------------ */
+void SaveToWav(std::string_view filename, const Recording& recording)
+{
+    std::vector<short> shortData = Samples_FloatToShort(recording.getSamples());
+
+    WAV_Writer writer{
+      filename,
+      static_cast<unsigned long>(recording.getSampleRate() * recording.getNumChannels()),
+      1};
+
+    writer.Write(shortData.data(), shortData.size());
+}
+
+Recording LoadFromWav(std::string_view filename)
+{
+    WAV_Reader reader{filename};
+    reader.Read();
+
+    std::vector<float> floatData = Samples_ShortToFloat(reader.get_Data());
+
+    // @todo
+    // HARDCODED '2' & '1' !!!!!!! TO REMOVE
+    return {&floatData.front(), &floatData.back(), (size_t)(reader.get_FrameRate() / 2), 1, 2};
+}
+
+
+/*************************************************************************************************/
+/* Static functions definitions ---------------------------------------------------------------- */
+std::vector<short> Samples_FloatToShort(const std::vector<float>& inVec)
+{
+    std::vector<short> shortData = std::vector<short>(inVec.size());
+
+    // https://stackoverflow.com/a/56213245/10827197
+    for(int i = 0; i < inVec.size(); i++)
+    {
+        float floatData = inVec[i] * 32767;
+        shortData[i]    = (short)floatData;
+    }
+
+    return shortData;
+}
+
+std::vector<float> Samples_ShortToFloat(const std::vector<short>& inVec)
+{
+    std::vector<float> floatData(inVec.size());
+
+    for(int i = 0; i < inVec.size(); i++)
+    {
+        float shortData = (float)inVec[i] / 32767;
+        floatData[i]    = shortData;
+    }
+
+    return floatData;
+}
+
+
+/*************************************************************************************************/
+/* Private methods definitions ----------------------------------------------------------------- */
 
 /* Write long word data to a little endian format byte array. */
 void WAV_Writer::WriteLongLE(unsigned char** addrPtr, unsigned long data)
@@ -237,7 +299,7 @@ WAV_Writer::~WAV_Writer()
     /* Update RIFF size */
     fseek(fid, 4, SEEK_SET);
 
-    size_t riffSize = dataSize + (WAV_HEADER_SIZE - 8);     // NOLINT
+    size_t riffSize = dataSize + (WAV_HEADER_SIZE - 8);    // NOLINT
     bufferPtr       = buffer.data();
 
     WriteLongLE(&bufferPtr, static_cast<unsigned long>(riffSize));

@@ -35,9 +35,6 @@ struct paTestData
                                size_t framesPerBuffer = FRAMES_PER_BUFFER,
                                size_t numChannels     = NUM_CHANNELS);
 
-void                    SaveToWav(std::string_view filename, const Recording& recording);
-[[nodiscard]] Recording LoadFromWav(std::string_view filename);
-
 [[nodiscard]] std::vector<short> Samples_FloatToShort(const std::vector<float>& inVec);
 [[nodiscard]] std::vector<float> Samples_ShortToFloat(const std::vector<short>& inVec);
 
