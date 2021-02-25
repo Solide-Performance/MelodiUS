@@ -56,7 +56,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;include;portaudio;source;.;..\..\..\Programmes\Qt\6.0.1\msvc2019_64\include;..\..\..\Programmes\Qt\6.0.1\msvc2019_64\include\QtGui;..\..\..\Programmes\Qt\6.0.1\msvc2019_64\include\QtCore;release;/include;..\..\..\Programmes\Qt\6.0.1\msvc2019_64\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;include;source;portaudio;CommunicationFPGA;.;..\..\..\Programmes\Qt\6.0.1\msvc2019_64\include;..\..\..\Programmes\Qt\6.0.1\msvc2019_64\include\QtGui;..\..\..\Programmes\Qt\6.0.1\msvc2019_64\include\QtCore;release;/include;..\..\..\Programmes\Qt\6.0.1\msvc2019_64\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -permissive- -Zc:__cplusplus -Zc:externConstexpr -utf-8 -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>release\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -76,7 +76,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>E:\Programmes\Qt\6.0.1\msvc2019_64\lib\Qt6Gui.lib;E:\Programmes\Qt\6.0.1\msvc2019_64\lib\Qt6Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalOptions>./portaudio_x64.lib &quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot; %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>./portaudio_x64.lib ./CommunicationFPGA.lib &quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot; %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -99,7 +99,7 @@
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;include;portaudio;source;.;..\..\..\Programmes\Qt\6.0.1\msvc2019_64\include;..\..\..\Programmes\Qt\6.0.1\msvc2019_64\include\QtGui;..\..\..\Programmes\Qt\6.0.1\msvc2019_64\include\QtCore;debug;/include;..\..\..\Programmes\Qt\6.0.1\msvc2019_64\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;include;source;portaudio;CommunicationFPGA;.;..\..\..\Programmes\Qt\6.0.1\msvc2019_64\include;..\..\..\Programmes\Qt\6.0.1\msvc2019_64\include\QtGui;..\..\..\Programmes\Qt\6.0.1\msvc2019_64\include\QtCore;debug;/include;..\..\..\Programmes\Qt\6.0.1\msvc2019_64\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -permissive- -Zc:__cplusplus -Zc:externConstexpr -utf-8 -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>debug\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -118,7 +118,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>E:\Programmes\Qt\6.0.1\msvc2019_64\lib\Qt6Guid.lib;E:\Programmes\Qt\6.0.1\msvc2019_64\lib\Qt6Cored.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalOptions>./portaudio_x64.lib &quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot; %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>./portaudio_x64.lib ./CommunicationFPGA.lib &quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot; %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreImportLibrary>true</IgnoreImportLibrary>
@@ -145,9 +145,11 @@
     <ClCompile Include="source\recording.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CommunicationFPGA\CommunicationFPGA.h" />
     <ClInclude Include="include\generator.h" />
     <ClInclude Include="include\globaldef.h" />
     <ClInclude Include="include\playback.h" />
+    <ClInclude Include="portaudio\portaudio.h" />
     <ClInclude Include="include\readwrite_wav.h" />
     <ClInclude Include="include\recorder.h" />
     <ClInclude Include="include\recording.h" />

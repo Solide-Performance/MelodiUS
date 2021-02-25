@@ -47,6 +47,9 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="CommunicationFPGA\CommunicationFPGA.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="include\generator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -54,6 +57,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\playback.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="portaudio\portaudio.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\readwrite_wav.h">

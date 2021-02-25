@@ -41,12 +41,6 @@ void Playback(const Recording& rec)
     PaError            err = paNoError;
 
     /* Playback recorded data.  -------------------------------------------- */
-    err = Pa_Initialize();
-    if(err != paNoError)
-    {
-        CALL_ERROR_HANDLER();
-    }
-
     outputParameters.device = Pa_GetDefaultOutputDevice(); /* default output device */
     if(outputParameters.device == paNoDevice)
     {
@@ -177,7 +171,7 @@ static int playCallback(const void*                     inputBuffer,
 
 static void errorHandler(PaError err)
 {
-    Pa_Terminate();
+    //Pa_Terminate();
 
     if(err != paNoError)
     {

@@ -7,6 +7,9 @@
 #include "recorder.h"
 #include "recording.h"
 
+#include "CommunicationFPGA.h"
+#include "portaudio.h"
+
 #include <iostream>
 #include <string>
 #include <string_view>
@@ -21,8 +24,35 @@ constexpr size_t FREQ_MIN    = 50;
 
 
 /*****************************************************************************/
+/* Function declarations --------------------------------------------------- */
+void menuHandler(CommunicationFPGA& fpga);
+void setupPortaudio();
+void setupCommunicationFGPA(CommunicationFPGA& fpga);
+
+
+/*****************************************************************************/
 /* Entry point ------------------------------------------------------------- */
 int main()
+{
+    /* portaudio init */
+    setupPortaudio();
+    
+    /* CommunicationFPGA init */
+    CommunicationFPGA fpga;
+    setupCommunicationFGPA(fpga);
+
+    /* Menu display and command handling */
+    menuHandler(fpga);
+
+    /* Close portaudio */
+    Pa_Terminate();
+    return 0;
+}
+
+
+/*****************************************************************************/
+/* Function definitions ---------------------------------------------------- */
+void menuHandler(CommunicationFPGA& fpga)
 {
     Recording rec;
 
@@ -131,12 +161,44 @@ int main()
             case 0:
                 [[fallthrough]];
             default:
-                return 0;
+                return;
         }
     }
-
-    return 1;
 }
+
+void setupCommunicationFGPA(CommunicationFPGA& fpga)
+{
+    if(!fpga.estOk())
+    {
+        std::cerr << "FPGA Connection Failed: " << fpga.messageErreur() << std::endl;
+        // throw std::exception();
+    }
+    else
+    {
+        std::cout << "FPGA Connection Successful" << std::endl;
+    }
+}
+
+
+void setupPortaudio()
+{
+    PaError err = Pa_Initialize();
+    if(err != paNoError)
+    {
+        std::cerr << "An error occured while using the portaudio stream\n"
+                  << "Error number: " << static_cast<int>(err) << '\n'
+                  << "Error message: " << Pa_GetErrorText(err) << std::endl;
+        throw std::exception();
+    }
+    else
+    {
+        // Clears screen, from:
+        // https://stackoverflow.com/a/33450696/10827197
+        system("@cls||clear");
+        std::cout << "Portaudio Initialized" << std::endl;
+    }
+}
+
 
 /*****************************************************************************/
 /* END OF FILE ------------------------------------------------------------- */

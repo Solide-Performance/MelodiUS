@@ -98,11 +98,11 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
         data.recordedSamples[i] = 0;
     }
 
-    err = Pa_Initialize();
+    /*err = Pa_Initialize();
     if(err != paNoError)
     {
         CALL_ERROR_HANDLER();
-    }
+    }*/
 
     inputParameters.device = Pa_GetDefaultInputDevice(); /* default input device */
     if(inputParameters.device == paNoDevice)
@@ -171,7 +171,7 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
 /* Static function definitions --------------------------------------------- */
 static void errorHandler(PaError err, SAMPLE** dataBlock)
 {
-    Pa_Terminate();
+    //Pa_Terminate();
 
     if(dataBlock != nullptr)
     {
