@@ -137,6 +137,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\fpga.cpp" />
     <ClCompile Include="source\generator.cpp" />
     <ClCompile Include="source\main.cpp" />
     <ClCompile Include="source\playback.cpp" />
@@ -146,6 +147,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommunicationFPGA\CommunicationFPGA.h" />
+    <ClInclude Include="include\fpga.h" />
     <ClInclude Include="include\generator.h" />
     <ClInclude Include="include\globaldef.h" />
     <ClInclude Include="include\playback.h" />
