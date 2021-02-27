@@ -7,7 +7,8 @@
 #include "recorder.h"
 #include "recording.h"
 
-#include "CommunicationFPGA.h"
+#include "fpga.h"
+
 #include "portaudio.h"
 
 #include <iostream>
@@ -25,9 +26,9 @@ constexpr size_t FREQ_MIN    = 50;
 
 /*****************************************************************************/
 /* Function declarations --------------------------------------------------- */
-void menuHandler(CommunicationFPGA& fpga);
+void menuHandler();
 void setupPortaudio();
-void setupCommunicationFGPA(CommunicationFPGA& fpga);
+void setupFPGA();
 
 
 /*****************************************************************************/
@@ -36,23 +37,23 @@ int main()
 {
     /* portaudio init */
     setupPortaudio();
-    
+
     /* CommunicationFPGA init */
-    CommunicationFPGA fpga;
-    setupCommunicationFGPA(fpga);
+    setupFPGA();
 
     /* Menu display and command handling */
-    menuHandler(fpga);
+    menuHandler();
 
-    /* Close portaudio */
+    /* Close portaudio & FPGA*/
     Pa_Terminate();
+    FPGA::DeInit();
     return 0;
 }
 
 
 /*****************************************************************************/
 /* Function definitions ---------------------------------------------------- */
-void menuHandler(CommunicationFPGA& fpga)
+void menuHandler()
 {
     Recording rec;
 
@@ -166,11 +167,14 @@ void menuHandler(CommunicationFPGA& fpga)
     }
 }
 
-void setupCommunicationFGPA(CommunicationFPGA& fpga)
+void setupFPGA()
 {
-    if(!fpga.estOk())
+    FPGA::Init();
+
+    FPGA::WriteLED(0xFF);
+    if(!FPGA::isOk())
     {
-        std::cerr << "FPGA Connection Failed: " << fpga.messageErreur() << std::endl;
+        std::cerr << "FPGA Connection Failed: " << FPGA::errorMsg() << std::endl;
         // throw std::exception();
     }
     else
