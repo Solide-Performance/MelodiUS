@@ -97,7 +97,6 @@ ipch/
 # Compiled Dynamic libraries
 *.so
 *.dylib
-*.dll
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
@@ -106,7 +105,6 @@ ipch/
 *.lai
 *.la
 *.a
-*.lib
 
 # Executables
 *.exe

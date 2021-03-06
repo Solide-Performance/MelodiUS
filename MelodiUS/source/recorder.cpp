@@ -38,50 +38,28 @@
 
 /*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
-#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
+#include <iostream>
 
 #include "portaudio.h"
-#include "write_wav.h"
-
+#include "readwrite_wav.h"
 #include "recorder.h"
 
 
 /*****************************************************************************/
-/* Defines ----------------------------------------------------------------- */
-#define EPSILON 0.0005
-
-
-/*****************************************************************************/
 /* Macros ------------------------------------------------------------------ */
-#define CALL_ERROR_HANDLER()   errorHandler(err, &data.recordedSamples)
-#define COMPARE_FLOATS(f1, f2) (std::abs(f1 - f2) <= EPSILON)
+#define CALL_ERROR_HANDLER() errorHandler(err, &data.recordedSamples)    // NOLINT
 
-
-/*****************************************************************************/
-/* Type definitions -------------------------------------------------------- */
-typedef struct
-{
-    int     frameIndex; /* Index into sample array. */
-    int     maxFrameIndex;
-    SAMPLE* recordedSamples;
-} paTestData;
 
 
 /*****************************************************************************/
 /* Static variables -------------------------------------------------------- */
-static size_t g_numChannels = -1;
+static size_t g_numChannels = static_cast<size_t>(-1);
 
 
 /*****************************************************************************/
 /* Static function declarations -------------------------------------------- */
-static int  playCallback(const void*                     inputBuffer,
-                         void*                           outputBuffer,
-                         unsigned long                   framesPerBuffer,
-                         const PaStreamCallbackTimeInfo* timeInfo,
-                         PaStreamCallbackFlags           statusFlags,
-                         void*                           userData);
 static int  recordCallback(const void*                     inputBuffer,
                            void*                           outputBuffer,
                            unsigned long                   framesPerBuffer,
@@ -95,45 +73,41 @@ static void errorHandler(PaError err, SAMPLE** dataBlock);
 /* Non-static function definitions ----------------------------------------- */
 Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, size_t numChannels)
 {
-    PaStreamParameters inputParameters, outputParameters;
-    PaStream*          stream;
-    PaError            err = paNoError;
-    paTestData         data;
-    int                i;
-    int                totalFrames;
-    int                numSamples;
-    int                numBytes;
-    SAMPLE             max, val;
-    double             average;
+    PaStreamParameters inputParameters;
+    PaStream*          stream = nullptr;
+    PaError            err    = paNoError;
+    paTestData         data{};
 
     g_numChannels = numChannels;
 
-    data.maxFrameIndex = totalFrames = numSeconds * sampleRate; /* Record for a few seconds. */
-    data.frameIndex                  = 0;
-    numSamples                       = totalFrames * numChannels;
-    numBytes                         = numSamples * sizeof(SAMPLE);
+    size_t totalFrames = data.maxFrameIndex =
+      numSeconds * sampleRate; /* Record for a few seconds. */
+
+    data.frameIndex   = 0;
+    size_t numSamples = totalFrames * numChannels;
+    size_t numBytes   = numSamples * sizeof(SAMPLE);
     data.recordedSamples =
-      (SAMPLE*)malloc(numBytes); /* From now on, recordedSamples is initialised. */
+      static_cast<SAMPLE*>(malloc(numBytes)); /* From now on, recordedSamples is initialised. */
     if(data.recordedSamples == nullptr)
     {
-        printf("Could not allocate record array.\n");
+        std::cout << "Could not allocate record array." << std::endl;
         CALL_ERROR_HANDLER();
     }
-    for(i = 0; i < numSamples; i++)
+    for(size_t i = 0; i < numSamples; i++)
     {
         data.recordedSamples[i] = 0;
     }
 
-    err = Pa_Initialize();
+    /*err = Pa_Initialize();
     if(err != paNoError)
     {
         CALL_ERROR_HANDLER();
-    }
+    }*/
 
     inputParameters.device = Pa_GetDefaultInputDevice(); /* default input device */
     if(inputParameters.device == paNoDevice)
     {
-        fprintf(stderr, "Error: No default input device.\n");
+        std::cerr << "Error: No default input device." << std::endl;
         CALL_ERROR_HANDLER();
     }
     inputParameters.channelCount = 2; /* stereo input */
@@ -147,8 +121,8 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
       &stream,
       &inputParameters,
       nullptr, /* &outputParameters, */
-      sampleRate,
-      framesPerBuffer,
+      static_cast<double>(sampleRate),
+      static_cast<unsigned long>(framesPerBuffer),
       paClipOff, /* we won't output out of range samples so don't bother clipping them */
       recordCallback,
       &data);
@@ -162,14 +136,12 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
     {
         CALL_ERROR_HANDLER();
     }
-    printf("\n=== Now recording!! Please speak into the microphone. ===\n");
-    fflush(stdout);
+    std::cout << "\n=== Now recording!! Please speak into the microphone. ===" << std::endl;
 
     while((err = Pa_IsStreamActive(stream)) == 1)
     {
-        Pa_Sleep(1000);
-        printf("index = %d\n", data.frameIndex);
-        fflush(stdout);
+        Pa_Sleep(1000);    // NOLINT
+        std::cout << "index = " << data.frameIndex << std::endl;
     }
     if(err < 0)
     {
@@ -182,166 +154,16 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
         CALL_ERROR_HANDLER();
     }
 
-    /* Measure maximum peak amplitude. */
-    max     = 0;
-    average = 0.0;
-    for(i = 0; i < numSamples; i++)
-    {
-        val = data.recordedSamples[i];
-        val = std::abs(val);
-        if(val > max)
-        {
-            max = val;
-        }
-        average += val;
-    }
-
-    average = average / (double)numSamples;
-
-    printf("sample max amplitude = " PRINTF_S_FORMAT "\n", max);
-    printf("sample average = %lf\n", average);
-
-    /* Playback recorded data.  -------------------------------------------- */
-    data.frameIndex = 0;
-
-    outputParameters.device = Pa_GetDefaultOutputDevice(); /* default output device */
-    if(outputParameters.device == paNoDevice)
-    {
-        fprintf(stderr, "Error: No default output device.\n");
-        CALL_ERROR_HANDLER();
-    }
-    outputParameters.channelCount = 2; /* stereo output */
-    outputParameters.sampleFormat = PA_SAMPLE_TYPE;
-    outputParameters.suggestedLatency =
-      Pa_GetDeviceInfo(outputParameters.device)->defaultLowOutputLatency;
-    outputParameters.hostApiSpecificStreamInfo = nullptr;
-
-    printf("\n=== Now playing back. ===\n");
-    fflush(stdout);
-    err = Pa_OpenStream(
-      &stream,
-      nullptr, /* no input */
-      &outputParameters,
-      sampleRate,
-      framesPerBuffer,
-      paClipOff, /* we won't output out of range samples so don't bother clipping them */
-      playCallback,
-      &data);
-    if(err != paNoError)
-    {
-        CALL_ERROR_HANDLER();
-    }
-
-    if(stream)
-    {
-        err = Pa_StartStream(stream);
-        if(err != paNoError)
-        {
-            CALL_ERROR_HANDLER();
-        }
-
-        printf("Waiting for playback to finish.\n");
-        fflush(stdout);
-
-        while((err = Pa_IsStreamActive(stream)) == 1)
-        {
-            Pa_Sleep(100);
-        }
-        if(err < 0)
-        {
-            CALL_ERROR_HANDLER();
-        }
-
-        err = Pa_CloseStream(stream);
-        if(err != paNoError)
-        {
-            CALL_ERROR_HANDLER();
-        }
-
-        printf("Done.\n");
-        fflush(stdout);
-    }
-
     Recording recording{&data.recordedSamples[0],
-                        &data.recordedSamples[numSeconds * sampleRate * numChannels],
+                        &data.recordedSamples[numSamples],
                         sampleRate,
                         framesPerBuffer,
                         numChannels};
 
-    g_numChannels = -1;
+    g_numChannels = static_cast<size_t>(-1);
     free(data.recordedSamples);
 
     return recording;
-}
-
-void SaveToWav(const char* filename, const Recording& recording)
-{
-    WAV_Writer writer;
-
-    std::vector<short> shortData = Samples_FloatToShort(recording.getSamples());
-
-    int result = Audio_WAV_OpenWriter(
-      &writer, filename, recording.getSampleRate() * recording.getNumChannels(), 1);
-    if(result < 0)
-    {
-        errorHandler(result, nullptr);
-    }
-    result = Audio_WAV_WriteShorts(&writer, shortData.data(), shortData.size());
-    if(result < 0)
-    {
-        errorHandler(result, nullptr);
-    }
-
-    result = Audio_WAV_CloseWriter(&writer);
-    if(result < 0)
-    {
-        errorHandler(result, nullptr);
-    }
-
-#if 0    // Default example
-    {
-        FILE* fid;
-        fid = fopen("recorded.raw", "wb");
-        if(fid == nullptr)
-        {
-            printf("Could not open file.");
-        }
-        else
-        {
-            fwrite(data.recordedSamples, numChannels * sizeof(SAMPLE), totalFrames, fid);
-            fclose(fid);
-            printf("Wrote data to 'recorded.raw'\n");
-        }
-    }
-#endif
-}
-
-
-std::vector<short> Samples_FloatToShort(const std::vector<float> inVec)
-{
-    std::vector<short> shortData = std::vector<short>(inVec.size());
-
-    // https://stackoverflow.com/a/56213245/10827197
-    for(int i = 0; i < inVec.size(); i++)
-    {
-        float floatData = inVec[i] * 32767;
-        shortData[i]    = (short)floatData;
-    }
-
-    return shortData;
-}
-
-std::vector<float> Samples_ShortToFloat(const std::vector<short> inVec)
-{
-    std::vector<float> floatData = std::vector<float>(inVec.size());
-
-    for(int i = 0; i < inVec.size(); i++)
-    {
-        float shortData = (float)inVec[i] / 32767;
-        floatData[i]    = shortData;
-    }
-
-    return floatData;
 }
 
 
@@ -349,7 +171,7 @@ std::vector<float> Samples_ShortToFloat(const std::vector<short> inVec)
 /* Static function definitions --------------------------------------------- */
 static void errorHandler(PaError err, SAMPLE** dataBlock)
 {
-    Pa_Terminate();
+    //Pa_Terminate();
 
     if(dataBlock != nullptr)
     {
@@ -358,10 +180,9 @@ static void errorHandler(PaError err, SAMPLE** dataBlock)
     }
     if(err != paNoError)
     {
-        fprintf(stderr, "An error occured while using the portaudio stream\n");
-        fprintf(stderr, "Error number: %d\n", err);
-        fprintf(stderr, "Error message: %s\n", Pa_GetErrorText(err));
-        // err = 1; /* Always return 0 or 1, but no other return codes. */
+        std::cerr << "An error occured while using the portaudio stream\n";
+        std::cerr << "Error number: " << err << '\n';
+        std::cerr << "Error message: " << Pa_GetErrorText(err) << std::endl;
 
         throw recorderException();
     }
@@ -379,13 +200,12 @@ static int recordCallback(const void*                     inputBuffer,
                           PaStreamCallbackFlags           statusFlags,
                           void*                           userData)
 {
-    paTestData*   data = (paTestData*)userData;
-    const SAMPLE* rptr = (const SAMPLE*)inputBuffer;
+    paTestData*   data = static_cast<paTestData*>(userData);
+    const SAMPLE* rptr = static_cast<const SAMPLE*>(inputBuffer);
     SAMPLE*       wptr = &data->recordedSamples[data->frameIndex * g_numChannels];
-    long          framesToCalc;
-    long          i;
+    size_t        framesToCalc = 0;
     int           finished;
-    unsigned long framesLeft = data->maxFrameIndex - data->frameIndex;
+    size_t        framesLeft = data->maxFrameIndex - data->frameIndex;
 
     (void)outputBuffer; /* Prevent unused variable warnings. */
     (void)timeInfo;
@@ -405,7 +225,7 @@ static int recordCallback(const void*                     inputBuffer,
 
     if(inputBuffer == nullptr)
     {
-        for(i = 0; i < framesToCalc; i++)
+        for(size_t i = 0; i < framesToCalc; i++)
         {
             *wptr++ = SAMPLE_SILENCE; /* left */
             if(g_numChannels == 2)
@@ -416,7 +236,7 @@ static int recordCallback(const void*                     inputBuffer,
     }
     else
     {
-        for(i = 0; i < framesToCalc; i++)
+        for(size_t i = 0; i < framesToCalc; i++)
         {
             *wptr++ = *rptr++; /* left */
             if(g_numChannels == 2)
@@ -429,66 +249,6 @@ static int recordCallback(const void*                     inputBuffer,
     return finished;
 }
 
-/* This routine will be called by the PortAudio engine when audio is needed.
-** It may be called at interrupt level on some machines so don't do anything
-** that could mess up the system like calling malloc() or free().
-*/
-static int playCallback(const void*                     inputBuffer,
-                        void*                           outputBuffer,
-                        unsigned long                   framesPerBuffer,
-                        const PaStreamCallbackTimeInfo* timeInfo,
-                        PaStreamCallbackFlags           statusFlags,
-                        void*                           userData)
-{
-    paTestData*  data = (paTestData*)userData;
-    SAMPLE*      rptr = &data->recordedSamples[data->frameIndex * g_numChannels];
-    SAMPLE*      wptr = (SAMPLE*)outputBuffer;
-    unsigned int i;
-    int          finished;
-    unsigned int framesLeft = data->maxFrameIndex - data->frameIndex;
-
-    (void)inputBuffer; /* Prevent unused variable warnings. */
-    (void)timeInfo;
-    (void)statusFlags;
-    (void)userData;
-
-    if(framesLeft < framesPerBuffer)
-    {
-        /* final buffer... */
-        for(i = 0; i < framesLeft; i++)
-        {
-            *wptr++ = *rptr++; /* left */
-            if(g_numChannels == 2)
-            {
-                *wptr++ = *rptr++; /* right */
-            }
-        }
-        for(; i < framesPerBuffer; i++)
-        {
-            *wptr++ = 0; /* left */
-            if(g_numChannels == 2)
-            {
-                *wptr++ = 0; /* right */
-            }
-        }
-        data->frameIndex += framesLeft;
-        finished = paComplete;
-    }
-    else
-    {
-        for(i = 0; i < framesPerBuffer; i++)
-        {
-            *wptr++ = *rptr++; /* left */
-            if(g_numChannels == 2)
-            {
-                *wptr++ = *rptr++; /* right */
-            }
-        }
-        data->frameIndex += framesPerBuffer;
-        finished = paContinue;
-    }
-    return finished;
-}
 #pragma endregion
 
 
