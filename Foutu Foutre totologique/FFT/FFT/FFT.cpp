@@ -8,24 +8,28 @@
 
 int main()
 {
-    constexpr int    nombre = 8;
-    constexpr double freq   = 100;
 
-    const Complex test[nombre] = {1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0};
+    // constexpr int nombre       = 8;
+    // constexpr int maxindex     = nombre;
+    // const Complex test[nombre] = {1.0, 1.0, 0.0, 0.0, 1.0, 1.0, 0.0, 0.0};
 
-    /*static Complex test[nombre] = {0.0f, 0.0f};
+    constexpr int    nombre       = 32765;
+    constexpr double freq         = 124;
+    constexpr int    maxindex     = (nombre > freq * 10) ? freq * 10 : nombre;
+    Complex          test[nombre] = {0.0f, 0.0f};
     for(int i = 0; i < nombre; i++)
     {
-        test[i] = sin(2. * PI * freq * i);
-    }*/
+        test[i] = sin(2. * PI * freq / nombre * i) + (1/sqrt(2)) * cos(2. * PI * PI * freq / nombre * i);
+    }
+
 
     CArray data(&test[0], &test[nombre]);
 
     FFT(data);
     std::cout << "fft" << std::endl;
-    for(int i = 0; i < nombre; ++i)
+    for(int i = 0; i < maxindex; ++i)
     {
-        std::cout << std::abs(data[i]) << std::endl;
+        //std::cout << std::abs(data[i]) << std::endl;
     }
 
 
@@ -36,5 +40,6 @@ int main()
           return std::abs(c1) < std::abs(c2);
       }));
 
-    std::cout << "freq" << data[firstPeak].real() << std::endl;
+    // std::cout << "freq" << data[firstPeak].real() << std::endl;
+    std::cout << "freq: " << firstPeak << "Hz" << std::endl;
 }
