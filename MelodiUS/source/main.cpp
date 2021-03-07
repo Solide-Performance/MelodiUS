@@ -1,5 +1,6 @@
 /*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
+#include "fft.h"
 #include "generator.h"
 #include "globaldef.h"
 #include "playback.h"
@@ -66,6 +67,7 @@ void menuHandler()
         std::cout << "3 - Playback recorded audio\n";
         std::cout << "4 - Save recorded .wav file\n";
         std::cout << "5 - Load & Playback .wav file\n";
+        std::cout << "6 - Find main frequency of signal\n";
         std::cout << "0 - Exit" << std::endl;
 
         int menuVal = 0;
@@ -155,6 +157,21 @@ void menuHandler()
                 {
                     std::cout << "Must read valid audio" << std::endl;
                 }
+                break;
+            }
+
+            case 6:
+            {
+                if(rec.isValid())
+                {
+                    size_t freq = FindFrequency(rec);
+                    std::cout << "Main frequency of signal: " << freq << std::endl;
+                }
+                else
+                {
+                    std::cout << "Must record valid audio" << std::endl;
+                }
+
                 break;
             }
 
