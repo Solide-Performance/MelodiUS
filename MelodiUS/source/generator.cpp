@@ -12,9 +12,9 @@
 /* Function definitions ---------------------------------------------------- */
 Recording Generate_Sine(size_t freq,
                         size_t numSeconds,
+                        size_t numChannels,
                         size_t sampleRate,
                         size_t framesPerBuffer,
-                        size_t numChannels,
                         float  amplitude)
 {
     size_t size   = numSeconds * sampleRate * numChannels;

@@ -58,6 +58,15 @@ void menuHandler()
 {
     Recording rec;
 
+    WAV_Reader C{"C.wav"};
+    WAV_Reader D{"D.wav"};
+    WAV_Reader D0{"D0.wav"};
+    WAV_Reader E{"E.wav"};
+    WAV_Reader E_maybe{"E_maybe.wav"};
+    WAV_Reader E2{"E2.wav"};
+    WAV_Reader G{"G.wav"};
+    WAV_Reader G_maybe{"G_maybe.wav"};
+
     while(true)
     {
         std::cout << std::endl;
@@ -100,10 +109,14 @@ void menuHandler()
                 size_t freq = 0;
                 std::cin >> freq;
 
+                std::cout << "Number of channels" << std::endl;
+                size_t numChannels = 0;
+                std::cin >> numChannels;
+
                 if(seconds > SECONDS_MIN && seconds < SECONDS_MAX && freq > FREQ_MIN
-                   && freq < FREQ_MAX)
+                   && freq < FREQ_MAX && numChannels >= MONO && numChannels <= STEREO)
                 {
-                    rec = Generate_Sine(freq, seconds);
+                    rec = Generate_Sine(freq, seconds, numChannels);
                 }
             }
             break;
@@ -139,6 +152,7 @@ void menuHandler()
                 std::cout << " - Load & Playback - \nFilename:" << std::endl;
                 std::string filename{};
                 std::cin >> filename;
+                rec.clear();
 
                 try
                 {

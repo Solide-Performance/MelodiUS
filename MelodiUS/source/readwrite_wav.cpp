@@ -91,7 +91,7 @@ void SaveToWav(std::string_view filename, const Recording& recording)
 
     WAV_Writer writer{
       filename,
-      static_cast<unsigned long>(recording.getSampleRate() * recording.getNumChannels()),
+      static_cast<unsigned long>(recording.getSampleRate()/* * recording.getNumChannels()*/),
       1};
 
     writer.Write(shortData.data(), shortData.size());
@@ -108,9 +108,9 @@ Recording LoadFromWav(std::string_view filename)
     // HARDCODED '2' & '1' !!!!!!! TO REMOVE
     return {&floatData.front(),
             &floatData.back(),
-            (size_t)(reader.get_FrameRate() / 2),
+            reader.get_FrameRate(),    // This used to be divided by 2 for some unknown reason
             1,
-            2};
+            reader.get_NumChannels()};
 }
 
 
@@ -403,7 +403,8 @@ WAV_Reader::WAV_Reader(std::string_view fileName)
     ReadShortLE(&addr, &short_bidon);   /* bits per sample */
     if(short_bidon != CHAR_BIT * sizeof(short))
     {
-        throw std::logic_error("2: Wrong it's 16 (" + std::to_string(short_bidon) + ")");
+        throw std::logic_error("Invalid bits per sample, only supports 16-bits ("
+                               + std::to_string(short_bidon) + ")");
     }
 
     /* Read ID and size for 'data' chunk. */

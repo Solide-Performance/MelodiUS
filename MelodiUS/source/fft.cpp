@@ -4,6 +4,7 @@
 #include "globaldef.h"
 #include <algorithm>
 #include <cmath>
+#include <iostream>
 #include <numbers>
 
 
@@ -15,28 +16,29 @@ double FindFrequency(const Recording& audio)
     /* clang-format off */
     auto lmbd = [&, N = audio.getNumChannels()](const SAMPLE& c) mutable
                 {
-                    return --N == 0 ? N = audio.getNumChannels() : false;
+                    (void)c;
+                    return static_cast<bool>(--N == 0 ? N = audio.getNumChannels() : false);
                 };
     /* clang-format on */
 
-    //std::vector<complex_t> v(audio.getNumSamples() / audio.getNumChannels());
-    //std::copy_if(audio.begin(), audio.end(), v.begin(), lmbd);
-    std::vector<complex_t> v(audio.begin(), audio.end());
+    /*std::vector<complex_t> v(audio.getNumSamples() / audio.getNumChannels());
+    std::copy_if(audio.begin(), audio.end(), v.begin(), lmbd);*/
+     std::vector<complex_t> v(audio.begin(), audio.end());
 
     // Calculate FFT
     FFT(v);
 
+
     /* clang-format off */
-    double firstpeak = std::distance(v.begin(),
+    size_t peak = std::distance(v.begin(),
                                 std::max_element(v.begin() + 1,
-                                                 v.end(),
+                                                 v.end() - v.size() / 2,
                                                  [](const complex_t& c1, const complex_t& c2)
                                                  {
                                                      return std::abs(c1) < std::abs(c2);
                                                  }));
     /* clang-format off */
-
-    double freq = firstpeak / audio.getNumSeconds();
+    double freq = peak  / audio.getNumSeconds();
     return freq;
 }
 
@@ -71,8 +73,8 @@ void FFT(std::vector<complex_t>& x)
     // combine
     for(size_t k = 0; k < x.size() / 2; ++k)
     {
-        complex_t t  = std::polar(1.0, -2 * std::numbers::pi * k / x.size()) * odd[k];
-        x[k]         = even[k] + t;
+        complex_t t         = std::polar(1.0, -2 * std::numbers::pi * k / x.size()) * odd[k];
+        x[k]                = even[k] + t;
         x[k + x.size() / 2] = even[k] - t;
     }
 }
