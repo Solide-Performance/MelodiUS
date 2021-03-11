@@ -15,6 +15,7 @@ HEADERS      += ./include/recorder.h ./include/recording.h
 HEADERS      += ./include/playback.h
 HEADERS      += ./include/readwrite_wav.h
 HEADERS      += ./include/generator.h
+HEADERS      += ./include/detection_rythme.h
 
 SOURCES      += ./source/main.cpp
 SOURCES      += ./source/recorder.cpp ./source/recording.cpp
@@ -22,4 +23,4 @@ SOURCES      += ./source/fpga.cpp
 SOURCES      += ./source/playback.cpp
 SOURCES      += ./source/readwrite_wav.cpp
 SOURCES      += ./source/generator.cpp
-
+SOURCES      += ./source/detection_rythme.cpp
