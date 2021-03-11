@@ -22,9 +22,14 @@ constexpr size_t FREQ_MIN    = 50;
 
 /*****************************************************************************/
 /* Entry point ------------------------------------------------------------- */
-int main()
+int main(int argc, char* argv[])
 {
+    int mainOfGui(int argc, char* argv[]);
+    mainOfGui(argc, argv);
+
+
     Recording rec;
+
 
     while(true)
     {
