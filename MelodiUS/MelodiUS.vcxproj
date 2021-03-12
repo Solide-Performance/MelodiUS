@@ -137,6 +137,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="source\detection_rythme.cpp" />
     <ClCompile Include="source\fpga.cpp" />
     <ClCompile Include="source\generator.cpp" />
     <ClCompile Include="source\main.cpp" />
@@ -147,6 +148,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommunicationFPGA\CommunicationFPGA.h" />
+    <ClInclude Include="include\detection_rythme.h" />
     <ClInclude Include="include\fpga.h" />
     <ClInclude Include="include\generator.h" />
     <ClInclude Include="include\globaldef.h" />

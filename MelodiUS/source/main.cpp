@@ -6,6 +6,7 @@
 #include "readwrite_wav.h"
 #include "recorder.h"
 #include "recording.h"
+#include "detection_rythme.h"
 
 #include "fpga.h"
 
@@ -66,6 +67,7 @@ void menuHandler()
         std::cout << "3 - Playback recorded audio\n";
         std::cout << "4 - Save recorded .wav file\n";
         std::cout << "5 - Load & Playback .wav file\n";
+        std::cout << "6 - Analyse de rythme\n";
         std::cout << "0 - Exit" << std::endl;
 
         int menuVal = 0;
@@ -98,10 +100,14 @@ void menuHandler()
                 size_t freq = 0;
                 std::cin >> freq;
 
+                std::cout << "Sample rate" << std::endl;
+                size_t sampleRate = 0;
+                std::cin >> sampleRate;
+
                 if(seconds > SECONDS_MIN && seconds < SECONDS_MAX && freq > FREQ_MIN
                    && freq < FREQ_MAX)
                 {
-                    rec = Generate_Sine(freq, seconds);
+                    rec = Generate_Sine(freq, seconds, sampleRate);
                 }
             }
             break;
@@ -149,12 +155,26 @@ void menuHandler()
 
                 if(rec.isValid())
                 {
-                    Playback(rec);
+                    //Playback(rec);
                 }
                 else
                 {
                     std::cout << "Must read valid audio" << std::endl;
                 }
+                break;
+            }
+
+            case 6:
+            {
+                if(rec.isValid())
+                {
+                    analyse_rythme(rec);
+                }
+                else
+                {
+                    std::cout << "Must read valid audio" << std::endl;
+                }
+
                 break;
             }
 

@@ -22,7 +22,7 @@ void FPGA::Init()
 void FPGA::DeInit()
 {
     WriteLED(0x00);
-    delete m_fpga;
+    //delete m_fpga;
 }
 
 /* --------------------------------- */
