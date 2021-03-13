@@ -38,13 +38,16 @@
 
 /*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
+#ifndef LINUX_
+#include "portaudio.h"
+#endif
+
+#include "readwrite_wav.h"
+#include "recorder.h"
+
 #include <cstdio>
 #include <cstdlib>
 #include <iostream>
-
-#include "portaudio.h"
-#include "readwrite_wav.h"
-#include "recorder.h"
 
 
 /*****************************************************************************/
@@ -60,19 +63,24 @@ static size_t g_numChannels = static_cast<size_t>(-1);
 
 /*****************************************************************************/
 /* Static function declarations -------------------------------------------- */
+#ifndef LINUX_
+static void errorHandler(PaError err, SAMPLE** dataBlock);
 static int  recordCallback(const void*                     inputBuffer,
                            void*                           outputBuffer,
                            unsigned long                   framesPerBuffer,
                            const PaStreamCallbackTimeInfo* timeInfo,
                            PaStreamCallbackFlags           statusFlags,
                            void*                           userData);
-static void errorHandler(PaError err, SAMPLE** dataBlock);
+#endif
 
 
 /*****************************************************************************/
 /* Non-static function definitions ----------------------------------------- */
 Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, size_t numChannels)
 {
+#ifdef LINUX_
+    return Recording{};
+#else
     PaStreamParameters inputParameters;
     PaStream*          stream = nullptr;
     PaError            err    = paNoError;
@@ -164,14 +172,16 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
     free(data.recordedSamples);
 
     return recording;
+#endif
 }
 
 
 /*****************************************************************************/
 /* Static function definitions --------------------------------------------- */
+#ifndef LINUX_
 static void errorHandler(PaError err, SAMPLE** dataBlock)
 {
-    //Pa_Terminate();
+    // Pa_Terminate();
 
     if(dataBlock != nullptr)
     {
@@ -200,9 +210,9 @@ static int recordCallback(const void*                     inputBuffer,
                           PaStreamCallbackFlags           statusFlags,
                           void*                           userData)
 {
-    paTestData*   data = static_cast<paTestData*>(userData);
-    const SAMPLE* rptr = static_cast<const SAMPLE*>(inputBuffer);
-    SAMPLE*       wptr = &data->recordedSamples[data->frameIndex * g_numChannels];
+    paTestData*   data         = static_cast<paTestData*>(userData);
+    const SAMPLE* rptr         = static_cast<const SAMPLE*>(inputBuffer);
+    SAMPLE*       wptr         = &data->recordedSamples[data->frameIndex * g_numChannels];
     size_t        framesToCalc = 0;
     int           finished;
     size_t        framesLeft = data->maxFrameIndex - data->frameIndex;
@@ -249,6 +259,7 @@ static int recordCallback(const void*                     inputBuffer,
     return finished;
 }
 
+#endif
 #pragma endregion
 
 

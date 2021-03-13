@@ -46,6 +46,7 @@
 /*************************************************************************************************/
 /* Includes ------------------------------------------------------------------------------------ */
 #include "readwrite_wav.h"
+#include "globaldef.h"
 #include <array>
 #include <cstdio>
 #include <iostream>
@@ -59,18 +60,18 @@ constexpr size_t WAV_HEADER_SIZE = (4 + 4 + 4 +  /* RIFF+size+WAVE */
                                     4 + 4);      /* data chunk     */
 
 /* Define WAV Chunk and FORM types as 4 byte integers. */
-constexpr uint32_t RIFF_ID = static_cast<uint32_t>(u8'R' << 24U)
-                             | static_cast<uint32_t>(u8'I' << 16U)
-                             | static_cast<uint32_t>(u8'F' << 8U) | u8'F';
-constexpr uint32_t WAVE_ID = static_cast<uint32_t>(u8'W' << 24U)
-                             | static_cast<uint32_t>(u8'A' << 16U)
-                             | static_cast<uint32_t>(u8'V' << 8U) | u8'E';
-constexpr uint32_t FMT_ID = static_cast<uint32_t>(u8'f' << 24U)
-                            | static_cast<uint32_t>(u8'm' << 16U)
-                            | static_cast<uint32_t>(u8't' << 8U) | u8' ';
-constexpr uint32_t DATA_ID = static_cast<uint32_t>(u8'd' << 24U)
-                             | static_cast<uint32_t>(u8'a' << 16U)
-                             | static_cast<uint32_t>(u8't' << 8U) | u8'a';
+constexpr uint32_t RIFF_ID = static_cast<uint32_t>('R' << 24U)
+                             | static_cast<uint32_t>('I' << 16U)
+                             | static_cast<uint32_t>('F' << 8U) | 'F';
+constexpr uint32_t WAVE_ID = static_cast<uint32_t>('W' << 24U)
+                             | static_cast<uint32_t>('A' << 16U)
+                             | static_cast<uint32_t>('V' << 8U) | 'E';
+constexpr uint32_t FMT_ID = static_cast<uint32_t>('f' << 24U)
+                            | static_cast<uint32_t>('m' << 16U)
+                            | static_cast<uint32_t>('t' << 8U) | ' ';
+constexpr uint32_t DATA_ID = static_cast<uint32_t>('d' << 24U)
+                             | static_cast<uint32_t>('a' << 16U)
+                             | static_cast<uint32_t>('t' << 8U) | 'a';
 
 /* WAV PCM data format ID */
 constexpr short WAVE_FORMAT_PCM = 1;
@@ -85,7 +86,7 @@ constexpr short WAVE_FORMAT_PCM = 1;
 
 /*************************************************************************************************/
 /* Function definitions ------------------------------------------------------------------------ */
-void SaveToWav(std::string_view filename, const Recording& recording)
+void SaveToWav(const std::string& filename, const Recording& recording)
 {
     std::vector<short> shortData = Samples_FloatToShort(recording.getSamples());
 
@@ -97,7 +98,7 @@ void SaveToWav(std::string_view filename, const Recording& recording)
     writer.Write(shortData.data(), shortData.size());
 }
 
-Recording LoadFromWav(std::string_view filename)
+Recording LoadFromWav(const std::string& filename)
 {
     WAV_Reader reader{filename};
     reader.Read();
@@ -117,7 +118,7 @@ std::vector<short> Samples_FloatToShort(const std::vector<float>& inVec)
     std::vector<short> shortData = std::vector<short>(inVec.size());
 
     // https://stackoverflow.com/a/56213245/10827197
-    for(int i = 0; i < inVec.size(); i++)
+    for(size_t i = 0; i < inVec.size(); i++)
     {
         float floatData = inVec[i] * 32767;
         shortData[i]    = (short)floatData;
@@ -130,7 +131,7 @@ std::vector<float> Samples_ShortToFloat(const std::vector<short>& inVec)
 {
     std::vector<float> floatData(inVec.size());
 
-    for(int i = 0; i < inVec.size(); i++)
+    for(size_t i = 0; i < inVec.size(); i++)
     {
         float shortData = (float)inVec[i] / 32767;
         floatData[i]    = shortData;
@@ -227,7 +228,7 @@ void WAV_Reader::ReadChunkType(unsigned char** addrPtr, unsigned long* cktyp)
  * The header includes the DATA chunk type and size.
  * Returns number of bytes written to file or negative error code.
  */
-WAV_Writer::WAV_Writer(std::string_view fileName,
+WAV_Writer::WAV_Writer(const std::string& fileName,
                        unsigned long    frameRate,
                        unsigned short   samplesPerFrame)
 {
@@ -238,8 +239,18 @@ WAV_Writer::WAV_Writer(std::string_view fileName,
     dataSizeOffset = 0;
 
     std::string file{fileName};
-    errno_t     err = fopen_s(&fid, file.c_str(), "wb");
-    if(fid == nullptr || err != 0)
+#ifndef LINUX_
+    errno_t err = fopen_s(&fid, file.c_str(), "wb");
+#else
+    fid = fopen(file.c_str(), "wb");
+#endif
+
+    if(fid == nullptr
+#ifdef LINUX_
+    )
+#else
+       || err != 0)
+#endif
     {
         std::cerr << "Could not open file to write" << std::endl;
     }
@@ -336,7 +347,7 @@ void WAV_Writer::Write(short* samples, size_t numSamples)
 /*****************************************************************************/
 
 
-WAV_Reader::WAV_Reader(std::string_view fileName)
+WAV_Reader::WAV_Reader(const std::string& fileName)
 {
     std::array<uint8_t, WAV_HEADER_SIZE> header{0};
     uint8_t*                             addr = header.data();
@@ -347,11 +358,21 @@ WAV_Reader::WAV_Reader(std::string_view fileName)
 
     /* Opening file for reading */
     std::string file{fileName};
-    errno_t     err = fopen_s(&fid, file.c_str(), "rb");
-    if(fid == nullptr || err != 0)
+#ifndef LINUX_
+    errno_t err = fopen_s(&fid, file.c_str(), "rb");
+#else
+    fid = fopen(file.c_str(), "rb");
+#endif
+
+    if(fid == nullptr
+#ifdef LINUX_
+    )
+#else
+       || err != 0)
+#endif
     {
         std::cerr << "Could not open file to read" << std::endl;
-        throw std::exception("Could not open file to read");
+        throw std::runtime_error("Could not open file to read");
     }
     fread(header.data(), 1, sizeof(header), fid);
 

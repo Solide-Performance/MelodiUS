@@ -1,7 +1,10 @@
 #pragma once
 /*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
+#ifndef LINUX_
 #include "CommunicationFPGA.h"
+#endif
+
 #include "globaldef.h"
 #include <string>
 #include <vector>
@@ -13,8 +16,11 @@
 /* The FPGA class is a `singleton` */
 class FPGA
 {
-
-    static  CommunicationFPGA* m_fpga; 
+#ifdef LINUX_
+    static void* m_fpga;
+#else
+    static CommunicationFPGA* m_fpga;
+#endif
 
     FPGA(); /* The constructor is private to avoid instanciation */
 public:

@@ -1,11 +1,14 @@
 /*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
 #include "generator.h"
-#include "portaudio.h"
 
 #include <cmath>
 #include <cstdlib>
-#include <numbers>
+
+
+/*****************************************************************************/
+/* Defines ----------------------------------------------------------------- */
+constexpr double pi = 3.1415926535897932384626433;
 
 
 /*****************************************************************************/
@@ -25,7 +28,7 @@ Recording Generate_Sine(size_t freq,
     /* initialise sinusoidal wavetable */
     for(size_t i = 0; i < size; i++)
     {
-        data[i] = static_cast<SAMPLE>(amplitude * sin((cycles / size) * std::numbers::pi * 2. * i));
+        data[i] = static_cast<SAMPLE>(amplitude * sin((cycles / size) * pi * 2. * i));
     }
 
     Recording rec{data.begin(), data.end(), sampleRate, framesPerBuffer, numChannels};
