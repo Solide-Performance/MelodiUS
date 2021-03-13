@@ -1,6 +1,7 @@
 /*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
 #include "detection_rythme.h"
+#include "fft.h"
 #include "generator.h"
 #include "globaldef.h"
 #include "playback.h"
@@ -62,6 +63,15 @@ void menuHandler()
 {
     Recording rec;
 
+    WAV_Reader C{"C.wav"};
+    WAV_Reader D{"D.wav"};
+    WAV_Reader D0{"D0.wav"};
+    WAV_Reader E{"E.wav"};
+    WAV_Reader E_maybe{"E_maybe.wav"};
+    WAV_Reader E2{"E2.wav"};
+    WAV_Reader G{"G.wav"};
+    WAV_Reader G_maybe{"G_maybe.wav"};
+
     while(true)
     {
         std::cout << std::endl;
@@ -72,6 +82,7 @@ void menuHandler()
         std::cout << "4 - Save recorded .wav file\n";
         std::cout << "5 - Load & Playback .wav file\n";
         std::cout << "6 - Analyse de rythme\n";
+        std::cout << "7 - Find main frequency of signal\n";
         std::cout << "0 - Exit" << std::endl;
 
         int menuVal = 0;
@@ -108,10 +119,14 @@ void menuHandler()
                 size_t sampleRate = 0;
                 std::cin >> sampleRate;
 
+                std::cout << "Number of channels" << std::endl;
+                size_t numChannels = 0;
+                std::cin >> numChannels;
+
                 if(seconds > SECONDS_MIN && seconds < SECONDS_MAX && freq > FREQ_MIN
-                   && freq < FREQ_MAX)
+                   && freq < FREQ_MAX && numChannels >= MONO && numChannels <= STEREO)
                 {
-                    rec = Generate_Sine(freq, seconds, sampleRate);
+                    rec = Generate_Sine(freq, seconds, sampleRate, numChannels);
                 }
             }
             break;
@@ -147,6 +162,7 @@ void menuHandler()
                 std::cout << " - Load & Playback - \nFilename:" << std::endl;
                 std::string filename{};
                 std::cin >> filename;
+                rec.clear();
 
                 try
                 {
@@ -177,6 +193,21 @@ void menuHandler()
                 else
                 {
                     std::cout << "Must read valid audio" << std::endl;
+                }
+
+                break;
+            }
+
+            case 7:
+            {
+                if(rec.isValid())
+                {
+                    size_t freq = FindFrequency(rec);
+                    std::cout << "Main frequency of signal: " << freq << std::endl;
+                }
+                else
+                {
+                    std::cout << "Must record valid audio" << std::endl;
                 }
 
                 break;

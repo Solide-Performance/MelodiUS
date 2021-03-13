@@ -11,15 +11,17 @@ HEADERS      += ./include/playback.h
 HEADERS      += ./include/readwrite_wav.h
 HEADERS      += ./include/generator.h
 HEADERS      += ./include/detection_rythme.h
+HEADERS      += ./include/fft.h
 
 # Sources
 SOURCES      += ./source/main.cpp
-SOURCES      += ./source/recorder.cpp ./source/recording.cpp
 SOURCES      += ./source/fpga.cpp
+SOURCES      += ./source/recorder.cpp ./source/recording.cpp
 SOURCES      += ./source/playback.cpp
 SOURCES      += ./source/readwrite_wav.cpp
 SOURCES      += ./source/generator.cpp
 SOURCES      += ./source/detection_rythme.cpp
+SOURCES      += ./source/fft.cpp
 
 win32 {
     # QT Project Settings

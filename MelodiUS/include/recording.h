@@ -6,6 +6,12 @@
 
 
 /*****************************************************************************/
+/* Defines ----------------------------------------------------------------- */
+constexpr size_t MONO   = 1;
+constexpr size_t STEREO = 2;
+
+
+/*****************************************************************************/
 /* Type definition --------------------------------------------------------- */
 #pragma region Sample format selection
 #if 1
@@ -75,6 +81,8 @@ public:
 
     [[nodiscard]] std::vector<SAMPLE>::const_iterator begin() const;
     [[nodiscard]] std::vector<SAMPLE>::const_iterator end() const;
+
+    void clear();
 };
 
 

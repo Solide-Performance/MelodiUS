@@ -27,7 +27,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
+<<<<<<< HEAD
     <ClCompile Include="source\detection_rythme.cpp">
+=======
+    <ClCompile Include="source\fft.cpp">
+>>>>>>> SimonPascal
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\fpga.cpp">
@@ -56,7 +60,11 @@
     <ClInclude Include="CommunicationFPGA\CommunicationFPGA.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+<<<<<<< HEAD
     <ClInclude Include="include\detection_rythme.h">
+=======
+    <ClInclude Include="include\fft.h">
+>>>>>>> SimonPascal
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\fpga.h">
