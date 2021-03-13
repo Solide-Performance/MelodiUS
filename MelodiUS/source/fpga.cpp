@@ -6,7 +6,9 @@
 
 /*****************************************************************************/
 /* Static member definitions ----------------------------------------------- */
+#ifndef LINUX_
 CommunicationFPGA* FPGA::m_fpga = nullptr;
+#endif
 
 
 /*****************************************************************************/
@@ -16,29 +18,42 @@ void FPGA::Init()
 {
     if(m_fpga == nullptr)
     {
+#ifndef LINUX_
         m_fpga = new CommunicationFPGA{};
+#endif
     }
 }
 void FPGA::DeInit()
 {
     WriteLED(0x00);
-    //delete m_fpga;
+    // delete m_fpga;
 }
 
 /* --------------------------------- */
 /* Accessors                         */
 bool FPGA::isOk()
 {
+#ifdef LINUX_
+    return false;
+#else
     return m_fpga->estOk();
+#endif
 }
 
 std::string FPGA::errorMsg()
 {
+#ifdef LINUX_
+    return "No FPGA support on Linux";
+#else
     return m_fpga->messageErreur();
+#endif
 }
 
 uint8_t FPGA::readPort(Port port)
 {
+#ifdef LINUX_
+    return 0x00;
+#else
     int  retval  = 0;
     bool success = true;
 
@@ -69,10 +84,14 @@ uint8_t FPGA::readPort(Port port)
     }
 
     return static_cast<uint8_t>(retval);
+#endif
 }
 
 bool FPGA::readPin(Port port, uint8_t pin)
 {
+#ifdef LINUX_
+    return false;
+#else
     if(pin > 0x04)
     {
         std::cerr << "Wrong pin to read from" << std::endl;
@@ -88,12 +107,15 @@ bool FPGA::readPin(Port port, uint8_t pin)
     }
 
     return val;
+#endif
 }
 
 
 void FPGA::WriteLED(uint8_t val)
 {
+#ifndef LINUX_
     m_fpga->ecrireRegistre(Registers::LED, val);
+#endif
 }
 
 

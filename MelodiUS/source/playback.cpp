@@ -1,7 +1,10 @@
 /*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
-#include "playback.h"
+#ifndef LINUX_
 #include "portaudio.h"
+#endif
+
+#include "playback.h"
 #include "recorder.h"
 
 #include <iostream>
@@ -23,6 +26,7 @@ struct PlaybackStruct
 
 /*****************************************************************************/
 /* Static function declarations -------------------------------------------- */
+#ifndef LINUX_
 static void errorHandler(PaError err);
 static int  playCallback(const void*                     inputBuffer,
                          void*                           outputBuffer,
@@ -30,12 +34,14 @@ static int  playCallback(const void*                     inputBuffer,
                          const PaStreamCallbackTimeInfo* timeInfo,
                          PaStreamCallbackFlags           statusFlags,
                          void*                           userData);
+#endif
 
 
 /*****************************************************************************/
 /* Function definitions ---------------------------------------------------- */
 void Playback(const Recording& rec)
 {
+#ifndef LINUX_
     PaStreamParameters outputParameters;
     PaStream*          stream;
     PaError            err = paNoError;
@@ -82,7 +88,7 @@ void Playback(const Recording& rec)
 
         while((err = Pa_IsStreamActive(stream)) == 1)
         {
-            Pa_Sleep(100);  // NOLINT
+            Pa_Sleep(100);    // NOLINT
         }
         if(err < 0)
         {
@@ -97,16 +103,33 @@ void Playback(const Recording& rec)
 
         std::cout << "Done." << std::endl;
     }
+#endif
 }
 
 
 /*****************************************************************************/
 /* Static function definitions --------------------------------------------- */
+#ifndef LINUX_
+static void errorHandler(PaError err)
+{
+    // Pa_Terminate();
+
+    if(err != paNoError)
+    {
+        std::cerr << "An error occured while using the portaudio stream\n"
+                  << "Error number: " << static_cast<int>(err) << '\n'
+                  << "Error message: " << Pa_GetErrorText(err) << std::endl;
+
+        throw recorderException();
+    }
+}
+
+#pragma region Callback functions
 /* This routine will be called by the PortAudio engine when audio is needed.
 ** It may be called at interrupt level on some machines so don't do anything
 ** that could mess up the system like calling malloc() or free().
 */
-#pragma region
+
 static int playCallback(const void*                     inputBuffer,
                         void*                           outputBuffer,
                         unsigned long                   framesPerBuffer,
@@ -168,20 +191,7 @@ static int playCallback(const void*                     inputBuffer,
     }
 }
 #pragma endregion
-
-static void errorHandler(PaError err)
-{
-    //Pa_Terminate();
-
-    if(err != paNoError)
-    {
-        std::cerr << "An error occured while using the portaudio stream\n"
-                  << "Error number: " << static_cast<int>(err) << '\n'
-                  << "Error message: " << Pa_GetErrorText(err) << std::endl;
-
-        throw recorderException();
-    }
-}
+#endif
 
 
 /*****************************************************************************/

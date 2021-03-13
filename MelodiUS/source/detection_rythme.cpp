@@ -4,7 +4,6 @@
 #include "globaldef.h"
 #include <algorithm>
 #include <cmath>
-#include <fstream>
 #include <iostream>
 #include <vector>
 
@@ -21,12 +20,12 @@ int analyse_rythme(const Recording& rec)
     const std::vector<float>& tableau = rec.getSamples();
     size_t                    taille  = tableau.size();
 
-    std::vector<float> derive(taille);
-    std::vector<float> volume(taille);
-    float              maximum = 0;
-    std::vector<float> derive_double(taille);
-    std::vector<bool>  attaque(taille);
-    std::vector<int>   distance(taille);
+    std::vector<float>  derive(taille);
+    std::vector<float>  volume(taille);
+    float               maximum = 0;
+    std::vector<float>  derive_double(taille);
+    std::vector<bool>   attaque(taille);
+    std::vector<size_t> distance(taille);
 
 
     for(size_t i = 0; i < taille - 1; i++)
@@ -62,8 +61,8 @@ int analyse_rythme(const Recording& rec)
     }
 
 
-    int note = 0;
-    int j    = 0;
+    size_t note = 0;
+    size_t j    = 0;
     for(size_t i = 0; i < taille - 1; i++)
     {
         if(attaque[i] == 1)
@@ -73,7 +72,7 @@ int analyse_rythme(const Recording& rec)
             j++;
         }
     }
-    int distanceMax = *std::max_element(distance.begin(), distance.end());
+    size_t distanceMax = *std::max_element(distance.begin(), distance.end());
     distance.erase(std::remove_if(distance.begin(),
                                   distance.end(),
                                   [&](int a) {
@@ -81,7 +80,7 @@ int analyse_rythme(const Recording& rec)
                                   }),
                    distance.end());
 
-    for(int dist : distance)
+    for(size_t dist : distance)
     {
         std::cout << dist << '\n';
     }

@@ -1,16 +1,18 @@
 /*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
+#include "detection_rythme.h"
 #include "generator.h"
 #include "globaldef.h"
 #include "playback.h"
 #include "readwrite_wav.h"
 #include "recorder.h"
 #include "recording.h"
-#include "detection_rythme.h"
 
 #include "fpga.h"
 
+#ifndef LINUX_
 #include "portaudio.h"
+#endif
 
 #include <iostream>
 #include <string>
@@ -45,9 +47,11 @@ int main()
     /* Menu display and command handling */
     menuHandler();
 
-    /* Close portaudio & FPGA*/
+/* Close portaudio & FPGA*/
+#ifndef LINUX_
     Pa_Terminate();
     FPGA::DeInit();
+#endif
     return 0;
 }
 
@@ -155,7 +159,7 @@ void menuHandler()
 
                 if(rec.isValid())
                 {
-                    //Playback(rec);
+                    // Playback(rec);
                 }
                 else
                 {
@@ -206,6 +210,7 @@ void setupFPGA()
 
 void setupPortaudio()
 {
+#ifndef LINUX_
     PaError err = Pa_Initialize();
     if(err != paNoError)
     {
@@ -221,6 +226,7 @@ void setupPortaudio()
         system("@cls||clear");
         std::cout << "Portaudio Initialized" << std::endl;
     }
+#endif
 }
 
 

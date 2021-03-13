@@ -46,6 +46,7 @@
 /*************************************************************************************************/
 /* Includes ------------------------------------------------------------------------------------ */
 #include "readwrite_wav.h"
+#include "globaldef.h"
 #include <array>
 #include <cstdio>
 #include <iostream>
@@ -117,7 +118,7 @@ std::vector<short> Samples_FloatToShort(const std::vector<float>& inVec)
     std::vector<short> shortData = std::vector<short>(inVec.size());
 
     // https://stackoverflow.com/a/56213245/10827197
-    for(int i = 0; i < inVec.size(); i++)
+    for(size_t i = 0; i < inVec.size(); i++)
     {
         float floatData = inVec[i] * 32767;
         shortData[i]    = (short)floatData;
@@ -130,7 +131,7 @@ std::vector<float> Samples_ShortToFloat(const std::vector<short>& inVec)
 {
     std::vector<float> floatData(inVec.size());
 
-    for(int i = 0; i < inVec.size(); i++)
+    for(size_t i = 0; i < inVec.size(); i++)
     {
         float shortData = (float)inVec[i] / 32767;
         floatData[i]    = shortData;
@@ -238,8 +239,18 @@ WAV_Writer::WAV_Writer(std::string_view fileName,
     dataSizeOffset = 0;
 
     std::string file{fileName};
-    errno_t     err = fopen_s(&fid, file.c_str(), "wb");
-    if(fid == nullptr || err != 0)
+#ifndef LINUX_
+    errno_t err = fopen_s(&fid, file.c_str(), "wb");
+#else
+    fid = fopen(file.c_str(), "wb");
+#endif
+
+    if(fid == nullptr
+#ifdef LINUX_
+    )
+#else
+       || err != 0)
+#endif
     {
         std::cerr << "Could not open file to write" << std::endl;
     }
@@ -347,11 +358,21 @@ WAV_Reader::WAV_Reader(std::string_view fileName)
 
     /* Opening file for reading */
     std::string file{fileName};
-    errno_t     err = fopen_s(&fid, file.c_str(), "rb");
-    if(fid == nullptr || err != 0)
+#ifndef LINUX_
+    errno_t err = fopen_s(&fid, file.c_str(), "rb");
+#else
+    fid = fopen(file.c_str(), "rb");
+#endif
+
+    if(fid == nullptr
+#ifdef LINUX_
+    )
+#else
+       || err != 0)
+#endif
     {
         std::cerr << "Could not open file to read" << std::endl;
-        throw std::exception("Could not open file to read");
+        throw std::runtime_error("Could not open file to read");
     }
     fread(header.data(), 1, sizeof(header), fid);
 

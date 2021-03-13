@@ -1,15 +1,8 @@
-
-TEMPLATE     = vcapp
 TARGET       = MelodiUS
-CONFIG       += warn_on qt debug_and_release windows console c++latest
-INCLUDEPATH  += ./include ./source ./portaudio ./CommunicationFPGA ./
-
-LIB          += ./portaudio_x64.lib ./CommunicationFPGA.lib
-QMAKE_LFLAGS += ./portaudio_x64.lib ./CommunicationFPGA.lib
-QMAKE_CXXFLAGS_WARN_ON ~= s/-W3/-W4
+CONFIG       += warn_on qt debug_and_release console
+INCLUDEPATH  += ./include ./source ./
 
 HEADERS      += ./include/globaldef.h
-HEADERS      += ./portaudio/portaudio.h ./CommunicationFPGA/CommunicationFPGA.h
 HEADERS      += ./include/fpga.h
 HEADERS      += ./include/recorder.h ./include/recording.h
 HEADERS      += ./include/playback.h
@@ -24,3 +17,21 @@ SOURCES      += ./source/playback.cpp
 SOURCES      += ./source/readwrite_wav.cpp
 SOURCES      += ./source/generator.cpp
 SOURCES      += ./source/detection_rythme.cpp
+
+win32 {
+    TEMPLATE     = vcapp
+    QMAKE_CXXFLAGS_WARN_ON ~= s/-W3/-W4
+    LIB          += ./portaudio_x64.lib ./CommunicationFPGA.lib
+    QMAKE_LFLAGS += ./portaudio_x64.lib ./CommunicationFPGA.lib
+    CONFIG       += windows c++17 console
+
+    INCLUDEPATH  += ./portaudio ./CommunicationFPGA
+    HEADERS      += ./portaudio/portaudio.h ./CommunicationFPGA/CommunicationFPGA.h
+}
+
+linux-g++* {
+	DEFINES += LINUX_
+	CONFIG += c++17
+	QMAKE_CXXFLAGS += -std=c++20
+	QMAKE_CFLAGS += -std=c++20
+}

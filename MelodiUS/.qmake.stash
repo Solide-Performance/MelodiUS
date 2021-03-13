@@ -5,3 +5,17 @@ QMAKE_CXX.COMPILER_MACROS = \
     QT_COMPILER_STDCXX \
     QMAKE_MSC_VER \
     QMAKE_MSC_FULL_VER
+QMAKE_CXX.INCDIRS = \
+    /usr/include/c++/10 \
+    /usr/include/x86_64-linux-gnu/c++/10 \
+    /usr/include/c++/10/backward \
+    /usr/lib/gcc/x86_64-linux-gnu/10/include \
+    /usr/local/include \
+    /usr/include/x86_64-linux-gnu \
+    /usr/include
+QMAKE_CXX.LIBDIRS = \
+    /usr/lib/gcc/x86_64-linux-gnu/10 \
+    /usr/lib/x86_64-linux-gnu \
+    /usr/lib \
+    /lib/x86_64-linux-gnu \
+    /lib

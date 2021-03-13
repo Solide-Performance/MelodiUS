@@ -9,9 +9,16 @@
 
 
 /*****************************************************************************/
+/* Defines ----------------------------------------------------------------- */
+#ifdef LINUX_
+constexpr uint8_t CHAR_BIT = 8;
+#endif
+
+
+/*****************************************************************************/
 /* Macros ------------------------------------------------------------------ */
 #define sizeof_array(x)    static_cast<size_t>(sizeof(x) / sizeof((x)[0]))    // NOLINT
-#define LABEL_TO_STRING(x) #x                                                 // NOLINT
+#define LABEL_TO_STRING(x) #x    // NOLINT
 
 /* Epsilon is a margin between the two floating point values */
 template<typename floating>
