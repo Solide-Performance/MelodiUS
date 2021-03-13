@@ -46,9 +46,9 @@
 
 /*************************************************************************************************/
 /* Function declarations ----------------------------------------------------------------------- */
-void SaveToWav(std::string_view filename, const Recording& recording);
+void SaveToWav(const std::string& filename, const Recording& recording);
 
-[[nodiscard]] Recording LoadFromWav(std::string_view filename);
+[[nodiscard]] Recording LoadFromWav(const std::string& filename);
 
 
 /*************************************************************************************************/
@@ -75,7 +75,7 @@ public:
      * The header includes the DATA chunk type and size.
      * Returns number of bytes written to file or negative error code.
      */
-    WAV_Writer(std::string_view fileName, unsigned long frameRate, unsigned short samplesPerFrame);
+    WAV_Writer(const std::string& fileName, unsigned long frameRate, unsigned short samplesPerFrame);
     /*********************************************************************************
      * Close WAV file.
      * Update chunk sizes so it can be read by audio applications.
@@ -123,7 +123,7 @@ public:
      * The header includes the DATA chunk type and size.
      * Returns number of bytes written to file or negative error code.
      */
-    explicit WAV_Reader(std::string_view fileName);
+    explicit WAV_Reader(const std::string& fileName);
 
 
     /*********************************************************************************

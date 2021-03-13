@@ -32,6 +32,4 @@ win32 {
 linux-g++* {
 	DEFINES += LINUX_
 	CONFIG += c++17
-	QMAKE_CXXFLAGS += -std=c++20
-	QMAKE_CFLAGS += -std=c++20
 }
