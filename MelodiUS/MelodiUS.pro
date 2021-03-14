@@ -6,7 +6,7 @@ INCLUDEPATH  += ./include ./source ./
 # Headers
 HEADERS      += ./include/globaldef.h
 HEADERS      += ./include/fpga.h
-HEADERS      += ./include/recorder.
+HEADERS      += ./include/recorder.h
 HEADERS      += ./include/recording.h
 HEADERS      += ./include/playback.h
 HEADERS      += ./include/readwrite_wav.h
@@ -31,10 +31,19 @@ win32 {
     QMAKE_CXXFLAGS_WARN_ON ~= s/-W3/-W4
 
     # Libraries
-    LIB          += ./portaudio_x64.lib ./CommunicationFPGA.lib
-    QMAKE_LFLAGS += ./portaudio_x64.lib ./CommunicationFPGA.lib
     INCLUDEPATH  += ./portaudio ./CommunicationFPGA
     HEADERS      += ./portaudio/portaudio.h ./CommunicationFPGA/CommunicationFPGA.h
+    QMAKE_LFLAGS += ./portaudio_x64.lib
+    LIB          += ./portaudio_x64.lib
+
+    CONFIG(debug, debug|release) {
+        QMAKE_LFLAGS += ./CommunicationFPGA-debug.lib
+        LIB          += ./CommunicationFPGA-debug.lib
+    }
+    else {
+        QMAKE_LFLAGS += ./CommunicationFPGA-release.lib
+        LIB          += ./CommunicationFPGA-release.lib
+    }
 }
 
 linux-g++* {
