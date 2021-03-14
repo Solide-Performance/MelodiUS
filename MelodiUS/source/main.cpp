@@ -15,9 +15,9 @@
 #include "portaudio.h"
 #endif
 
+#include <iomanip>
 #include <iostream>
 #include <string>
-#include <string_view>
 
 
 /*****************************************************************************/
@@ -63,15 +63,6 @@ void menuHandler()
 {
     Recording rec;
 
-    WAV_Reader C{"C.wav"};
-    WAV_Reader D{"D.wav"};
-    WAV_Reader D0{"D0.wav"};
-    WAV_Reader E{"E.wav"};
-    WAV_Reader E_maybe{"E_maybe.wav"};
-    WAV_Reader E2{"E2.wav"};
-    WAV_Reader G{"G.wav"};
-    WAV_Reader G_maybe{"G_maybe.wav"};
-
     while(true)
     {
         std::cout << std::endl;
@@ -81,7 +72,7 @@ void menuHandler()
         std::cout << "3 - Playback recorded audio\n";
         std::cout << "4 - Save recorded .wav file\n";
         std::cout << "5 - Load & Playback .wav file\n";
-        std::cout << "6 - Analyse de rythme\n";
+        std::cout << "6 - Rythm analysis\n";
         std::cout << "7 - Find main frequency of signal\n";
         std::cout << "0 - Exit" << std::endl;
 
@@ -202,8 +193,9 @@ void menuHandler()
             {
                 if(rec.isValid())
                 {
-                    size_t freq = FindFrequency(rec);
-                    std::cout << "Main frequency of signal: " << freq << std::endl;
+                    double freq = FindFrequency(rec);
+                    std::cout << "Main frequency of signal: " << std::setprecision(1) << freq
+                              << std::endl;
                 }
                 else
                 {

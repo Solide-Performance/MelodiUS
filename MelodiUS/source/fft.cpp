@@ -5,7 +5,6 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
-#include <numbers>
 
 
 /*****************************************************************************/
@@ -23,7 +22,7 @@ double FindFrequency(const Recording& audio)
 
     /*std::vector<complex_t> v(audio.getNumSamples() / audio.getNumChannels());
     std::copy_if(audio.begin(), audio.end(), v.begin(), lmbd);*/
-     std::vector<complex_t> v(audio.begin(), audio.end());
+    std::vector<complex_t> v(audio.begin(), audio.end());
 
     // Calculate FFT
     FFT(v);
@@ -37,8 +36,8 @@ double FindFrequency(const Recording& audio)
                                                  {
                                                      return std::abs(c1) < std::abs(c2);
                                                  }));
-    /* clang-format off */
-    double freq = peak  / audio.getNumSeconds();
+    /* clang-format on */
+    double freq = peak / audio.getNumSeconds();
     return freq;
 }
 
@@ -57,8 +56,9 @@ void FFT(std::vector<complex_t>& x)
 
     /* clang-format off */
     // For vector slicing in even and odd pairs
-    auto lmbd = [N = 0](const complex_t& c) mutable
+    auto lmbd = [N = false](const complex_t& c) mutable
                 {
+                    (void)c;
                     return N = !N;
                 };
     /* clang-format on */
@@ -73,7 +73,7 @@ void FFT(std::vector<complex_t>& x)
     // combine
     for(size_t k = 0; k < x.size() / 2; ++k)
     {
-        complex_t t         = std::polar(1.0, -2 * std::numbers::pi * k / x.size()) * odd[k];
+        complex_t t         = std::polar(1.0, -2 * pi * k / x.size()) * odd[k];
         x[k]                = even[k] + t;
         x[k + x.size() / 2] = even[k] - t;
     }

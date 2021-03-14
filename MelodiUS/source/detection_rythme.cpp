@@ -6,11 +6,13 @@
 #include <cmath>
 #include <iostream>
 #include <vector>
-#include <numeric>
+
 
 /*****************************************************************************/
 /* Defines ----------------------------------------------------------------- */
-constexpr double epsilon = 0.005;
+constexpr double epsilon       = 0.005;
+constexpr size_t MARGE_moment  = 1000;
+constexpr size_t MARGE_attaque = 200;
 
 
 /*****************************************************************************/
@@ -46,16 +48,17 @@ int analyse_rythme(const Recording& rec)
     {
         derive_double[i] = volume[i + 1] - volume[i];
     }
-    
-    //const int AVANT=20;
+
+    // const int AVANT=20;
     float volmax = *std::max_element(volume.cbegin(), volume.cend());
-    //float derive_doublemax = *std::max_element(derive_double.cbegin(), derive_double.cend());
-    //std::cout << derive_doublemax << std::endl;
+    // float derive_doublemax = *std::max_element(derive_double.cbegin(), derive_double.cend());
+    // std::cout << derive_doublemax << std::endl;
     for(size_t i = 0; i < taille - 1; i++)
     {
-        //float pente = std::accumulate(derive_double.begin()+i-AVANT, derive_double.begin()+i,0.0f)/AVANT;
-        //std::cout << pente << std::endl;
-        if(COMPARE_FLOATS(derive_double[i], 0.0f, epsilon) && volume[i] > 0.5 * volmax /*&& pente>derive_doublemax*0.3*/ )
+        // float pente = std::accumulate(derive_double.begin()+i-AVANT,
+        // derive_double.begin()+i,0.0f)/AVANT; std::cout << pente << std::endl;
+        if(COMPARE_FLOATS(derive_double[i], 0.0f, epsilon)
+           && volume[i] > 0.5 * volmax /*&& pente>derive_doublemax*0.3*/)
         {    // comparaison avec marge d'erreur, utilise la fonction de pascal
             attaque[i] = true;
         }
@@ -80,7 +83,7 @@ int analyse_rythme(const Recording& rec)
     size_t distanceMax = *std::max_element(distance.begin(), distance.end());
     distance.erase(std::remove_if(distance.begin(),
                                   distance.end(),
-                                  [&](int a) {
+                                  [&](size_t a) {
                                       return a < distanceMax * 0.05;
                                   }),
                    distance.end());
@@ -89,51 +92,57 @@ int analyse_rythme(const Recording& rec)
     {
         std::cout << dist << '\n';
     }
-    std::vector<size_t> index_debut(distance.size()); 
+    std::vector<size_t> index_debut(distance.size());
     std::cout << std::endl;
-    for(int i=0; i<distance.size(); i++){
-        index_debut[i]=std::accumulate(distance.begin(), distance.begin()+i+1,0);
+    for(size_t i = 0; i < distance.size(); i++)
+    {
+        index_debut[i] = std::accumulate(distance.begin(), distance.begin() + i + 1, 0);
     }
-    
+
     for(size_t debut : index_debut)
     {
         std::cout << debut << '\n';
     }
-    
+
     std::cout << std::endl;
     std::vector<size_t> index_fin(distance.size());
-    const int MARGE_moment=1000;
-    const int MARGE_attaque=200;
-    for(int i=0; i<index_debut.size()-1;i++)
+    for(size_t i = 0; i < index_debut.size() - 1; i++)
     {
-        int compteur=index_debut[i];
-        float volume_attaque=std::accumulate(&volume[index_debut[i]-MARGE_attaque], &volume[index_debut[i]+MARGE_attaque],0.0f);
-        std::cout <<volume_attaque << std::endl;
-        for(;compteur<index_debut[i+1];compteur++)
+        size_t compteur       = index_debut[i];
+        float  volume_attaque = std::accumulate(
+          &volume[index_debut[i] - MARGE_attaque], &volume[index_debut[i] + MARGE_attaque], 0.0f);
+        std::cout << volume_attaque << std::endl;
+        for(; compteur < index_debut[i + 1]; compteur++)
         {
-            
-            float volume_moment=std::accumulate(&volume[compteur-MARGE_moment], &volume[compteur+MARGE_moment],0.0f);
-            
-            if(volume_moment<0.3*volume_attaque){
+
+            float volume_moment = std::accumulate(
+              &volume[compteur - MARGE_moment], &volume[compteur + MARGE_moment], 0.0f);
+
+            if(volume_moment < 0.3 * volume_attaque)
+            {
                 break;
             }
         }
-        index_fin[i]=compteur;
+        index_fin[i] = compteur;
     }
-    float volume_attaque=std::accumulate(&volume[index_debut[index_debut.size()]-MARGE_attaque], &volume[index_debut[index_debut.size()]+MARGE_attaque],0.0f);
-    std::cout <<volume_attaque << std::endl;
-    int compteur=index_debut[index_debut.size()-1];
-        for(;compteur<volume.size();compteur++)
+    float volume_attaque = std::accumulate(&volume[index_debut[index_debut.size()] - MARGE_attaque],
+                                           &volume[index_debut[index_debut.size()] + MARGE_attaque],
+                                           0.0f);
+    std::cout << volume_attaque << std::endl;
+    size_t compteur = index_debut[index_debut.size() - 1];
+    for(; compteur < volume.size(); compteur++)
+    {
+
+        float volume_moment =
+          std::accumulate(&volume[compteur - MARGE_moment], &volume[compteur + MARGE_moment], 0.0f);
+
+        if(volume_moment < 0.3 * volume_attaque)
         {
-            
-            float volume_moment=std::accumulate(&volume[compteur-MARGE_moment], &volume[compteur+MARGE_moment],0.0f);
-            
-            if(volume_moment<0.3*volume_attaque){
-                break;
-            }
+            break;
         }
-        index_fin[index_debut.size()-1]=compteur;
-        
+    }
+    index_fin[index_debut.size() - 1] = compteur;
+
     for(size_t fin : index_fin)
     {
         std::cout << fin << '\n';

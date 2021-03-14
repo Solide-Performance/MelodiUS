@@ -40,7 +40,6 @@
 /* Includes ------------------------------------------------------------------------------------ */
 #include "globaldef.h"
 #include "recording.h"
-#include <string_view>
 #include <vector>
 
 
@@ -75,7 +74,7 @@ public:
      * The header includes the DATA chunk type and size.
      * Returns number of bytes written to file or negative error code.
      */
-    WAV_Writer(const std::string& fileName, unsigned long frameRate, unsigned short samplesPerFrame);
+    WAV_Writer(const std::string& fileName, uint32_t frameRate, uint16_t samplesPerFrame);
     /*********************************************************************************
      * Close WAV file.
      * Update chunk sizes so it can be read by audio applications.
@@ -90,9 +89,9 @@ public:
 
 
 private:
-    static void WriteLongLE(unsigned char** addrPtr, unsigned long data);
-    static void WriteShortLE(unsigned char** addrPtr, unsigned short data);
-    static void WriteChunkType(unsigned char** addrPtr, unsigned long cktyp);
+    static void WriteLongLE(uint8_t** addrPtr, uint32_t data);
+    static void WriteShortLE(uint8_t** addrPtr, uint16_t data);
+    static void WriteChunkType(uint8_t** addrPtr, uint32_t cktyp);
 };
 
 class WAV_Reader
@@ -101,13 +100,13 @@ class WAV_Reader
     std::vector<short> data;
 
     /* Offset in file for data size. */
-    size_t        dataSizeOffset = 0;
-    unsigned long dataSize       = 0;
+    size_t   dataSizeOffset = 0;
+    uint32_t dataSize       = 0;
 
-    unsigned long      frameRate      = 0;
-    unsigned short     numChannels    = 0;
-    long unsigned int  bytesPerSecond = 0;
-    short unsigned int bytesPerBlock  = 0;
+    uint32_t frameRate      = 0;
+    uint16_t numChannels    = 0;
+    uint32_t bytesPerSecond = 0;
+    uint16_t bytesPerBlock  = 0;
 
 public:
     WAV_Reader()                  = delete;
@@ -148,12 +147,12 @@ public:
         return data;
     }
 
-    [[nodiscard]] unsigned long get_FrameRate() const
+    [[nodiscard]] uint32_t get_FrameRate() const
     {
         return frameRate;
     }
 
-    [[nodiscard]] unsigned short get_NumChannels() const
+    [[nodiscard]] uint16_t get_NumChannels() const
     {
         return numChannels;
     }
@@ -170,7 +169,7 @@ public:
 #pragma endregion
 
 private:
-    static void ReadLongLE(unsigned char** addrPtr, unsigned long* data);
-    static void ReadShortLE(unsigned char** addrPtr, unsigned short* data);
-    static void ReadChunkType(unsigned char** addrPtr, unsigned long* cktyp);
+    static void ReadLongLE(uint8_t** addrPtr, uint32_t* data);
+    static void ReadShortLE(uint8_t** addrPtr, uint16_t* data);
+    static void ReadChunkType(uint8_t** addrPtr, uint32_t* cktyp);
 };
