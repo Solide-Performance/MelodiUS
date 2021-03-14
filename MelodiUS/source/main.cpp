@@ -18,6 +18,7 @@
 #include <iomanip>
 #include <iostream>
 #include <string>
+#include <thread>
 
 
 /*****************************************************************************/
@@ -40,7 +41,7 @@ void setupFPGA();
 int main()
 {
     /* portaudio init */
-    setupPortaudio();
+    std::thread portAudioInitThread(setupPortaudio);
 
     /* CommunicationFPGA init */
     setupFPGA();
@@ -50,6 +51,7 @@ int main()
 
 /* Close portaudio & FPGA*/
 #ifndef LINUX_
+    portAudioInitThread.join();    // Wait for init thread to be completed
     Pa_Terminate();
     FPGA::DeInit();
 #endif
@@ -234,7 +236,10 @@ void setupFPGA()
 void setupPortaudio()
 {
 #ifndef LINUX_
+    /* Initialise portaudio */
     PaError err = Pa_Initialize();
+
+    /* Check for errors */
     if(err != paNoError)
     {
         std::cerr << "An error occured while using the portaudio stream\n"
@@ -246,7 +251,7 @@ void setupPortaudio()
     {
         // Clears screen, from:
         // https://stackoverflow.com/a/33450696/10827197
-        system("@cls||clear");
+        //system("@cls||clear");
         std::cout << "Portaudio Initialized" << std::endl;
     }
 #endif

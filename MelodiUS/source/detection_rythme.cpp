@@ -125,9 +125,10 @@ int analyse_rythme(const Recording& rec)
         }
         index_fin[i] = compteur;
     }
-    float volume_attaque = std::accumulate(&volume[index_debut[index_debut.size()] - MARGE_attaque],
-                                           &volume[index_debut[index_debut.size()] + MARGE_attaque],
-                                           0.0f);
+    float volume_attaque =
+      std::accumulate(&volume[index_debut[index_debut.size() - 1] - MARGE_attaque],
+                      &volume[index_debut[index_debut.size() - 1] + MARGE_attaque],
+                      0.0f);
     std::cout << volume_attaque << std::endl;
     size_t compteur = index_debut[index_debut.size() - 1];
     for(; compteur < volume.size(); compteur++)
