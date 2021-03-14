@@ -5,14 +5,20 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <thread>
 #include <vector>
+
+#ifndef LINUX_
+#include <immintrin.h>
+#include <xmmintrin.h>
+#endif
 
 
 /*****************************************************************************/
 /* Constants --------------------------------------------------------------- */
-constexpr double epsilon       = 0.005;
-constexpr size_t MARGE_moment  = 1000;
-constexpr size_t MARGE_attaque = 200;
+constexpr double  epsilon       = 0.005;
+constexpr int64_t MARGE_moment  = 1000;
+constexpr size_t  MARGE_attaque = 200;
 
 
 /*****************************************************************************/
@@ -22,64 +28,38 @@ int analyse_rythme(const Recording& rec)
     const std::vector<float>& tableau = rec.getSamples();
     size_t                    taille  = tableau.size();
 
-    std::vector<float>  derive(taille);
     std::vector<float>  volume(taille);
-    float               maximum = 0;
-    std::vector<float>  derive_double(taille);
-    std::vector<bool>   attaque(taille);
-    std::vector<size_t> distance(taille);
+    std::vector<size_t> distance(16); /* Allocates 16 notes, will grow if needed */
 
-
+    float maximum = 0;
+#pragma omp parallel for
     for(size_t i = 0; i < taille - 1; i++)
     {
-        derive[i] = tableau[i + 1] - tableau[i];
-    }
+        float derive = tableau[i + 1] - tableau[i];
 
-    for(size_t i = 0; i < taille - 1; i++)
-    {
-        if(COMPARE_FLOATS(derive[i], 0.0f, epsilon) && tableau[i] > 0)
+        if(COMPARE_FLOATS(derive, 0.0f, epsilon) && tableau[i] > 0)
         {    // comparaison avec marge d'erreur, utilise la fonction de pascal
             maximum = tableau[i];
         }
         volume[i] = maximum;
     }
 
-    for(size_t i = 0; i < taille - 1; i++)
-    {
-        derive_double[i] = volume[i + 1] - volume[i];
-    }
 
-    // const int AVANT=20;
-    float volmax = *std::max_element(volume.cbegin(), volume.cend());
-    // float derive_doublemax = *std::max_element(derive_double.cbegin(), derive_double.cend());
-    // std::cout << derive_doublemax << std::endl;
-    for(size_t i = 0; i < taille - 1; i++)
+    std::vector<float> derive_double(taille);
+    float              volmax = *std::max_element(volume.cbegin(), volume.cend());
+#pragma omp parallel for
+    for(size_t i = 0, note = 0; i < taille - 1; i++)
     {
-        // float pente = std::accumulate(derive_double.begin()+i-AVANT,
-        // derive_double.begin()+i,0.0f)/AVANT; std::cout << pente << std::endl;
-        if(COMPARE_FLOATS(derive_double[i], 0.0f, epsilon)
-           && volume[i] > 0.5 * volmax /*&& pente>derive_doublemax*0.3*/)
+        float deriv_double = volume[i + 1] - volume[i];
+        derive_double[i]   = deriv_double;
+
+        if(COMPARE_FLOATS(deriv_double, 0.0f, epsilon) && volume[i] > 0.5 * volmax)
         {    // comparaison avec marge d'erreur, utilise la fonction de pascal
-            attaque[i] = true;
-        }
-        else
-        {
-            attaque[i] = false;
+            distance.push_back(i - note);
+            note = i;
         }
     }
 
-
-    size_t note = 0;
-    size_t j    = 0;
-    for(size_t i = 0; i < taille - 1; i++)
-    {
-        if(attaque[i] == 1)
-        {
-            distance[j] = i - note;
-            note        = i;
-            j++;
-        }
-    }
     size_t distanceMax = *std::max_element(distance.begin(), distance.end());
     distance.erase(std::remove_if(distance.begin(),
                                   distance.end(),
@@ -87,62 +67,103 @@ int analyse_rythme(const Recording& rec)
                                       return a < distanceMax * 0.05;
                                   }),
                    distance.end());
+    size_t notesQty = distance.size();
 
-    for(size_t dist : distance)
-    {
-        std::cout << dist << '\n';
-    }
-    std::vector<size_t> index_debut(distance.size());
-    std::cout << std::endl;
-    for(size_t i = 0; i < distance.size(); i++)
+    // for(size_t dist : distance)
+    //{
+    //    std::cout << dist << '\n';
+    //}
+    // std::cout << std::endl;
+
+    std::vector<size_t> index_debut(notesQty);
+#pragma omp parallel for
+    for(size_t i = 0; i < notesQty; i++)
     {
         index_debut[i] = std::accumulate(distance.begin(), distance.begin() + i + 1, 0);
     }
 
-    for(size_t debut : index_debut)
-    {
-        std::cout << debut << '\n';
-    }
+    // for(size_t debut : index_debut)
+    //{
+    //    std::cout << debut << '\n';
+    //}
+    // std::cout << std::endl;
 
-    std::cout << std::endl;
-    std::vector<size_t> index_fin(distance.size());
-    for(size_t i = 0; i < index_debut.size() - 1; i++)
-    {
-        size_t compteur       = index_debut[i];
-        float  volume_attaque = std::accumulate(
-          &volume[index_debut[i] - MARGE_attaque], &volume[index_debut[i] + MARGE_attaque], 0.0f);
-        std::cout << volume_attaque << std::endl;
-        for(; compteur < index_debut[i + 1]; compteur++)
+    std::vector<size_t>      index_fin(notesQty);
+    std::vector<std::thread> threadPool{};
+    threadPool.reserve(notesQty);
+
+    auto lambda = [&](size_t i, int64_t limit) {
+        size_t  debut    = index_debut[i];
+        int64_t compteur = debut;
+
+        float volume_attaque =
+          std::accumulate(&volume[debut - MARGE_attaque], &volume[debut + MARGE_attaque], 0.0f);
+
+        // std::cout << volume_attaque << std::endl;
+
+#pragma omp parallel for
+        for(; compteur < limit; compteur++)
         {
+#ifndef LINUX_
+            // https://ravikiranb.com/tutorials/mac-with-simd/
+            // https://stackoverflow.com/a/32992310/10827197
+            // https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_add_ss
+            // https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_load_p
+            // https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_hadd_ps
+            // https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_extract_ps
 
-            float volume_moment = std::accumulate(
-              &volume[compteur - MARGE_moment], &volume[compteur + MARGE_moment], 0.0f);
+            auto begin = &volume[std::max(compteur - MARGE_moment, 0ll)];
 
-            if(volume_moment < 0.3 * volume_attaque)
+            const size_t N = std::min(size_t(compteur + MARGE_moment), volume.size() - 1)
+                             - std::max(compteur - MARGE_moment, 0ll);
+
+            __m128 mm_volume_moment = {0.0f, 0.0f, 0.0f, 0.0f};
+            float  volume_moment    = 0.0f;
+
+            /* Main SIMD loop */
+            size_t i = 0;
+            for(; i < (N & ~(4 - 1)); i += 4)
+            {
+                mm_volume_moment = _mm_add_ss(mm_volume_moment, _mm_load_ps(begin + i));
+            }
+
+            /* Pack 128-bits info into a single register by adding them */
+            mm_volume_moment = _mm_hadd_ps(mm_volume_moment, mm_volume_moment);
+            mm_volume_moment = _mm_hadd_ps(mm_volume_moment, mm_volume_moment);
+
+            /* Get SIMD register value */
+            volume_moment = _mm_extract_ps(mm_volume_moment, 0);
+
+            /* add up remaining single values until all elements are covered */
+            for(; i < N; i++)
+            {
+                volume_moment += begin[i];
+            }
+
+#else
+            float volume_moment =
+              std::accumulate(&volume[std::max(compteur - MARGE_moment, 0ll)],
+                              &volume[std::min(size_t(compteur + MARGE_moment), volume.size() - 1)],
+                              0.0f);
+#endif
+
+            if(volume_moment < 0.3f * volume_attaque)
             {
                 break;
             }
         }
         index_fin[i] = compteur;
-    }
-    float volume_attaque =
-      std::accumulate(&volume[index_debut[index_debut.size() - 1] - MARGE_attaque],
-                      &volume[index_debut[index_debut.size() - 1] + MARGE_attaque],
-                      0.0f);
-    std::cout << volume_attaque << std::endl;
-    size_t compteur = index_debut[index_debut.size() - 1];
-    for(; compteur < volume.size(); compteur++)
+    };
+#pragma omp parallel for
+    for(size_t i = 0; i < notesQty - 1; i++)
     {
-
-        float volume_moment =
-          std::accumulate(&volume[compteur - MARGE_moment], &volume[compteur + MARGE_moment], 0.0f);
-
-        if(volume_moment < 0.3 * volume_attaque)
-        {
-            break;
-        }
+        threadPool.emplace_back(lambda, i, index_debut[i + 1]);
     }
-    index_fin[index_debut.size() - 1] = compteur;
+    threadPool.emplace_back(lambda, notesQty - 1, volume.size());
+    for(std::thread& t : threadPool)
+    {
+        t.join();
+    }
 
     for(size_t fin : index_fin)
     {

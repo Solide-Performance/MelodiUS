@@ -7,8 +7,6 @@
 #include <iostream>
 #include <thread>
 
-#include "benchmark.h"
-
 
 /*****************************************************************************/
 /* Constants --------------------------------------------------------------- */
@@ -19,7 +17,6 @@ constexpr int MAX_DEPTH = 4;
 /* Function definitions ---------------------------------------------------- */
 double FindFrequency(const Recording& audio)
 {
-    Benchmark b;
     // To take only a single channel
     /* clang-format off */
     auto lmbd = [&, N = audio.getNumChannels()](const SAMPLE& c) mutable

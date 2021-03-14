@@ -15,12 +15,12 @@ private:
     using timepoint = std::chrono::time_point<clock>;
     using duration  = std::chrono::duration<uint64_t, std::milli>;
 
-    timepoint m_startTime;
+    timepoint   m_startTime;
+    const char* m_msg;
 
 public:
-    Benchmark()
+    Benchmark(const char* msg = "") : m_msg{msg}, m_startTime{clock::now()}
     {
-        m_startTime = clock::now();
     }
     ~Benchmark()
     {
@@ -29,7 +29,7 @@ public:
         timepoint endTime = clock::now();
         duration  dur     = duration_cast<duration>(endTime - m_startTime);
 
-        std::cout << "Took: " << dur.count() << "ms" << std::endl;
+        std::cout << m_msg << " Took: " << dur.count() << "ms" << std::endl;
     }
 };
 
