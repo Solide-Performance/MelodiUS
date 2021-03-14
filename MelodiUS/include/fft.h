@@ -14,7 +14,7 @@ using complex_t = std::complex<double>;
 /*****************************************************************************/
 /* Function declarations --------------------------------------------------- */
 double FindFrequency(const Recording& audio);
-void   FFT(std::vector<complex_t>& x);
+void   FFT(std::vector<complex_t>& x, int depth = 0);
 
 
 /*****************************************************************************/

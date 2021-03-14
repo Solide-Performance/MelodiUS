@@ -62,27 +62,83 @@ public:
     }
 
 
-    /* --------------------------------- */
-    /* Operators                         */
-    [[nodiscard]] const SAMPLE& operator[](size_t index) const;
-    [[nodiscard]] SAMPLE&       operator[](size_t index);
+/* --------------------------------- */
+#pragma region Operators
+    [[nodiscard]] INLINE const SAMPLE& operator[](size_t index) const
+    {
+        return m_samples[index];
+    }
 
-    /* --------------------------------- */
-    /* Accessors                         */
-    [[nodiscard]] const std::vector<SAMPLE>& getSamples() const;
+    [[nodiscard]] INLINE SAMPLE& operator[](size_t index)
+    {
+        return const_cast<SAMPLE&>(
+          const_cast<const Recording*>(this)->operator[](index));    // NOLINT
+    }
+#pragma endregion
 
-    [[nodiscard]] size_t getSampleRate() const;
-    [[nodiscard]] size_t getNumSamples() const;
-    [[nodiscard]] float  getNumSeconds() const;
-    [[nodiscard]] size_t getFramesPerBuffer() const;
-    [[nodiscard]] size_t getMaxFrameIndex() const;
-    [[nodiscard]] size_t getNumChannels() const;
-    [[nodiscard]] bool   isValid() const;
+/* --------------------------------- */
+#pragma region Accessors
+    [[nodiscard]] INLINE const std::vector<SAMPLE>& getSamples() const
+    {
+        return m_samples;
+    }
+    [[nodiscard]] INLINE size_t getSampleRate() const
+    {
+        return m_sampleRate;
+    }
 
-    [[nodiscard]] std::vector<SAMPLE>::const_iterator begin() const;
-    [[nodiscard]] std::vector<SAMPLE>::const_iterator end() const;
+    [[nodiscard]] INLINE size_t getNumSamples() const
+    {
+        return m_samples.size();
+    }
 
-    void clear();
+    [[nodiscard]] INLINE float getNumSeconds() const
+    {
+        return getNumSamples() / static_cast<float>(getNumChannels() * getSampleRate());
+    }
+
+    [[nodiscard]] INLINE size_t getFramesPerBuffer() const
+    {
+        return m_framesPerBuffer;
+    }
+
+    [[nodiscard]] INLINE size_t getMaxFrameIndex() const
+    {
+        return getNumSamples() / getNumChannels();
+    }
+
+    [[nodiscard]] INLINE size_t getNumChannels() const
+    {
+        return m_numChannels;
+    }
+
+
+    [[nodiscard]] INLINE bool isValid() const
+    {
+        return !m_samples.empty();
+    }
+
+
+    [[nodiscard]] INLINE std::vector<SAMPLE>::const_iterator begin() const
+    {
+        return m_samples.cbegin();
+    }
+    [[nodiscard]] INLINE std::vector<SAMPLE>::const_iterator end() const
+    {
+        return m_samples.cend();
+    }
+
+
+    void clear()
+    {
+        m_samples.clear();
+        m_framesPerBuffer = 0;
+        m_numChannels     = 0;
+        m_sampleRate      = 0;
+    }
+
+
+#pragma endregion
 };
 
 

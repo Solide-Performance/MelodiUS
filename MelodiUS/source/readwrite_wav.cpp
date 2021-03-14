@@ -105,7 +105,7 @@ Recording LoadFromWav(const std::string& filename)
     std::vector<float> floatData = Samples_ShortToFloat(reader.get_Data());
 
     // @todo
-    // HARDCODED '2' & '1' !!!!!!! TO REMOVE
+    // HARDCODED '1' !!!!!!! TO REMOVE (maybe?)
     return {&floatData.front(),
             &floatData.back(),
             reader.get_FrameRate(),    // This used to be divided by 2 for some unknown reason

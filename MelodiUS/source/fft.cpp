@@ -5,12 +5,21 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <thread>
+
+#include "benchmark.h"
+
+
+/*****************************************************************************/
+/* Constants --------------------------------------------------------------- */
+constexpr int MAX_DEPTH = 4;
 
 
 /*****************************************************************************/
 /* Function definitions ---------------------------------------------------- */
 double FindFrequency(const Recording& audio)
 {
+    Benchmark b;
     // To take only a single channel
     /* clang-format off */
     auto lmbd = [&, N = audio.getNumChannels()](const SAMPLE& c) mutable
@@ -42,7 +51,7 @@ double FindFrequency(const Recording& audio)
 }
 
 // https://rosettacode.org/wiki/Fast_Fourier_transform#C.2B.2B
-void FFT(std::vector<complex_t>& x)
+void FFT(std::vector<complex_t>& x, int depth)
 {
     if(x.size() <= 1)
     {
@@ -67,10 +76,23 @@ void FFT(std::vector<complex_t>& x)
     std::copy_if(x.begin() + 1, x.end(), odd.begin(), lmbd);
 
     // conquer
-    FFT(even);
-    FFT(odd);
+    if(++depth > MAX_DEPTH)
+    {
+        FFT(even, depth);
+        FFT(odd, depth);
+    }
+    else
+    {
+        std::thread evenThread{FFT, std::ref(even), depth};
+        //std::thread oddThread{FFT, std::ref(odd), depth};
+        FFT(odd, depth);
 
-    // combine
+        evenThread.join();
+        //oddThread.join();
+    }
+
+// combine
+#pragma omp parallel for
     for(size_t k = 0; k < x.size() / 2; ++k)
     {
         complex_t t         = std::polar(1.0, -2 * pi * k / x.size()) * odd[k];

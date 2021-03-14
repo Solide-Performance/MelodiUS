@@ -8,7 +8,7 @@
 #include "readwrite_wav.h"
 #include "recorder.h"
 #include "recording.h"
-
+#include "benchmark.h"
 #include "fpga.h"
 
 #ifndef LINUX_
