@@ -52,7 +52,7 @@ void Playback(const Recording& rec)
     {
         std::cerr << "Error: No default output device." << std::endl;
     }
-    outputParameters.channelCount = 2; /* stereo output */
+    outputParameters.channelCount = rec.getNumChannels();
     outputParameters.sampleFormat = PA_SAMPLE_TYPE;
     outputParameters.suggestedLatency =
       Pa_GetDeviceInfo(outputParameters.device)->defaultLowOutputLatency;

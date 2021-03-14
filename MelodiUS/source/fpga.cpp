@@ -33,6 +33,11 @@ void FPGA::DeInit()
 /* Accessors                         */
 bool FPGA::isOk()
 {
+    if(!m_fpga)
+    {
+        return false;
+    }
+
 #ifdef LINUX_
     return false;
 #else
@@ -42,6 +47,11 @@ bool FPGA::isOk()
 
 std::string FPGA::errorMsg()
 {
+    if(!m_fpga)
+    {
+        return "";
+    }
+
 #ifdef LINUX_
     return "No FPGA support on Linux";
 #else
@@ -51,6 +61,11 @@ std::string FPGA::errorMsg()
 
 uint8_t FPGA::readPort(Port port)
 {
+    if(!m_fpga)
+    {
+        return 0x00;
+    }
+
 #ifdef LINUX_
     return 0x00;
 #else
@@ -89,6 +104,11 @@ uint8_t FPGA::readPort(Port port)
 
 bool FPGA::readPin(Port port, uint8_t pin)
 {
+    if(!m_fpga)
+    {
+        return false;
+    }
+
 #ifdef LINUX_
     return false;
 #else
@@ -113,6 +133,11 @@ bool FPGA::readPin(Port port, uint8_t pin)
 
 void FPGA::WriteLED(uint8_t val)
 {
+    if(!m_fpga)
+    {
+        return;
+    }
+
 #ifndef LINUX_
     m_fpga->ecrireRegistre(Registers::LED, val);
 #endif

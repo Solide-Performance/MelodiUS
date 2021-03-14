@@ -23,6 +23,7 @@ class FPGA
 #endif
 
     FPGA(); /* The constructor is private to avoid instanciation */
+
 public:
     /* --------------------------------- */
     /* Types                             */

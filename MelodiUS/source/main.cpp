@@ -15,14 +15,13 @@
 #include "portaudio.h"
 #endif
 
-#include <iomanip>
 #include <iostream>
 #include <string>
 #include <thread>
 
 
 /*****************************************************************************/
-/* Defines ----------------------------------------------------------------- */
+/* Constants --------------------------------------------------------------- */
 constexpr size_t SECONDS_MAX = 60;
 constexpr size_t SECONDS_MIN = 0;
 constexpr size_t FREQ_MAX    = 20000;
@@ -51,7 +50,7 @@ int main()
 
 /* Close portaudio & FPGA*/
 #ifndef LINUX_
-    portAudioInitThread.join();    // Wait for init thread to be completed
+    portAudioInitThread.join();
     Pa_Terminate();
     FPGA::DeInit();
 #endif
@@ -72,8 +71,8 @@ void menuHandler()
         std::cout << "1 - Start recording\n";
         std::cout << "2 - Generate sinus wave\n";
         std::cout << "3 - Playback recorded audio\n";
-        std::cout << "4 - Save recorded .wav file\n";
-        std::cout << "5 - Load & Playback .wav file\n";
+        std::cout << "4 - Save .wav file\n";
+        std::cout << "5 - Load .wav file\n";
         std::cout << "6 - Rythm analysis\n";
         std::cout << "7 - Find main frequency of signal\n";
         std::cout << "0 - Exit" << std::endl;
@@ -108,13 +107,17 @@ void menuHandler()
                 size_t freq = 0;
                 std::cin >> freq;
 
-                std::cout << "Sample rate" << std::endl;
+                std::cout << "Sample rate (0 for default 44100):" << std::endl;
                 size_t sampleRate = 0;
                 std::cin >> sampleRate;
+                if(sampleRate == 0)
+                    sampleRate = SAMPLE_RATE;
 
-                std::cout << "Number of channels" << std::endl;
+                std::cout << "Number of channels (0 for default 2-channels stereo):" << std::endl;
                 size_t numChannels = 0;
                 std::cin >> numChannels;
+                if(numChannels == 0)
+                    numChannels = STEREO;
 
                 if(seconds > SECONDS_MIN && seconds < SECONDS_MAX && freq > FREQ_MIN
                    && freq < FREQ_MAX && numChannels >= MONO && numChannels <= STEREO)
@@ -195,9 +198,8 @@ void menuHandler()
             {
                 if(rec.isValid())
                 {
-                    double freq = FindFrequency(rec);
-                    std::cout << "Main frequency of signal: " << std::setprecision(1) << freq
-                              << std::endl;
+                    int freq = static_cast<int>(FindFrequency(rec));
+                    std::cout << "Main frequency of signal: " << freq << std::endl;
                 }
                 else
                 {
@@ -247,13 +249,9 @@ void setupPortaudio()
                   << "Error message: " << Pa_GetErrorText(err) << std::endl;
         throw std::exception();
     }
-    else
-    {
-        // Clears screen, from:
-        // https://stackoverflow.com/a/33450696/10827197
-        //system("@cls||clear");
-        std::cout << "Portaudio Initialized" << std::endl;
-    }
+
+
+    std::cout << "Portaudio Initialized successfully" << std::endl;
 #endif
 }
 

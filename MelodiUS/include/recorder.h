@@ -6,8 +6,7 @@
 
 
 /*****************************************************************************/
-/* Defines ----------------------------------------------------------------- */
-/* #define SAMPLE_RATE  (17932)     // Test failure to open with this value. */
+/* Constants --------------------------------------------------------------- */
 constexpr size_t SAMPLE_RATE       = 44100;
 constexpr size_t FRAMES_PER_BUFFER = 512;
 constexpr size_t NUM_CHANNELS      = 2;
