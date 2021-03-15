@@ -240,7 +240,7 @@ WAV_Writer::WAV_Writer(const std::string& fileName, uint32_t frameRate, uint16_t
     dataSizeOffset = 0;
 
 #ifdef LINUX_
-    fid = fopen(file.c_str(), "wb");
+    fid = fopen(fileName.c_str(), "wb");
     if(fid == nullptr)
 #else
     errno_t err = fopen_s(&fid, fileName.c_str(), "wb");
@@ -353,11 +353,10 @@ WAV_Reader::WAV_Reader(const std::string& fileName)
     uint32_t long_bidon  = 0;
 
     /* Opening file for reading */
-    std::string file{fileName};
 #ifndef LINUX_
-    errno_t err = fopen_s(&fid, file.c_str(), "rb");
+    errno_t err = fopen_s(&fid, fileName.c_str(), "rb");
 #else
-    fid = fopen(file.c_str(), "rb");
+    fid = fopen(fileName.c_str(), "rb");
 #endif
 
     if(fid == nullptr

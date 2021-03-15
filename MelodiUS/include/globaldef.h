@@ -43,7 +43,7 @@ constexpr bool COMPARE_FLOATS(floating f1, floating f2, double epsilon = 0.0005)
 #ifndef LINUX_
 #define INLINE __forceinline
 #else
-#define INLINE
+#define INLINE 
 #endif
 
 
