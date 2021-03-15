@@ -8,6 +8,8 @@
 /* Static member definitions ----------------------------------------------- */
 #ifndef LINUX_
 CommunicationFPGA* FPGA::m_fpga = nullptr;
+#else
+void* FPGA::m_fpga = nullptr;
 #endif
 
 
