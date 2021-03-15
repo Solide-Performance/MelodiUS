@@ -1,15 +1,15 @@
 /*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
+#include "benchmark.h"
 #include "detection_rythme.h"
 #include "fft.h"
+#include "fpga.h"
 #include "generator.h"
 #include "globaldef.h"
 #include "playback.h"
 #include "readwrite_wav.h"
 #include "recorder.h"
 #include "recording.h"
-#include "benchmark.h"
-#include "fpga.h"
 
 #ifndef LINUX_
 #include "portaudio.h"
@@ -148,7 +148,15 @@ void menuHandler()
                 std::cout << " - Saving recording - \nFilename:" << std::endl;
                 std::string filename{};
                 std::cin >> filename;
-                SaveToWav(filename, rec);
+
+                if(rec.isValid())
+                {
+                    SaveToWav(filename, rec);
+                }
+                else
+                {
+                    std::cout << "Must record valid audio" << std::endl;
+                }
                 break;
             }
 

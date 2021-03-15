@@ -18,7 +18,7 @@
 /* Constants --------------------------------------------------------------- */
 constexpr double  epsilon       = 0.005;
 constexpr int64_t MARGE_moment  = 1000;
-constexpr size_t  MARGE_attaque = 200;
+constexpr size_t  MARGE_attaque = 2;
 
 
 /*****************************************************************************/
@@ -165,6 +165,11 @@ int analyse_rythme(const Recording& rec)
         t.join();
     }
 
+    for(size_t debut : index_debut)
+    {
+        std::cout << debut << '\n';
+    }
+    std::cout << std::endl;
     for(size_t fin : index_fin)
     {
         std::cout << fin << '\n';

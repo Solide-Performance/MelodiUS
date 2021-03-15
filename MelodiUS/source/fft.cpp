@@ -7,6 +7,8 @@
 #include <iostream>
 #include <thread>
 
+#include "benchmark.h"
+
 
 /*****************************************************************************/
 /* Constants --------------------------------------------------------------- */
@@ -17,6 +19,7 @@ constexpr int MAX_DEPTH = 4;
 /* Function definitions ---------------------------------------------------- */
 double FindFrequency(const Recording& audio)
 {
+    Benchmark total{"Total"};
     // To take only a single channel
     /* clang-format off */
     auto lmbd = [&, N = audio.getNumChannels()](const SAMPLE& c) mutable
@@ -50,6 +53,11 @@ double FindFrequency(const Recording& audio)
 // https://rosettacode.org/wiki/Fast_Fourier_transform#C.2B.2B
 void FFT(std::vector<complex_t>& x, int depth)
 {
+    Benchmark* fft = nullptr;
+    if(depth < MAX_DEPTH)
+    {
+        fft = new Benchmark{"FFT"};
+    }
     if(x.size() <= 1)
     {
         return;
@@ -69,33 +77,47 @@ void FFT(std::vector<complex_t>& x, int depth)
                 };
     /* clang-format on */
 
+    Benchmark* copy = nullptr;
+    if(depth < MAX_DEPTH)
+    {
+        copy = new Benchmark{"copy"};
+    }
     std::copy_if(x.begin(), x.end(), even.begin(), lmbd);
     std::copy_if(x.begin() + 1, x.end(), odd.begin(), lmbd);
+    delete copy;
 
     // conquer
-    if(++depth > MAX_DEPTH)
+    if(depth > MAX_DEPTH)
     {
-        FFT(even, depth);
-        FFT(odd, depth);
+        FFT(even, depth + 1);
+        FFT(odd, depth + 1);
     }
     else
     {
-        std::thread evenThread{FFT, std::ref(even), depth};
-        //std::thread oddThread{FFT, std::ref(odd), depth};
-        FFT(odd, depth);
+        std::thread evenThread{FFT, std::ref(even), depth + 1};
+        // std::thread oddThread{FFT, std::ref(odd), depth};
+        FFT(odd, depth + 1);
 
         evenThread.join();
-        //oddThread.join();
+        // oddThread.join();
     }
 
 // combine
 #pragma omp parallel for
+    Benchmark* combine = nullptr;
+    if(depth < MAX_DEPTH)
+    {
+        combine = new Benchmark{"combine"};
+    }
     for(size_t k = 0; k < x.size() / 2; ++k)
     {
         complex_t t         = std::polar(1.0, -2 * pi * k / x.size()) * odd[k];
         x[k]                = even[k] + t;
         x[k + x.size() / 2] = even[k] - t;
     }
+    delete combine;
+
+    delete fft;
 }
 
 
