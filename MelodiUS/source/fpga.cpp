@@ -48,13 +48,12 @@ bool FPGA::isOk()
 std::string FPGA::errorMsg()
 {
 #ifdef LINUX_
+    return "No FPGA support on Linux";
+#else
     if(!m_fpga)
     {
         return "";
     }
-
-    return "No FPGA support on Linux";
-#else
     return m_fpga->messageErreur();
 #endif
 }
