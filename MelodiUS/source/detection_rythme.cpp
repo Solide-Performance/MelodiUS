@@ -112,7 +112,7 @@ int analyse_rythme(const Recording& rec)
             // https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_hadd_ps
             // https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_extract_ps
 
-            auto begin = &volume[std::max(compteur - MARGE_moment, 0ll)];
+            auto begin = &volume[std::max(compteur - MARGE_moment, int64_t(0))];
 
             const size_t N = std::min(size_t(compteur + MARGE_moment), volume.size() - 1)
                              - std::max(compteur - MARGE_moment, 0ll);
@@ -121,10 +121,10 @@ int analyse_rythme(const Recording& rec)
             float  volume_moment    = 0.0f;
 
             /* Main SIMD loop */
-            size_t i = 0;
-            for(; i < (N & ~(4 - 1)); i += 4)
+            size_t j = 0;
+            for(; j < (N & ~(4 - 1)); j += 4)
             {
-                mm_volume_moment = _mm_add_ss(mm_volume_moment, _mm_load_ps(begin + i));
+                mm_volume_moment = _mm_add_ss(mm_volume_moment, _mm_load_ps(begin + j));
             }
 
             /* Pack 128-bits info into a single register by adding them */
@@ -135,7 +135,7 @@ int analyse_rythme(const Recording& rec)
             volume_moment = _mm_extract_ps(mm_volume_moment, 0);
 
             /* add up remaining single values until all elements are covered */
-            for(; i < N; i++)
+            for(; j < N; i++)
             {
                 volume_moment += begin[i];
             }
