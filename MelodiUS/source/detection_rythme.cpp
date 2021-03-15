@@ -142,7 +142,7 @@ int analyse_rythme(const Recording& rec)
 
 #else
             float volume_moment =
-              std::accumulate(&volume[std::max(compteur - MARGE_moment, 0ll)],
+              std::accumulate(&volume[std::max(compteur - MARGE_moment, int64_t(0))],
                               &volume[std::min(size_t(compteur + MARGE_moment), volume.size() - 1)],
                               0.0f);
 #endif
