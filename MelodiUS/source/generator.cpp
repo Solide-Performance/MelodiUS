@@ -24,7 +24,7 @@ Recording Generate_Sine(size_t freq,
     /* initialise sinusoidal wavetable */
     for(size_t i = 0; i < size / numChannels; i += numChannels)
     {
-        SAMPLE sample = amplitude * sin((cycles / size) * pi * 2. * i);
+        SAMPLE sample = amplitude * double(sin((cycles / size) * pi * 2. * i));
 
         for(size_t chann = 0; chann < numChannels; chann++)
         {

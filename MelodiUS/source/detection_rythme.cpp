@@ -79,7 +79,7 @@ int analyse_rythme(const Recording& rec)
 #pragma omp parallel for
     for(size_t i = 0; i < notesQty; i++)
     {
-        index_debut[i] = std::accumulate(distance.begin(), distance.begin() + i + 1, 0);
+        index_debut[i] = std::accumulate(distance.begin(), distance.begin() + i + 1, size_t(0));
     }
 
     // for(size_t debut : index_debut)
@@ -112,7 +112,7 @@ int analyse_rythme(const Recording& rec)
             // https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_hadd_ps
             // https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_extract_ps
 
-            auto begin = &volume[std::max(compteur - MARGE_moment, int64_t(0))];
+            float* begin = &volume[std::max(compteur - MARGE_moment, int64_t(0))];
 
             const size_t N = std::min(size_t(compteur + MARGE_moment), volume.size() - 1)
                              - std::max(compteur - MARGE_moment, 0ll);
@@ -135,11 +135,10 @@ int analyse_rythme(const Recording& rec)
             volume_moment = _mm_extract_ps(mm_volume_moment, 0);
 
             /* add up remaining single values until all elements are covered */
-            for(; j < N; i++)
+            for(; j < N; j++)
             {
                 volume_moment += begin[i];
             }
-
 #else
             float volume_moment =
               std::accumulate(&volume[std::max(compteur - MARGE_moment, int64_t(0))],

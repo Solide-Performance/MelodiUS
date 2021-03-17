@@ -30,6 +30,9 @@
     <ClCompile Include="source\detection_rythme.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="fasttrigo\fasttrigo.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="source\fft.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -57,6 +60,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\detection_rythme.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="fasttrigo\fasttrigo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\fft.h">

@@ -27,12 +27,14 @@ SOURCES      += ./source/fft.cpp
 win32 {
     # QT Project Settings
     TEMPLATE     = vcapp
-    CONFIG       += windows c++17 console
+    CONFIG       += c++17
+    CONFIG       += /external:W0
     QMAKE_CXXFLAGS_WARN_ON ~= s/-W3/-W4
 
     # Libraries
-    INCLUDEPATH  += ./portaudio ./CommunicationFPGA
-    HEADERS      += ./portaudio/portaudio.h ./CommunicationFPGA/CommunicationFPGA.h
+    INCLUDEPATH  += ./portaudio ./CommunicationFPGA ./fasttrigo
+    HEADERS      += ./portaudio/portaudio.h ./CommunicationFPGA/CommunicationFPGA.h ./fasttrigo/fasttrigo.h
+    SOURCES      += ./fasttrigo/fasttrigo.cpp
     QMAKE_LFLAGS += ./portaudio_x64.lib
     LIB          += ./portaudio_x64.lib
 
