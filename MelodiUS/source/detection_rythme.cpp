@@ -5,6 +5,8 @@
 #include <algorithm>
 #include <cmath>
 #include <iostream>
+#include <fstream>
+#include <string>
 #include <thread>
 #include <vector>
 
@@ -17,8 +19,8 @@
 /*****************************************************************************/
 /* Constants --------------------------------------------------------------- */
 constexpr double  epsilon       = 0.005;
-constexpr int64_t MARGE_moment  = 1000;
-constexpr size_t  MARGE_attaque = 2;
+constexpr int64_t MARGE_moment  = 10;
+constexpr size_t  MARGE_attaque = 1;
 
 
 /*****************************************************************************/
@@ -43,6 +45,7 @@ int analyse_rythme(const Recording& rec)
         }
         volume[i] = maximum;
     }
+
 
 
     std::vector<float> derive_double(taille);
@@ -96,15 +99,16 @@ int analyse_rythme(const Recording& rec)
         size_t  debut    = index_debut[i];
         int64_t compteur = debut;
 
+        // @TODO 
+        // Adjust for attack at beginning
         float volume_attaque =
-          std::accumulate(&volume[debut - MARGE_attaque], &volume[debut + MARGE_attaque], 0.0f);
+          std::accumulate(&volume[debut - MARGE_attaque], &volume[debut + MARGE_attaque], 0.0f) / (MARGE_attaque * 2);
 
         // std::cout << volume_attaque << std::endl;
 
 #pragma omp parallel for
         for(; compteur < limit; compteur++)
         {
-#ifndef LINUX_
             // https://ravikiranb.com/tutorials/mac-with-simd/
             // https://stackoverflow.com/a/32992310/10827197
             // https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_add_ss
@@ -116,6 +120,7 @@ int analyse_rythme(const Recording& rec)
 
             const size_t N = std::min(size_t(compteur + MARGE_moment), volume.size() - 1)
                              - std::max(compteur - MARGE_moment, 0ll);
+#ifdef LINUX_
 
             __m128 mm_volume_moment = {0.0f, 0.0f, 0.0f, 0.0f};
             float  volume_moment    = 0.0f;
@@ -139,12 +144,14 @@ int analyse_rythme(const Recording& rec)
             {
                 volume_moment += begin[i];
             }
+            volume_moment /= N;
 #else
             float volume_moment =
               std::accumulate(&volume[std::max(compteur - MARGE_moment, int64_t(0))],
                               &volume[std::min(size_t(compteur + MARGE_moment), volume.size() - 1)],
-                              0.0f);
+                              0.0f) / (2 * N);
 #endif
+
 
             if(volume_moment < 0.3f * volume_attaque)
             {
@@ -154,7 +161,13 @@ int analyse_rythme(const Recording& rec)
         index_fin[i] = compteur;
     };
 #pragma omp parallel for
+
+
     for(size_t i = 0; i < notesQty - 1; i++)
+    {
+        lambda(i, index_debut[i + 1]);
+    }
+    /*for(size_t i = 0; i < notesQty - 1; i++)
     {
         threadPool.emplace_back(lambda, i, index_debut[i + 1]);
     }
@@ -162,7 +175,15 @@ int analyse_rythme(const Recording& rec)
     for(std::thread& t : threadPool)
     {
         t.join();
+    }*/
+    std::ofstream f{"fichier.txt", std::ios::out | std::ios::app};
+
+    for(size_t i = 0; i < taille; i++)
+    {
+        f << i << '\t' << volume[i] << '\t' << 
     }
+
+    f.close();
 
     for(size_t debut : index_debut)
     {
