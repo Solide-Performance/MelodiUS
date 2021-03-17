@@ -78,8 +78,9 @@ void FFT(std::vector<complex_t>& x, int depth)
                 };
     /* clang-format on */
 
-    std::copy_if(x.begin(), x.end(), even.begin(), lmbd);
-    std::copy_if(x.begin() + 1, x.end(), odd.begin(), lmbd);
+    // Copy data in odd and even sample pairs
+    std::copy_if(x.cbegin(), x.cend(), even.begin(), lmbd);
+    std::copy_if(x.cbegin() + 1, x.cend(), odd.begin(), lmbd);
 
     // conquer
     if(depth > MAX_DEPTH)
@@ -95,7 +96,8 @@ void FFT(std::vector<complex_t>& x, int depth)
         evenThread.join();
     }
 
-    // combine
+// combine
+#ifndef LINUX_
     size_t N = x.size() / 2;
 #pragma omp parallel for
     for(size_t k = 0; k < (N & ~(4 - 1)); k += 4)
@@ -153,67 +155,15 @@ void FFT(std::vector<complex_t>& x, int depth)
         }
     }
 
-
-    // for(size_t k = 0; k < x.size() / 2; ++k)
-    //{
-    //    complex_t* begin_odd  = &odd[k];
-    //    complex_t* begin_even = &even[k];
-
-    //    double re_odd[2]  = {begin_odd[0].real(), begin_odd[1].real()};
-    //    double im_odd[2]  = {begin_odd[0].imag(), begin_odd[1].imag()};
-    //    double re_even[2] = {begin_even[0].real(), begin_even[1].real()};
-    //    double im_even[2] = {begin_even[0].imag(), begin_even[1].imag()};
-
-    //    double re_t   = std::cos(-2 * pi * k / x.size());
-    //    double im_t   = std::sin(-2 * pi * k / x.size());
-    //    double re_mul = re_odd[0];
-    //    double im_mul = im_odd[0];
-
-    //    /* Complex number multiplication */
-    //    double tmp = re_t * re_mul - im_t * im_mul;
-    //    im_t       = re_t * im_mul + im_t * re_mul;
-    //    re_t       = tmp;
-
-    //    double im_new_p = im_even[0] + im_t;
-    //    double re_new_p = re_even[0] + re_t;
-    //    double im_new_n = im_even[0] - im_t;
-    //    double re_new_n = re_even[0] - re_t;
-
-    //    x[k]                = {re_new_p, im_new_p};
-    //    x[k + x.size() / 2] = {re_new_n, im_new_n};
-    //}
-
+#else
 #pragma omp parallel for
-    // for(size_t k = 0; k < x.size() / 2; ++k)
-    //{
-    //    double re_t   = std::cos(-2 * pi * k / x.size());
-    //    double im_t   = std::sin(-2 * pi * k / x.size());
-    //    double re_mul = odd[k].real();
-    //    double im_mul = odd[k].imag();
-
-    //    /* Complex number multiplication */
-    //    double tmp = re_t * re_mul - im_t * im_mul;
-    //    im_t       = re_t * im_mul + im_t * re_mul;
-    //    re_t       = tmp;
-
-    //    complex_t t = {re_t, im_t};
-
-    //    double im_new_p = even[k].imag() + im_t;
-    //    double re_new_p = even[k].real() + re_t;
-    //    double im_new_n = even[k].imag() - im_t;
-    //    double re_new_n = even[k].real() - re_t;
-
-    //    x[k]                = {re_new_p, im_new_p};
-    //    x[k + x.size() / 2] = {re_new_n, im_new_n};
-    //}
-
-#pragma omp parallel for
-    // for(size_t k = 0; k < x.size() / 2; ++k)
-    //{
-    //    complex_t t         = std::polar<complex_t::_Ty>(1.0, -2 * pi * k / x.size()) * odd[k];
-    //    x[k]                = even[k] + t;
-    //    x[k + x.size() / 2] = even[k] - t;
-    //}
+    for(size_t k = 0; k < x.size() / 2; ++k)
+    {
+        complex_t t         = std::polar<complex_t::_Ty>(1.0, -2 * pi * k / x.size()) * odd[k];
+        x[k]                = even[k] + t;
+        x[k + x.size() / 2] = even[k] - t;
+    }
+#endif
 }
 
 
