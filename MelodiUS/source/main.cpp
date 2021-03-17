@@ -40,17 +40,17 @@ void setupFPGA();
 int main()
 {
     /* portaudio init */
-    std::thread portAudioInitThread(setupPortaudio);
+    //std::thread portAudioInitThread(setupPortaudio);
 
     /* CommunicationFPGA init */
-    setupFPGA();
+    //setupFPGA();
 
     /* Menu display and command handling */
     menuHandler();
 
 /* Close portaudio & FPGA*/
 #ifndef LINUX_
-    portAudioInitThread.join();
+    //portAudioInitThread.join();
     Pa_Terminate();
     FPGA::DeInit();
 #endif
