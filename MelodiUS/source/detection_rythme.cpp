@@ -103,15 +103,16 @@ int analyse_rythme(const Recording& rec)
 
     std::vector<size_t> index_fin(distance.size());
     std::vector<float>  tousLesVolumes(volume.size(), 0.f);
-    for(size_t i = 0; i < index_debut.size() - 1; i++)
+    for(size_t i = 0; i < index_debut.size(); i++)
     {
         float  volume_attaque = 0.0f;
         size_t compteur       = index_debut[i];
-        for(; compteur < index_debut[i + 1]; compteur += dt)
+        size_t max            = i == index_debut.size() - 1 ? volume.size() - 1 : index_debut[i + 1];
+        for(; compteur < max; compteur += dt)
         {
             float  volumeMoyen = 0.f;
             size_t j           = compteur;
-            for(; j < std::min(compteur + dt, volume.size() - 1); j++)
+            for(; j < std::min(compteur + dt, volume.size()); j++)
             {
                 volumeMoyen += volume[j];
             }
@@ -128,30 +129,8 @@ int analyse_rythme(const Recording& rec)
                 break;
             }
         }
-        index_fin[i] = compteur;
+        index_fin[i] = std::min({compteur + dt, max, volume.size() - 1});
     }
-
-    float volume_attaque =
-      std::accumulate(&volume[index_debut[index_debut.size() - 1] - MARGE_attaque],
-                      &volume[index_debut[index_debut.size() - 1] + MARGE_attaque],
-                      0.0f);
-
-    size_t compteur = index_debut[index_debut.size() - 1];
-    for(; compteur < volume.size(); compteur++)
-    {
-
-        float volume_moment =
-          std::accumulate(&volume[std::max(compteur - MARGE_moment, 0ull)],
-                          &volume[std::min(size_t(compteur + MARGE_moment), volume.size() - 1)],
-                          0.0f)
-          / (2 * MARGE_moment);
-
-        if(volume_moment < 0.3 * volume_attaque)
-        {
-            break;
-        }
-    }
-    index_fin[index_debut.size() - 1] = compteur;
 
     for(size_t debut : index_debut)
     {
