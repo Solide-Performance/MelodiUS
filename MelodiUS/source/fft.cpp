@@ -18,11 +18,45 @@
 
 /*****************************************************************************/
 /* Constants --------------------------------------------------------------- */
-constexpr int MAX_DEPTH = 4;
+constexpr int    MAX_DEPTH       = 4;
+constexpr double MIN_GUITAR_FREQ = 75.0;
 
 
 /*****************************************************************************/
 /* Function definitions ---------------------------------------------------- */
+size_t FindPeak(const std::vector<complex_t>& v,
+                std::vector<size_t>           ignoredPeaks = {},
+                size_t                        trueBegin    = 1)
+{
+    /* clang-format off */
+    return std::distance(v.begin(),
+                         std::max_element(v.begin() + trueBegin,
+                                          v.end() - v.size() / 2,
+                                          [v, ignoredPeaks](const complex_t& c1, const complex_t& c2)
+                                          {
+                                              for (size_t ignoredPeak : ignoredPeaks)
+                                              {
+                                                  if(c1 == v[ignoredPeak] || c2 == v[ignoredPeak])
+                                                  {
+                                                      return false;
+                                                  }
+                                              }
+                                              return std::abs(c1) < std::abs(c2);
+                                          }));
+    /* clang-format on */
+}
+
+size_t ComparePeaks(const std::vector<complex_t>& v, size_t peak1, size_t peak2)
+{
+    constexpr int amplitudeMargin = 200;
+    float         num             = abs(abs(v[peak1]) - abs(v[peak2]));
+    if(num < amplitudeMargin)
+    {
+        return std::min(peak1, peak2);
+    }
+}
+
+
 double FindFrequency(const Recording& audio)
 {
     // Benchmark total{"Total"};
@@ -43,31 +77,23 @@ double FindFrequency(const Recording& audio)
     FFT(v);
 
 
-    /* clang-format off */
-    size_t peak = std::distance(v.begin(),
-                                std::max_element(v.begin() + 1,
-                                                 v.end() - v.size() / 2,
-                                                 [](const complex_t& c1, const complex_t& c2)
-                                                 {
-                                                     return std::abs(c1) < std::abs(c2);
-                                                 }));
-    size_t peak2 = std::distance(v.begin(),
-                                std::max_element(v.begin() + 1,
-                                                 v.end() - v.size() / 2,
-                                                 [peak, v](const complex_t& c1, const complex_t& c2)
-                                                 {
-                                                     return (std::abs(c1) < std::abs(c2)) && (c1 != v[peak] && c2 != v[peak]);
-                                                 }));
+    size_t peak  = FindPeak(v);
+    size_t peak2 = FindPeak(v, {peak});
 
-    constexpr int amplitudeMargin = 200;
-    float num = abs(abs(v[peak]) - abs(v[peak2]));
-    if (num < amplitudeMargin)
+    peak = ComparePeaks(v, peak, peak2);
+
+
+    double freq = peak / audio.getNumSeconds();
+    std::vector<size_t> badPeaks{};
+    while(freq < MIN_GUITAR_FREQ)
     {
-        peak = std::min(peak, peak2);
+        badPeaks.push_back(peak);
+        size_t newPeak = FindPeak(v, badPeaks, *std::max_element(badPeaks.begin(), badPeaks.end()));
+        peak           = ComparePeaks(v, peak2, newPeak);
+
+        double freq = peak / audio.getNumSeconds();
     }
 
-    /* clang-format on */
-    double freq = peak / audio.getNumSeconds();
     return freq;
 }
 

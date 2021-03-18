@@ -31,9 +31,9 @@ constexpr size_t  MARGE_attaque = 1;
 /* Function definitions ---------------------------------------------------- */
 std::vector<Recording> analyse_rythme(const Recording& rec)
 {
-    const size_t              dt      = rec.getSampleRate();
-    const std::vector<float>& tableau = rec.getSamples();
-    size_t                    taille  = tableau.size();
+    const size_t       dt      = rec.getSampleRate();
+    std::vector<float> tableau = rec.getSamples();
+    size_t             taille  = tableau.size();
 
     std::vector<float>  derive(taille);
     std::vector<float>  volume(taille);
@@ -64,6 +64,18 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
     }
 
     float volmax = *std::max_element(volume.cbegin(), volume.cend());
+    float volmin = 0.0316 * volmax;
+
+    // Genocide
+    
+    for(auto itTab = tableau.begin(), itVol = volume.begin(); itVol < volume.end() && itTab < tableau.end(); itTab++, itVol++)
+    {
+        if(*itVol < volmin)
+        {
+            *itTab = 0.f;
+        }
+    }
+
     for(size_t i = 0; i < taille - 1; i++)
     {
         if(COMPARE_FLOATS(derive_double[i], 0.0f, epsilon) /*&& pente>derive_doublemax*0.3*/)
@@ -167,9 +179,9 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
           beginIt, endIt, rec.getSampleRate(), rec.getFramesPerBuffer(), rec.getNumChannels()};
 
         double freq = FindFrequency(notes[i]);
-        std::cout << "Note " << i + 1 << " : " << freq << "Hz (" << FindNoteFromFreq(freq) << ")\tSamples: " << index_debut[i]
-                  << " to " << index_fin[i] << "(" << index_fin[i] - index_debut[i] << ")"
-                  << std::endl;
+        std::cout << "Note " << i + 1 << " : " << freq << "Hz (" << FindNoteFromFreq(freq)
+                  << ")\tSamples: " << index_debut[i] << " to " << index_fin[i] << "("
+                  << index_fin[i] - index_debut[i] << ")" << std::endl;
     }
 
     return notes;
