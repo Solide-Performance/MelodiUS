@@ -6,7 +6,7 @@
 
 /*****************************************************************************/
 /* Function declarations --------------------------------------------------- */
-std::vector<Recording> analyse_rythme(const Recording& rec);
+Recording analyse_rythme(const Recording& rec);
 
 
 /*****************************************************************************/

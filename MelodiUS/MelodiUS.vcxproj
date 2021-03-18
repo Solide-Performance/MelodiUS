@@ -159,7 +159,6 @@
     <ClInclude Include="include\readwrite_wav.h" />
     <ClInclude Include="include\recorder.h" />
     <ClInclude Include="include\recording.h" />
-    <ClInclude Include="include\tuning.h" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="debug\moc_predefs.h.cbt">

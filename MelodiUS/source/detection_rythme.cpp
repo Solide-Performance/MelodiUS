@@ -4,7 +4,7 @@
 #include "globaldef.h"
 
 #include "fft.h"
-#include "tuning.h"
+
 
 #include <algorithm>
 #include <cmath>
@@ -22,25 +22,28 @@
 
 /*****************************************************************************/
 /* Constants --------------------------------------------------------------- */
-constexpr double epsilon       = 0.005;
-constexpr size_t SAMPLE_CUTOFF = 3000;
+constexpr double epsilon = 0.005;
 
 
 /*****************************************************************************/
 /* Function definitions ---------------------------------------------------- */
-std::vector<Recording> analyse_rythme(const Recording& rec)
+Recording analyse_rythme(const Recording& rec)
 {
-    const size_t       dt      = rec.getSampleRate() / 3;
-    std::vector<float> tableau = rec.getSamples();
-    size_t             taille  = tableau.size();
+    const size_t       dt            = rec.getSampleRate() / 20;
+    const size_t       sample_cutoff = rec.getSampleRate() / 5;
+    std::vector<float> tableau       = rec.getSamples();
+    size_t             taille        = tableau.size();
 
-    std::vector<float>  derive(taille);
-    std::vector<float>  volume(taille);
-    float               maximum = 0;
-    std::vector<float>  derive_double(taille);
-    std::vector<bool>   attaque(taille);
-    std::vector<size_t> distance(taille);
-
+    std::vector<float> derive(taille);
+    std::vector<float> volume(taille);
+    std::vector<float> volume_plat(taille);
+    std::vector<float> derive_double(taille);
+    std::vector<int>   debut_note{};
+    std::vector<int>   fin_note(taille);
+    float              maximum      = 0;
+    const float        marge_bruit  = 0.0005;
+    const float        marge_volume = 0.005;
+    const float        marge_note   = 0.05f;
 
     for(size_t i = 0; i < taille - 1; i++)
     {
@@ -51,7 +54,7 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
     float volmin = /* 0.0316*/ 0.1 * volmax;
     for(size_t i = 0; i < taille - 1; i++)
     {
-        if(COMPARE_FLOATS(derive[i], 0.0f, epsilon) && tableau[i] > 0)
+        if(COMPARE_FLOATS(derive[i], 0.0f, epsilon) && tableau[i] > 0 /*marge_volume*/)
         {    // comparaison avec marge d'erreur, utilise la fonction de pascal
             maximum = tableau[i];
         }
@@ -60,151 +63,71 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
 
     for(size_t i = 0; i < taille - 1; i++)
     {
-        derive_double[i] = volume[i + 1] - volume[i];
-    }
-
-
-    // Genocide
-
-    for(auto itTab = tableau.begin(), const itVol = volume.begin();
-        itVol < volume.end() && itTab < tableau.end();
-        itTab++, itVol++)
-    {
-        if(*itVol < volmin)
+        if(volume[i] < marge_bruit)
         {
-            *itTab = 0.f;
+            volume[i] = 0;
         }
     }
 
+    for(int i = 0; i < taille; i += dt)
+    {
+        float volume_moyen = 0.f;
+
+        size_t max = std::min(i + dt, volume.size() - 1);
+        for(int j = i; j < max; j++)
+        {
+            volume_moyen += volume[j];
+        }
+        volume_moyen /= dt;
+        std::fill(&volume_plat[i], &volume_plat[max], volume_moyen);
+    }
+
+    int compteur_debut = 0;
     for(size_t i = 0; i < taille - 1; i++)
     {
-        if(COMPARE_FLOATS(derive_double[i], 0.0f, epsilon) /*&& pente>derive_doublemax*0.3*/)
+        derive_double[i] = volume_plat[i + 1] - volume_plat[i];
+        if(derive_double[i] > marge_note)
         {
-            if(volume[i] > 0.5 * volmax)
-            {
-                attaque[i] = true;
-            }
-        }
-        else
-        {
-            attaque[i] = false;
+            debut_note.push_back(i);
         }
     }
 
 
-    size_t note = 0;
-    size_t j    = 0;
-    for(size_t i = 0; i < taille - 1; i++)
+    for(size_t i = 0; i < debut_note.size() - 1; i++)
     {
-        if(attaque[i] == 1)
+        size_t sampleLength = debut_note[i + 1] - debut_note[i];
+        if(sampleLength < sample_cutoff)
         {
-            distance[j] = i - note;
-            note        = i;
-            j++;
-        }
-    }
-    size_t distanceMax = *std::max_element(distance.begin(), distance.end());
-    distance.erase(std::remove_if(distance.begin(),
-                                  distance.end(),
-                                  [&](size_t a) {
-                                      return a < distanceMax * 0.05;
-                                  }),
-                   distance.end());
-
-
-    std::vector<size_t> index_debut(distance.size());
-    for(size_t i = 0; i < distance.size(); i++)
-    {
-        index_debut[i] = std::accumulate(distance.begin(), distance.begin() + i + 1, 0);
-    }
-
-    std::vector<size_t> index_fin(distance.size());
-    // std::vector<float>  tousLesVolumes(volume.size(), 0.f);
-    for(size_t i = 0; i < index_debut.size(); i++)
-    {
-        float  volume_attaque = 0.0f;
-        size_t compteur       = index_debut[i];
-        size_t max = i == index_debut.size() - 1 ? volume.size() - 1 : index_debut[i + 1];
-        for(; compteur < max; compteur += dt)
-        {
-            float  volumeMoyen = 0.f;
-            size_t j           = compteur;
-            for(; j < std::min(compteur + dt, volume.size()); j++)
-            {
-                volumeMoyen += volume[j];
-            }
-            volumeMoyen /= dt;
-
-            // std::fill(&tousLesVolumes[compteur], &tousLesVolumes[j], volumeMoyen);
-
-            if(compteur == index_debut[i])
-            {
-                volume_attaque = volumeMoyen;
-            }
-            else if(volumeMoyen <= volume_attaque * 0.33)
-            {
-                break;
-            }
-        }
-        index_fin[i] = std::min(compteur, max);
-    }
-
-    /*for(size_t debut : index_debut)
-    {
-        std::cout << debut << '\n';
-    }
-    for(size_t fin : index_fin)
-    {
-        std::cout << fin << '\n';
-    }*/
-
-    for(size_t i = 0; i < index_debut.size(); i++)
-    {
-        size_t sampleLength = index_fin[i] - index_debut[i];
-        if (sampleLength < SAMPLE_CUTOFF)
-        {
-            if(i < index_debut.size() - 1)
-            {
-                // Removes begin of next note
-                index_debut.erase(index_debut.begin() + i + 1);
-                index_fin.erase(index_fin.begin() + i);
-            }
-            else
-            {
-                // Remove current note
-                index_debut.erase(index_debut.begin() + i);
-                index_fin.erase(index_fin.begin() + i);
-            }
+            // Removes note
+            debut_note.erase(debut_note.begin() + i);
         }
     }
 
-
-    /*std::ofstream f("fichier.txt");
-    for(size_t i = 0; i < taille; i++)
+    size_t           compteur = 0;
+    std::ofstream f{"test.txt"};
+    for(int i = 0; i < taille; i++)
     {
-        f << i << '\t' << volume[i] << '\t' << tousLesVolumes[i] << '\t' << attaque[i] << '\t'
-          << defense[i] << '\n';
+        bool val = false;
+        if(i == debut_note[compteur])
+        {
+            val = true;
+            compteur = std::min(compteur + 1, debut_note.size() - 1);
+        }
+        f << i << '\t' << volume[i] << '\t' << volume_plat[i] << '\t' << derive_double[i] << '\t'
+          << val << '\n';
     }
-    f.close();*/
+    f.close();
 
-    std::cout << std::endl << "Frequencies:" << std::endl;
-
-    std::vector<Recording> notes(index_debut.size());
-    for(size_t i = 0; i < notes.size(); i++)
+    for(size_t debut : debut_note)
     {
-        const float* beginIt = &tableau[index_debut[i]];
-        const float* endIt   = &tableau[index_fin[i]];
-
-        notes[i] = Recording{
-          beginIt, endIt, rec.getSampleRate(), rec.getFramesPerBuffer(), rec.getNumChannels()};
-
-        double freq = FindFrequency(notes[i]);
-        std::cout << "Note " << i + 1 << " : " << freq << "Hz (" << FindNoteFromFreq(freq)
-                  << ")\tSamples: " << index_debut[i] << " to " << index_fin[i] << "("
-                  << index_fin[i] - index_debut[i] << ")" << std::endl;
+        if(debut != 0)
+        {
+            std::cout << debut << '\n';
+        }
     }
+    std::cout << std::endl;
 
-    return notes;
+    return {};
 }
 
 
