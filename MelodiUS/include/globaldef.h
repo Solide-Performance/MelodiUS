@@ -8,6 +8,7 @@
 #include <numeric>
 #include <stdexcept>
 #include <type_traits>
+#include <cmath>
 
 
 /*****************************************************************************/
@@ -35,6 +36,25 @@ constexpr bool COMPARE_FLOATS(floating f1, floating f2, double epsilon = 0.0005)
     /* Due to floating point representation imprecision, two floating-point values should never be
      * compared together */
     return std::abs(f1 - f2) <= epsilon;
+}
+
+
+template<typename floating>
+constexpr floating db_to_lin(floating dB)
+{
+    static_assert(std::is_floating_point<floating>::value,
+                  "Argument must be a floating point type");
+
+    return std::pow<floating>(10, dB / 20.0);
+}
+
+template<typename floating>
+constexpr floating lin_to_db(floating lin)
+{
+    static_assert(std::is_floating_point<floating>::value,
+                  "Argument must be a floating point type");
+
+    return 20 * std::log10<floating>(lin);
 }
 
 

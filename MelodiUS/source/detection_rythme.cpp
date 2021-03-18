@@ -47,6 +47,8 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
         derive[i] = tableau[i + 1] - tableau[i];
     }
 
+    float volmax = *std::max_element(volume.cbegin(), volume.cend());
+    float volmin = /* 0.0316*/ 0.1 * volmax;
     for(size_t i = 0; i < taille - 1; i++)
     {
         if(COMPARE_FLOATS(derive[i], 0.0f, epsilon) && tableau[i] > 0)
@@ -61,8 +63,6 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
         derive_double[i] = volume[i + 1] - volume[i];
     }
 
-    float volmax = *std::max_element(volume.cbegin(), volume.cend());
-    float volmin = /* 0.0316*/ 0.1 * volmax;
 
     // Genocide
 
