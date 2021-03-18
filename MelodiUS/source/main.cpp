@@ -10,11 +10,13 @@
 #include "readwrite_wav.h"
 #include "recorder.h"
 #include "recording.h"
+#include "tuning.h"
 
 #ifndef LINUX_
 #include "portaudio.h"
 #endif
 
+#include <filesystem>
 #include <iostream>
 #include <string>
 #include <thread>
@@ -40,17 +42,17 @@ void setupFPGA();
 int main()
 {
     /* portaudio init */
-    //std::thread portAudioInitThread(setupPortaudio);
+    std::thread portAudioInitThread(setupPortaudio);
 
     /* CommunicationFPGA init */
-    //setupFPGA();
+    setupFPGA();
 
     /* Menu display and command handling */
     menuHandler();
 
 /* Close portaudio & FPGA*/
 #ifndef LINUX_
-    //portAudioInitThread.join();
+    portAudioInitThread.join();
     Pa_Terminate();
     FPGA::DeInit();
 #endif
@@ -63,6 +65,26 @@ int main()
 void menuHandler()
 {
     Recording rec;
+
+    /*std::string path = "guitare/";
+    for(const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(path))
+    {
+        std::cout << entry.path() << std::endl;
+
+        try
+        {
+            rec = LoadFromWav(entry.path().generic_string());
+            double freq = FindFrequency(rec);
+            std::cout << "Freq: " << freq << " (" + FindNoteFromFreq(freq) + ")" << std::endl;
+        }
+        catch(const std::exception& ex)
+        {
+            std::cout << "Could not read .wav file" << ex.what() << std::endl;
+        }
+    }
+    while(1)
+    {
+    }*/
 
     while(true)
     {

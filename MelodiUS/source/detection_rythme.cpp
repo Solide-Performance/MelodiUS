@@ -2,6 +2,10 @@
 /* Includes ---------------------------------------------------------------- */
 #include "detection_rythme.h"
 #include "globaldef.h"
+
+#include "fft.h"
+#include "tuning.h"
+
 #include <algorithm>
 #include <cmath>
 #include <fstream>
@@ -22,9 +26,10 @@ constexpr double  epsilon       = 0.005;
 constexpr int64_t MARGE_moment  = 10;
 constexpr size_t  MARGE_attaque = 1;
 
+
 /*****************************************************************************/
 /* Function definitions ---------------------------------------------------- */
-int analyse_rythme(const Recording& rec)
+std::vector<Recording> analyse_rythme(const Recording& rec)
 {
     const size_t              dt      = rec.getSampleRate();
     const std::vector<float>& tableau = rec.getSamples();
@@ -35,7 +40,7 @@ int analyse_rythme(const Recording& rec)
     float               maximum = 0;
     std::vector<float>  derive_double(taille);
     std::vector<bool>   attaque(taille);
-    std::vector<bool>   defense(taille, 0);
+    std::vector<bool>   defense(taille, false);
     std::vector<size_t> distance(taille);
 
 
@@ -102,12 +107,12 @@ int analyse_rythme(const Recording& rec)
     }
 
     std::vector<size_t> index_fin(distance.size());
-    std::vector<float>  tousLesVolumes(volume.size(), 0.f);
+    // std::vector<float>  tousLesVolumes(volume.size(), 0.f);
     for(size_t i = 0; i < index_debut.size(); i++)
     {
         float  volume_attaque = 0.0f;
         size_t compteur       = index_debut[i];
-        size_t max            = i == index_debut.size() - 1 ? volume.size() - 1 : index_debut[i + 1];
+        size_t max = i == index_debut.size() - 1 ? volume.size() - 1 : index_debut[i + 1];
         for(; compteur < max; compteur += dt)
         {
             float  volumeMoyen = 0.f;
@@ -118,7 +123,7 @@ int analyse_rythme(const Recording& rec)
             }
             volumeMoyen /= dt;
 
-            std::fill(&tousLesVolumes[compteur], &tousLesVolumes[j], volumeMoyen);
+            // std::fill(&tousLesVolumes[compteur], &tousLesVolumes[j], volumeMoyen);
 
             if(compteur == index_debut[i])
             {
@@ -142,16 +147,32 @@ int analyse_rythme(const Recording& rec)
         std::cout << fin << '\n';
     }
 
-    std::ofstream f("fichier.txt");
+    /*std::ofstream f("fichier.txt");
     for(size_t i = 0; i < taille; i++)
     {
         f << i << '\t' << volume[i] << '\t' << tousLesVolumes[i] << '\t' << attaque[i] << '\t'
           << defense[i] << '\n';
     }
-    f.close();
+    f.close();*/
 
-    std::cout << std::endl;
-    return 0;
+    std::cout << std::endl << "Frequencies:" << std::endl;
+
+    std::vector<Recording> notes(index_debut.size());
+    for(size_t i = 0; i < notes.size(); i++)
+    {
+        const float* beginIt = &tableau[index_debut[i]];
+        const float* endIt   = &tableau[index_fin[i]];
+
+        notes[i] = Recording{
+          beginIt, endIt, rec.getSampleRate(), rec.getFramesPerBuffer(), rec.getNumChannels()};
+
+        double freq = FindFrequency(notes[i]);
+        std::cout << "Note " << i + 1 << " : " << freq << "Hz (" << FindNoteFromFreq(freq) << ")\tSamples: " << index_debut[i]
+                  << " to " << index_fin[i] << "(" << index_fin[i] - index_debut[i] << ")"
+                  << std::endl;
+    }
+
+    return notes;
 }
 
 

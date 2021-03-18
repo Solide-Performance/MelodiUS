@@ -25,7 +25,7 @@ constexpr int MAX_DEPTH = 4;
 /* Function definitions ---------------------------------------------------- */
 double FindFrequency(const Recording& audio)
 {
-    Benchmark total{"Total"};
+    // Benchmark total{"Total"};
     // To take only a single channel
     /* clang-format off */
     auto lmbd = [&, N = audio.getNumChannels()](const SAMPLE& c) mutable
@@ -51,6 +51,21 @@ double FindFrequency(const Recording& audio)
                                                  {
                                                      return std::abs(c1) < std::abs(c2);
                                                  }));
+    size_t peak2 = std::distance(v.begin(),
+                                std::max_element(v.begin() + 1,
+                                                 v.end() - v.size() / 2,
+                                                 [peak, v](const complex_t& c1, const complex_t& c2)
+                                                 {
+                                                     return (std::abs(c1) < std::abs(c2)) && (c1 != v[peak] && c2 != v[peak]);
+                                                 }));
+
+    constexpr int amplitudeMargin = 200;
+    float num = abs(abs(v[peak]) - abs(v[peak2]));
+    if (num < amplitudeMargin)
+    {
+        peak = std::min(peak, peak2);
+    }
+
     /* clang-format on */
     double freq = peak / audio.getNumSeconds();
     return freq;
