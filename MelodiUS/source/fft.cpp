@@ -88,6 +88,12 @@ double FindFrequency(const Recording& audio)
     while(freq < MIN_GUITAR_FREQ)
     {
         badPeaks.push_back(peak);
+
+        if (badPeaks.size() > 10)
+        {
+            return -1.;
+        }
+
         size_t newPeak = FindPeak(v, badPeaks, *std::max_element(badPeaks.begin(), badPeaks.end()));
         peak           = ComparePeaks(v, peak2, newPeak);
 

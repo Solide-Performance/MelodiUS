@@ -22,16 +22,15 @@
 
 /*****************************************************************************/
 /* Constants --------------------------------------------------------------- */
-constexpr double  epsilon       = 0.005;
-constexpr int64_t MARGE_moment  = 10;
-constexpr size_t  MARGE_attaque = 1;
+constexpr double epsilon       = 0.005;
+constexpr size_t SAMPLE_CUTOFF = 3000;
 
 
 /*****************************************************************************/
 /* Function definitions ---------------------------------------------------- */
 std::vector<Recording> analyse_rythme(const Recording& rec)
 {
-    const size_t       dt      = rec.getSampleRate();
+    const size_t       dt      = rec.getSampleRate() / 3;
     std::vector<float> tableau = rec.getSamples();
     size_t             taille  = tableau.size();
 
@@ -40,7 +39,6 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
     float               maximum = 0;
     std::vector<float>  derive_double(taille);
     std::vector<bool>   attaque(taille);
-    std::vector<bool>   defense(taille, false);
     std::vector<size_t> distance(taille);
 
 
@@ -64,11 +62,13 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
     }
 
     float volmax = *std::max_element(volume.cbegin(), volume.cend());
-    float volmin = 0.0316 * volmax;
+    float volmin = /* 0.0316*/ 0.1 * volmax;
 
     // Genocide
-    
-    for(auto itTab = tableau.begin(), itVol = volume.begin(); itVol < volume.end() && itTab < tableau.end(); itTab++, itVol++)
+
+    for(auto itTab = tableau.begin(), const itVol = volume.begin();
+        itVol < volume.end() && itTab < tableau.end();
+        itTab++, itVol++)
     {
         if(*itVol < volmin)
         {
@@ -141,23 +141,43 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
             {
                 volume_attaque = volumeMoyen;
             }
-            else if(volumeMoyen <= volume_attaque * 0.2)
+            else if(volumeMoyen <= volume_attaque * 0.33)
             {
                 break;
             }
         }
-        index_fin[i] = std::min({compteur + dt, max, volume.size() - 1});
+        index_fin[i] = std::min(compteur, max);
     }
 
-    for(size_t debut : index_debut)
+    /*for(size_t debut : index_debut)
     {
         std::cout << debut << '\n';
     }
     for(size_t fin : index_fin)
     {
-        defense[fin] = true;
         std::cout << fin << '\n';
+    }*/
+
+    for(size_t i = 0; i < index_debut.size(); i++)
+    {
+        size_t sampleLength = index_fin[i] - index_debut[i];
+        if (sampleLength < SAMPLE_CUTOFF)
+        {
+            if(i < index_debut.size() - 1)
+            {
+                // Removes begin of next note
+                index_debut.erase(index_debut.begin() + i + 1);
+                index_fin.erase(index_fin.begin() + i);
+            }
+            else
+            {
+                // Remove current note
+                index_debut.erase(index_debut.begin() + i);
+                index_fin.erase(index_fin.begin() + i);
+            }
+        }
     }
+
 
     /*std::ofstream f("fichier.txt");
     for(size_t i = 0; i < taille; i++)
