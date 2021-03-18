@@ -10,7 +10,7 @@
 #include "readwrite_wav.h"
 #include "recorder.h"
 #include "recording.h"
-#include "tuning.h"
+
 
 #ifndef LINUX_
 #include "portaudio.h"
