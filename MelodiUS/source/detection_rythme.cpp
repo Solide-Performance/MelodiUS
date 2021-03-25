@@ -117,7 +117,6 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
             }
         }
         fin_note.push_back(std::min(i, volume_plat.size() - 1));
-
     }
 
     /*std::ofstream f{"test.txt"};
@@ -163,9 +162,83 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
                   << fin_note[i] - debut_note[i] << ")" << std::endl;
     }
     std::cout << std::endl;
+    std::cout << std::endl;
+
+    analyse_note(debut_note, fin_note, volume_plat.size());
+
 
     return notes;
+}
 
+
+void analyse_note(std::vector<size_t> debuts, std::vector<size_t> fins, size_t recordingLength)
+{
+    std::vector<int64_t> liste_duree;
+    std::vector<int64_t> liste_ratios;
+
+    /* Garder la durée des notes et des silences.
+     * Chaque note est associé à un silence (même s'il fait 0 de longueur). */
+    for(int64_t i = 0; i < debuts.size(); i++)
+    {
+        int64_t noteLength = fins[i] - debuts[i];
+
+        int64_t maxSilenceLength = i + 1 >= debuts.size() ? recordingLength : debuts[i + 1];
+        int64_t silenceLength    = maxSilenceLength - fins[i];
+
+        liste_duree.push_back(noteLength);
+        liste_duree.push_back(silenceLength);
+    }
+
+    /* Create groups of note lengths */
+    const int64_t maxLength =
+      *std::max_element(liste_duree.begin(), liste_duree.end(), std::less());
+
+    const std::vector<int64_t> fractions = {
+      maxLength, maxLength / 2, maxLength / 4, maxLength / 8, maxLength / 16, 0};
+
+    for(int64_t noteLength : liste_duree)
+    {
+        /* Set current min value to infinity */
+        int64_t currentMin = std::numeric_limits<int64_t>::max();
+
+        for(int64_t groupLength : fractions)
+        {
+            /* Update current minimum value */
+            int64_t val = std::abs((int64_t)groupLength - (int64_t)noteLength);
+            currentMin  = std::min(currentMin, val);
+        }
+
+        /* Find where the min was */
+        for(int i = 0; i < fractions.size(); i++)
+        {
+            int64_t currentFraction = fractions[i];
+            int64_t upperVal        = currentMin + noteLength;
+            int64_t lowerVal        = abs(currentMin - noteLength);
+            if(currentFraction == upperVal || currentFraction == lowerVal)
+            {
+                /* Append index of ratio */
+                liste_ratios.push_back(i);
+                break;
+            }
+        }
+    }
+
+    /* Get lowest layer of fraction */
+    int64_t max_ratio =
+      *std::max_element(liste_ratios.begin(),
+                        liste_ratios.end(),
+                        [rejected = fractions.size() - 1](int64_t greatest, int64_t val) {
+                            return val == rejected ? false : greatest < val;
+                        });
+
+    std::cout << max_ratio << std::endl;
+    for(int64_t i = 0; i < liste_duree.size(); i++)
+    {
+        int64_t duree = liste_duree[i];
+        int64_t ratio = liste_ratios[i];
+        std::cout << duree << '\t' << ratio << '\n';
+    }
+    std::cout << std::endl;
 }
 
 

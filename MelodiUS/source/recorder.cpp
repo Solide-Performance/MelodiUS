@@ -59,6 +59,7 @@
 /*****************************************************************************/
 /* Static variables -------------------------------------------------------- */
 static size_t g_numChannels = static_cast<size_t>(-1);
+static bool   g_stopFlag    = false;
 
 
 /*****************************************************************************/
@@ -149,6 +150,13 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
     while((err = Pa_IsStreamActive(stream)) == 1)
     {
         Pa_Sleep(1000);    // NOLINT
+        int val = 0;
+        std::cin >> val;
+        if(val == ' ')
+        {
+            g_stopFlag = true;
+        }
+
         std::cout << "index = " << data.frameIndex << std::endl;
     }
     if(err < 0)
@@ -221,6 +229,11 @@ static int recordCallback(const void*                     inputBuffer,
     (void)timeInfo;
     (void)statusFlags;
     (void)userData;
+
+    if(g_stopFlag == true)
+    {
+        return paComplete;
+    }
 
     if(framesLeft < framesPerBuffer)
     {
