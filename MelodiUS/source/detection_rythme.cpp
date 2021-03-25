@@ -34,16 +34,16 @@ Recording analyse_rythme(const Recording& rec)
     std::vector<float> tableau       = rec.getSamples();
     size_t             taille        = tableau.size();
 
-    std::vector<float> derive(taille);
-    std::vector<float> volume(taille);
-    std::vector<float> volume_plat(taille);
-    std::vector<float> derive_double(taille);
-    std::vector<int>   debut_note{};
-    std::vector<int>   fin_note(taille);
-    float              maximum      = 0;
-    const float        marge_bruit  = 0.0005;
-    const float        marge_volume = 0.005;
-    const float        marge_note   = 0.05f;
+    std::vector<float>  derive(taille);
+    std::vector<float>  volume(taille);
+    std::vector<float>  volume_plat(taille);
+    std::vector<float>  derive_double(taille);
+    std::vector<size_t> debut_note{};
+    std::vector<size_t> fin_note{};
+    float               maximum      = 0;
+    const float         marge_bruit  = 0.0005;
+    const float         marge_volume = 0.005;
+    const float         marge_note   = 0.05f;
 
     for(size_t i = 0; i < taille - 1; i++)
     {
@@ -92,7 +92,6 @@ Recording analyse_rythme(const Recording& rec)
         }
     }
 
-
     for(size_t i = 0; i < debut_note.size() - 1; i++)
     {
         size_t sampleLength = debut_note[i + 1] - debut_note[i];
@@ -103,26 +102,50 @@ Recording analyse_rythme(const Recording& rec)
         }
     }
 
-    size_t           compteur = 0;
+    for(size_t note = 0; note < debut_note.size(); note++)
+    {
+        float valeurAttaque = volume_plat[note];
+
+        size_t max = note == debut_note.size() - 1 ? volume.size() - 1 : debut_note[note + 1];
+        size_t i   = debut_note[note];
+        for(; i < max; i += dt)
+        {
+            float currentValue = volume_plat[note];
+            if(currentValue < 0.3f * valeurAttaque)
+            {
+                break;
+            }
+        }
+        fin_note.push_back(i);
+    }
+
+    size_t        compteur = 0;
     std::ofstream f{"test.txt"};
     for(int i = 0; i < taille; i++)
     {
-        bool val = false;
+        bool valDebut = false;
+        bool valFin   = false;
+        if(i == fin_note[compteur])
+        {
+            valFin = true;
+        }
         if(i == debut_note[compteur])
         {
-            val = true;
+            valDebut = true;
             compteur = std::min(compteur + 1, debut_note.size() - 1);
         }
         f << i << '\t' << volume[i] << '\t' << volume_plat[i] << '\t' << derive_double[i] << '\t'
-          << val << '\n';
+          << valDebut << '\t' << valFin << '\n';
     }
     f.close();
 
-    for(size_t debut : debut_note)
+
+    for(size_t i = 0; i < debut_note.size(); i++)
     {
-        if(debut != 0)
+        if(debut_note[i] != 0)
         {
-            std::cout << debut << '\n';
+            std::cout << debut_note[i] << " | " << fin_note[i] << "\t | "
+                      << (fin_note[i] - debut_note[i]) << '\n';
         }
     }
     std::cout << std::endl;
