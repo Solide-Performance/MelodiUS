@@ -78,13 +78,13 @@ double FindFrequency(const Recording& audio)
 
 
     size_t peak  = FindPeak(v);
-    size_t peak2 = FindPeak(v, {peak});
+   /* size_t peak2 = FindPeak(v, {peak});
 
-    peak = ComparePeaks(v, peak, peak2);
+    peak = ComparePeaks(v, peak, peak2);*/
 
 
     double freq = peak / audio.getNumSeconds();
-    std::vector<size_t> badPeaks{};
+    /*std::vector<size_t> badPeaks{};
     while(freq < MIN_GUITAR_FREQ)
     {
         badPeaks.push_back(peak);
@@ -98,7 +98,7 @@ double FindFrequency(const Recording& audio)
         peak           = ComparePeaks(v, peak2, newPeak);
 
         double freq = peak / audio.getNumSeconds();
-    }
+    }*/
 
     return freq;
 }

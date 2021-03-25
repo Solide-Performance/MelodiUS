@@ -4,7 +4,7 @@
 #include "globaldef.h"
 
 #include "fft.h"
-
+#include "tuning.h"
 
 #include <algorithm>
 #include <cmath>
@@ -27,7 +27,7 @@ constexpr double epsilon = 0.005;
 
 /*****************************************************************************/
 /* Function definitions ---------------------------------------------------- */
-Recording analyse_rythme(const Recording& rec)
+std::vector<Recording> analyse_rythme(const Recording& rec)
 {
     const size_t       dt            = rec.getSampleRate() / 20;
     const size_t       sample_cutoff = rec.getSampleRate() / 5;
@@ -104,53 +104,68 @@ Recording analyse_rythme(const Recording& rec)
 
     for(size_t note = 0; note < debut_note.size(); note++)
     {
-        float valeurAttaque = volume_plat[note];
+        float valeurAttaque = volume_plat[debut_note[note]];
 
         size_t max = note == debut_note.size() - 1 ? volume.size() - 1 : debut_note[note + 1];
         size_t i   = debut_note[note];
         for(; i < max; i += dt)
         {
-            float currentValue = volume_plat[note];
+            float currentValue = volume_plat[i];
             if(currentValue < 0.3f * valeurAttaque)
             {
                 break;
             }
         }
-        fin_note.push_back(i);
+        fin_note.push_back(std::min(i, volume_plat.size() - 1));
+
     }
 
-    size_t        compteur = 0;
-    std::ofstream f{"test.txt"};
+    /*std::ofstream f{"test.txt"};
     for(int i = 0; i < taille; i++)
     {
         bool valDebut = false;
         bool valFin   = false;
-        if(i == fin_note[compteur])
-        {
-            valFin = true;
-        }
-        if(i == debut_note[compteur])
+        if(std::find(debut_note.begin(), debut_note.end(), i) != debut_note.end())
         {
             valDebut = true;
-            compteur = std::min(compteur + 1, debut_note.size() - 1);
+        }
+        if(std::find(fin_note.begin(), fin_note.end(), i) != fin_note.end())
+        {
+            valFin = true;
         }
         f << i << '\t' << volume[i] << '\t' << volume_plat[i] << '\t' << derive_double[i] << '\t'
           << valDebut << '\t' << valFin << '\n';
     }
-    f.close();
+    f.close();*/
 
 
-    for(size_t i = 0; i < debut_note.size(); i++)
+    /*for(size_t i = 0; i < debut_note.size(); i++)
     {
         if(debut_note[i] != 0)
         {
             std::cout << debut_note[i] << " | " << fin_note[i] << "\t | "
                       << (fin_note[i] - debut_note[i]) << '\n';
         }
+    }*/
+
+    std::vector<Recording> notes(debut_note.size());
+    for(size_t i = 0; i < notes.size(); i++)
+    {
+        const float* beginIt = &tableau[debut_note[i]];
+        const float* endIt   = &tableau[fin_note[i]];
+
+        notes[i] = Recording{
+          beginIt, endIt, rec.getSampleRate(), rec.getFramesPerBuffer(), rec.getNumChannels()};
+
+        double freq = FindFrequency(notes[i]);
+        std::cout << "Note " << i + 1 << " : " << freq << "Hz (" << FindNoteFromFreq(freq)
+                  << ")\tSamples: " << debut_note[i] << " to " << fin_note[i] << "("
+                  << fin_note[i] - debut_note[i] << ")" << std::endl;
     }
     std::cout << std::endl;
 
-    return {};
+    return notes;
+
 }
 
 
