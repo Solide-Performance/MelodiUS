@@ -40,6 +40,7 @@
 /* Includes ---------------------------------------------------------------- */
 #ifndef LINUX_
 #include "portaudio.h"
+#include <conio.h>    // Used for _kbhit example, can be removed
 #endif
 
 #include "readwrite_wav.h"
@@ -47,7 +48,9 @@
 
 #include <cstdio>
 #include <cstdlib>
+#include <future>
 #include <iostream>
+#include <thread>
 
 
 /*****************************************************************************/
@@ -73,6 +76,8 @@ static int  recordCallback(const void*                     inputBuffer,
                            PaStreamCallbackFlags           statusFlags,
                            void*                           userData);
 #endif
+static void recorderStopHandler(std::function<bool()> policy);
+static bool keyboardStopListener();
 
 
 /*****************************************************************************/
@@ -89,8 +94,7 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
 
     g_numChannels = numChannels;
 
-    size_t totalFrames = data.maxFrameIndex =
-      numSeconds * sampleRate; /* Record for a few seconds. */
+    size_t totalFrames = data.maxFrameIndex = numSeconds * sampleRate;
 
     data.frameIndex   = 0;
     size_t numSamples = totalFrames * numChannels;
@@ -147,22 +151,29 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
     }
     std::cout << "\n=== Now recording!! Please speak into the microphone. ===" << std::endl;
 
+    /* Clear input buffer */
+    std::fflush(stdin);
+
+    /* Start listening for ' ' to be pressed.
+     * If pressed, stop recording audio */
+    std::thread stopperThread{recorderStopHandler, []() {
+                                  return keyboardStopListener();
+                              }};
     while((err = Pa_IsStreamActive(stream)) == 1)
     {
         Pa_Sleep(1000);    // NOLINT
-        int val = 0;
-        std::cin >> val;
-        if(val == ' ')
-        {
-            g_stopFlag = true;
-        }
-
-        std::cout << "index = " << data.frameIndex << std::endl;
     }
     if(err < 0)
     {
         CALL_ERROR_HANDLER();
     }
+    std::cout << "Recording complete (" << data.frameIndex << ')' << std::endl;
+
+    /* Clear input buffer */
+    std::fflush(stdin);
+    g_stopFlag = true;
+    stopperThread.join();
+    g_stopFlag = false;
 
     err = Pa_CloseStream(stream);
     if(err != paNoError)
@@ -171,7 +182,7 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
     }
 
     Recording recording{&data.recordedSamples[0],
-                        &data.recordedSamples[numSamples],
+                        &data.recordedSamples[data.frameIndex],
                         sampleRate,
                         framesPerBuffer,
                         numChannels};
@@ -186,6 +197,31 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
 
 /*****************************************************************************/
 /* Static function definitions --------------------------------------------- */
+static void recorderStopHandler(std::function<bool()> policy)
+{
+    /* Stopflag is used to kill this thread, as well as to kill the listener thread */
+    while(g_stopFlag != true)
+    {
+        bool evaluation = policy();
+        if(evaluation)
+        {
+            g_stopFlag = true;
+        }
+        else
+        {
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+        }
+    }
+}
+static bool keyboardStopListener()
+{
+#ifndef LINUX
+    return _kbhit() != 0;
+#else
+    return false;
+#endif;
+}
+
 #ifndef LINUX_
 static void errorHandler(PaError err, SAMPLE** dataBlock)
 {

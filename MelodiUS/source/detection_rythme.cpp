@@ -177,7 +177,7 @@ void analyse_note(std::vector<size_t> debuts, std::vector<size_t> fins, size_t r
     std::vector<int64_t> liste_ratios;
 
     /* Garder la durée des notes et des silences.
-     * Chaque note est associé à un silence (même s'il fait 0 de longueur). */
+     * Chaque note est associEEun silence (même s'il fait 0 de longueur). */
     for(int64_t i = 0; i < debuts.size(); i++)
     {
         int64_t noteLength = fins[i] - debuts[i];
