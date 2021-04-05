@@ -31,6 +31,7 @@ public:
     QAction* actionImporter;
     QAction* actionEnregistrer;
     QAction* actionG_n_rer_un_sinus;
+    QAction* actionPlayback;
     QWidget* centralwidget;
 
     QLabel* label;
@@ -48,26 +49,30 @@ public:
     QSpinBox* spinBox_2;
 
     QPushButton* pushButtonA;
+    QPushButton* buttonRecord;
+    QPushButton* buttonStopRecord;
 
     QMenuBar*   menubar;
     QMenu*      menuFichier;
     QMenu*      menuOutil;
     QStatusBar* statusbar;
 
-    void setupUi(QMainWindow* MainWindow)
+    void setupUi(QMainWindow* mainWindow)
     {
-        if(MainWindow->objectName().isEmpty())
-            MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(1600, 900);    // Window size
-        actionNouveau = new QAction(MainWindow);
+        if(mainWindow->objectName().isEmpty())
+            mainWindow->setObjectName(QString::fromUtf8("MainWindow"));
+        mainWindow->resize(1600, 900);    // Window size
+        actionNouveau = new QAction(mainWindow);
         actionNouveau->setObjectName(QString::fromUtf8("actionNouveau"));
-        actionImporter = new QAction(MainWindow);
+        actionImporter = new QAction(mainWindow);
         actionImporter->setObjectName(QString::fromUtf8("actionImporter"));
-        actionEnregistrer = new QAction(MainWindow);
+        actionEnregistrer = new QAction(mainWindow);
         actionEnregistrer->setObjectName(QString::fromUtf8("actionEnregistrer"));
-        actionG_n_rer_un_sinus = new QAction(MainWindow);
+        actionG_n_rer_un_sinus = new QAction(mainWindow);
         actionG_n_rer_un_sinus->setObjectName(QString::fromUtf8("actionG_n_rer_un_sinus"));
-        centralwidget = new QWidget(MainWindow);
+        actionPlayback = new QAction(mainWindow);
+        actionPlayback->setObjectName(QString::fromUtf8("actionplayback"));
+        centralwidget = new QWidget(mainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         label = new QLabel(centralwidget);
         label->setObjectName(QString::fromUtf8("label"));
@@ -127,18 +132,26 @@ public:
         pushButtonA->setObjectName(QString::fromUtf8("pushButton"));
         pushButtonA->setGeometry(QRect(70, 370, 93, 28));
 
-        MainWindow->setCentralWidget(centralwidget);
-        menubar = new QMenuBar(MainWindow);
+        buttonRecord = new QPushButton(centralwidget);
+        buttonRecord->setObjectName(QString::fromUtf8("buttonRecord"));
+        buttonRecord->setGeometry(QRect(50, 300, 93, 28));
+        buttonStopRecord = new QPushButton(centralwidget);
+        buttonStopRecord->setObjectName(QString::fromUtf8("buttonStopRecord"));
+        buttonStopRecord->setGeometry(QRect(50, 300, 93, 28));
+        buttonStopRecord->hide();
+
+        mainWindow->setCentralWidget(centralwidget);
+        menubar = new QMenuBar(mainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
         menubar->setGeometry(QRect(0, 0, 800, 26));
         menuFichier = new QMenu(menubar);
         menuFichier->setObjectName(QString::fromUtf8("menuFichier"));
         menuOutil = new QMenu(menubar);
         menuOutil->setObjectName(QString::fromUtf8("menuOutil"));
-        MainWindow->setMenuBar(menubar);
-        statusbar = new QStatusBar(MainWindow);
+        mainWindow->setMenuBar(menubar);
+        statusbar = new QStatusBar(mainWindow);
         statusbar->setObjectName(QString::fromUtf8("statusbar"));
-        MainWindow->setStatusBar(statusbar);
+        mainWindow->setStatusBar(statusbar);
 
         menubar->addAction(menuFichier->menuAction());
         menubar->addAction(menuOutil->menuAction());
@@ -146,10 +159,11 @@ public:
         menuFichier->addAction(actionImporter);
         menuFichier->addAction(actionEnregistrer);
         menuOutil->addAction(actionG_n_rer_un_sinus);
+        menuOutil->addAction(actionPlayback);
 
-        retranslateUi(MainWindow);
+        retranslateUi(mainWindow);
 
-        QMetaObject::connectSlotsByName(MainWindow);
+        // QMetaObject::connectSlotsByName(MainWindow);
     }    // setupUi
 
     void retranslateUi(QMainWindow* MainWindow)
@@ -162,6 +176,7 @@ public:
           QCoreApplication::translate("MainWindow", "Enregistrer", nullptr));
         actionG_n_rer_un_sinus->setText(
           QCoreApplication::translate("MainWindow", "G\303\251n\303\251rer un sinus", nullptr));
+        actionPlayback->setText(QCoreApplication::translate("MainWindow", "Playback", nullptr));
         label->setText(QCoreApplication::translate(
           "MainWindow",
           "<html><head/><body><p>MelodiUS V1.0   UwU Solide Performance</p></body></html>",
@@ -169,6 +184,9 @@ public:
         //  centralwidget->setTitle(
         //  QCoreApplication::translate("MainWindow", "Affichage partition", nullptr));
         pushButtonA->setText(QCoreApplication::translate("MainWindow", "A", nullptr));
+        buttonRecord->setText(QCoreApplication::translate("MainWindow", "Record", nullptr));
+        buttonStopRecord->setText(
+          QCoreApplication::translate("MainWindow", "Stop Recording", nullptr));
         menuFichier->setTitle(QCoreApplication::translate("MainWindow", "Fichier", nullptr));
         menuOutil->setTitle(QCoreApplication::translate("MainWindow", "Outil", nullptr));
     }    // retranslateUi

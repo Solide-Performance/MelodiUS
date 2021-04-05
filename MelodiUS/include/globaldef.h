@@ -2,13 +2,14 @@
 /*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
 #include <cassert>
+#include <cmath>
 #include <cstddef>
 #include <cstdint>
+#include <functional>
 #include <limits>
 #include <numeric>
 #include <stdexcept>
 #include <type_traits>
-#include <cmath>
 
 
 /*****************************************************************************/
@@ -63,7 +64,7 @@ constexpr floating lin_to_db(floating lin)
 #ifndef LINUX_
 #define INLINE __forceinline
 #else
-#define INLINE 
+#define INLINE
 #endif
 
 

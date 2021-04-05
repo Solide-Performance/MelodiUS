@@ -58,13 +58,6 @@
 #define CALL_ERROR_HANDLER() errorHandler(err, &data.recordedSamples)    // NOLINT
 
 
-
-/*****************************************************************************/
-/* Static variables -------------------------------------------------------- */
-static size_t g_numChannels = static_cast<size_t>(-1);
-static bool   g_stopFlag    = false;
-
-
 /*****************************************************************************/
 /* Static function declarations -------------------------------------------- */
 #ifndef LINUX_
@@ -76,8 +69,15 @@ static int  recordCallback(const void*                     inputBuffer,
                            PaStreamCallbackFlags           statusFlags,
                            void*                           userData);
 #endif
-static void recorderStopHandler(std::function<bool()> policy);
+static void recorderStopHandler();
 static bool keyboardStopListener();
+
+
+/*****************************************************************************/
+/* Static variables -------------------------------------------------------- */
+static size_t                g_numChannels = static_cast<size_t>(-1);
+static bool                  g_stopFlag    = false;
+static std::function<bool()> g_policy      = keyboardStopListener;
 
 
 /*****************************************************************************/
@@ -110,12 +110,6 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
     {
         data.recordedSamples[i] = 0;
     }
-
-    /*err = Pa_Initialize();
-    if(err != paNoError)
-    {
-        CALL_ERROR_HANDLER();
-    }*/
 
     inputParameters.device = Pa_GetDefaultInputDevice(); /* default input device */
     if(inputParameters.device == paNoDevice)
@@ -156,9 +150,7 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
 
     /* Start listening for ' ' to be pressed.
      * If pressed, stop recording audio */
-    std::thread stopperThread{recorderStopHandler, []() {
-                                  return keyboardStopListener();
-                              }};
+    std::thread stopperThread{recorderStopHandler};
     while((err = Pa_IsStreamActive(stream)) == 1)
     {
         Pa_Sleep(1000);    // NOLINT
@@ -194,15 +186,26 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
 #endif
 }
 
+void Recording_SetStopPolicy(const std::function<bool()>& newPolicy)
+{
+    if(newPolicy)
+    {
+        g_policy = newPolicy;
+    }
+    else
+    {
+        g_policy = keyboardStopListener;
+    }
+}
 
 /*****************************************************************************/
 /* Static function definitions --------------------------------------------- */
-static void recorderStopHandler(std::function<bool()> policy)
+static void recorderStopHandler()
 {
     /* Stopflag is used to kill this thread, as well as to kill the listener thread */
     while(g_stopFlag != true)
     {
-        bool evaluation = policy();
+        bool evaluation = g_policy();
         if(evaluation)
         {
             g_stopFlag = true;

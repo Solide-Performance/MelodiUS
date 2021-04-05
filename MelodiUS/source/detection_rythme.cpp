@@ -161,7 +161,7 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
     }
     std::cout << std::endl;
     std::cout << std::endl;
-
+    
     analyse_note(debut_note, fin_note, volume_plat.size());
 
     return notes;

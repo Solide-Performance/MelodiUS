@@ -15,6 +15,8 @@ class MainWindow : public QMainWindow
     Q_OBJECT
 public slots:
    void on_pushButton_clicked();
+   void startRecord();
+   void stopRecord();
 
 public:
     MainWindow(QWidget* parent = nullptr);
