@@ -91,7 +91,7 @@ void SaveToWav(std::string_view filename, const Recording& recording)
 
     WAV_Writer writer{
       filename,
-      static_cast<unsigned long>(recording.getSampleRate() * recording.getNumChannels()),
+      static_cast<unsigned long>(recording.getSampleRate()/* * recording.getNumChannels()*/),
       1};
 
     writer.Write(shortData.data(), shortData.size());
@@ -106,7 +106,11 @@ Recording LoadFromWav(std::string_view filename)
 
     // @todo
     // HARDCODED '2' & '1' !!!!!!! TO REMOVE
-    return {&floatData.front(), &floatData.back(), (size_t)(reader.get_FrameRate() / 2), 1, 2};
+    return {&floatData.front(),
+            &floatData.back(),
+            reader.get_FrameRate(),    // This used to be divided by 2 for some unknown reason
+            1,
+            reader.get_NumChannels()};
 }
 
 
@@ -254,15 +258,16 @@ WAV_Writer::WAV_Writer(std::string_view fileName,
     WriteChunkType(&addr, WAVE_ID);
 
     /* Write format chunk based on AudioSample structure. */
+    // https://www.isip.piconepress.com/projects/speech/software/tutorials/production/fundamentals/v1.0/section_02/s02_01_p05.html#:~:text=The%20WAV%20format%20is%20by,up%20to%202%20for%20stereo).
     WriteChunkType(&addr, FMT_ID);
-    WriteLongLE(&addr, CHAR_BIT * sizeof(short));
+    WriteLongLE(&addr, 2 + 2 + 4 + 4 + 2 + 2);
     WriteShortLE(&addr, WAVE_FORMAT_PCM);
 
     uint32_t bytesPerSecond = frameRate * samplesPerFrame * sizeof(short);
     WriteShortLE(&addr, samplesPerFrame);
     WriteLongLE(&addr, frameRate);
     WriteLongLE(&addr, bytesPerSecond);
-    WriteShortLE(&addr, (samplesPerFrame * sizeof(short))); /* bytesPerBlock */
+    WriteShortLE(&addr, (samplesPerFrame * sizeof(short))); /* alignement */
     WriteShortLE(&addr, CHAR_BIT * sizeof(short));          /* bits per sample */
 
     /* Write ID and size for 'data' chunk. */
@@ -355,13 +360,13 @@ WAV_Reader::WAV_Reader(std::string_view fileName)
     }
     fread(header.data(), 1, sizeof(header), fid);
 
-    /* Write RIFF header. */
+    /* Read RIFF header. */
     ReadChunkType(&addr, &long_bidon);
     if(long_bidon != RIFF_ID)
     {
         throw std::logic_error("Wrong RIFF_ID");
     }
-    /* Write RIFF size as zero for now. Will patch later. */
+    /* Read file size, we don't care. */
     ReadLongLE(&addr, &long_bidon);
 
     /* Read WAVE form ID. */
@@ -379,9 +384,9 @@ WAV_Reader::WAV_Reader(std::string_view fileName)
         throw std::logic_error("Wrong FMT_ID");
     }
     ReadLongLE(&addr, &long_bidon);
-    if(long_bidon != CHAR_BIT * sizeof(short))
+    if(long_bidon != 16)
     {
-        throw std::logic_error("Wrong it's 16 (" + std::to_string(long_bidon) + ")");
+        throw std::logic_error("1: Wrong it's 16 (" + std::to_string(long_bidon) + ")");
     }
 
     ReadShortLE(&addr, &short_bidon);
@@ -391,14 +396,15 @@ WAV_Reader::WAV_Reader(std::string_view fileName)
     }
 
     // bytesPerSecond = frameRate * samplesPerFrame * sizeof(short);
-    ReadShortLE(&addr, &samplesPerFrame);
+    ReadShortLE(&addr, &numChannels);
     ReadLongLE(&addr, &frameRate);
     ReadLongLE(&addr, &bytesPerSecond);
     ReadShortLE(&addr, &bytesPerBlock); /* bytesPerBlock */
     ReadShortLE(&addr, &short_bidon);   /* bits per sample */
     if(short_bidon != CHAR_BIT * sizeof(short))
     {
-        throw std::logic_error("Wrong it's 16 (" + std::to_string(short_bidon) + ")");
+        throw std::logic_error("Invalid bits per sample, only supports 16-bits ("
+                               + std::to_string(short_bidon) + ")");
     }
 
     /* Read ID and size for 'data' chunk. */
@@ -423,7 +429,6 @@ std::vector<short>& WAV_Reader::Read()
     {
         std::array<uint8_t, 2> buffer{0};
         uint8_t*               bufferPtr = buffer.data();
-        ;
 
         size_t bytesRead = fread(buffer.data(), 1, sizeof(buffer), fid);
         if(bytesRead != sizeof(buffer))
