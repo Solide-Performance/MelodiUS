@@ -40,9 +40,9 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
     std::vector<float>  derive_double(taille);
     std::vector<size_t> debut_note{};
     std::vector<size_t> fin_note{};
-    float               maximum      = 0;
-    const float         marge_bruit  = 0.0005;
-    const float         marge_volume = 0.005;
+    float               maximum      = 0.f;
+    const float         marge_bruit  = 0.0005f;
+    const float         marge_volume = 0.005f;
     const float         marge_note   = 0.05f;
 
     for(size_t i = 0; i < taille - 1; i++)
@@ -51,7 +51,6 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
     }
 
     float volmax = *std::max_element(volume.cbegin(), volume.cend());
-    float volmin = /* 0.0316*/ 0.1 * volmax;
     for(size_t i = 0; i < taille - 1; i++)
     {
         if(COMPARE_FLOATS(derive[i], 0.0f, epsilon) && tableau[i] > 0 /*marge_volume*/)
@@ -82,7 +81,6 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
         std::fill(&volume_plat[i], &volume_plat[max], volume_moyen);
     }
 
-    int compteur_debut = 0;
     for(size_t i = 0; i < taille - 1; i++)
     {
         derive_double[i] = volume_plat[i + 1] - volume_plat[i];
@@ -166,7 +164,6 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
 
     analyse_note(debut_note, fin_note, volume_plat.size());
 
-
     return notes;
 }
 
@@ -176,8 +173,8 @@ void analyse_note(std::vector<size_t> debuts, std::vector<size_t> fins, size_t r
     std::vector<int64_t> liste_duree;
     std::vector<int64_t> liste_ratios;
 
-    /* Garder la durÈe des notes et des silences.
-     * Chaque note est associÅEÅEun silence (mÍme s'il fait 0 de longueur). */
+    /* Garder la duree des notes et des silences.
+     * Chaque note est associee a un silence (meme s'il fait 0 de longueur). */
     for(int64_t i = 0; i < debuts.size(); i++)
     {
         int64_t noteLength = fins[i] - debuts[i];

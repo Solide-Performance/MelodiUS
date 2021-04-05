@@ -11,8 +11,10 @@
 #include "recorder.h"
 #include "recording.h"
 #include "tuning.h"
+#include "gui.h"
 
 #ifndef LINUX_
+#include "fpga.h"
 #include "portaudio.h"
 #endif
 
@@ -39,8 +41,11 @@ void setupFPGA();
 
 /*****************************************************************************/
 /* Entry point ------------------------------------------------------------- */
-int main()
+int main(int argc, char* argv[])
 {
+    /* Invoke GUI */
+    std::thread gui{mainOfGui, argc, argv};
+
     /* portaudio init */
     std::thread portAudioInitThread(setupPortaudio);
 
@@ -56,6 +61,8 @@ int main()
     Pa_Terminate();
     FPGA::DeInit();
 #endif
+
+    gui.join();
     return 0;
 }
 
@@ -65,26 +72,6 @@ int main()
 void menuHandler()
 {
     Recording rec;
-
-    /*std::string path = "guitare/";
-    for(const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(path))
-    {
-        std::cout << entry.path() << std::endl;
-
-        try
-        {
-            rec = LoadFromWav(entry.path().generic_string());
-            double freq = FindFrequency(rec);
-            std::cout << "Freq: " << freq << " (" + FindNoteFromFreq(freq) + ")" << std::endl;
-        }
-        catch(const std::exception& ex)
-        {
-            std::cout << "Could not read .wav file" << ex.what() << std::endl;
-        }
-    }
-    while(1)
-    {
-    }*/
 
     while(true)
     {
