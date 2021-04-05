@@ -24,6 +24,8 @@ HEADERS      += ./include/readwrite_wav.h
 HEADERS      += ./include/generator.h
 HEADERS      += ./include/mainwindow.h ./include/mainwindow_ui.h
 HEADERS      += ./include/fft.h
+HEADERS      += ./include/gui.h
+
 
 SOURCES      += ./source/main.cpp
 SOURCES      += ./source/recorder.cpp ./source/recording.cpp

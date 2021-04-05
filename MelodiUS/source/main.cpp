@@ -7,14 +7,15 @@
 #include "readwrite_wav.h"
 #include "recorder.h"
 #include "recording.h"
-
 #include "fpga.h"
+#include "gui.h"
 
 #include "portaudio.h"
 
 #include <iostream>
 #include <string>
 #include <string_view>
+#include <thread>
 
 
 /*****************************************************************************/
@@ -36,9 +37,8 @@ void setupFPGA();
 /* Entry point ------------------------------------------------------------- */
 int main(int argc, char* argv[])
 {
-    int mainOfGui(int argc, char* argv[]);
-    mainOfGui(argc, argv);
-
+    /* Invoke GUI */
+    std::thread gui{mainOfGui, argc, argv};
 
     /* portaudio init */
     setupPortaudio();
@@ -51,7 +51,9 @@ int main(int argc, char* argv[])
 
     /* Close portaudio & FPGA*/
     Pa_Terminate();
-    FPGA::DeInit();
+    //FPGA::DeInit();
+
+    gui.join();
     return 0;
 }
 
@@ -61,9 +63,6 @@ int main(int argc, char* argv[])
 void menuHandler()
 {
     Recording rec;
-
-
-
 
     while(true)
     {

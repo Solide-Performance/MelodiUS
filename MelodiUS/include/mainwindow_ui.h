@@ -17,52 +17,48 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QWidget>
-#include <QtWidgets/QSpinBox>
-#include <QtWidgets/QPushButton>
 
 QT_BEGIN_NAMESPACE
 
 class Ui_MainWindow
 {
 public:
-    QAction*      actionNouveau;
-    QAction*      actionImporter;
-    QAction*      actionEnregistrer;
-    QAction*      actionG_n_rer_un_sinus;
-    QWidget*      centralwidget;
+    QAction* actionNouveau;
+    QAction* actionImporter;
+    QAction* actionEnregistrer;
+    QAction* actionG_n_rer_un_sinus;
+    QWidget* centralwidget;
 
-    QLabel*       label;
-    QLabel*       label_3;
-    QLabel*       label_A;
+    QLabel* label;
+    QLabel* label_3;
+    QLabel* label_A;
 
+    QFrame* line;
+    QFrame* line_2;
+    QFrame* line_3;
+    QFrame* line_4;
+    QFrame* line_5;
+    QFrame* line_6;
 
-    QFrame*       line;
-    QFrame*       line_2;
-    QFrame*       line_3;
-    QFrame*       line_4;
-    QFrame*       line_5;
-    QFrame*       line_6;
+    QSpinBox* spinBox;
+    QSpinBox* spinBox_2;
 
-    QSpinBox*     spinBox;
-    QSpinBox*     spinBox_2;
+    QPushButton* pushButtonA;
 
-    QComboBox*    comboBox;
-    QComboBox*    comboBox_2;
-
-    QPushButton*  pushButtonA;
-
-    QMenuBar*     menubar;
-    QMenu*        menuFichier;
-    QMenu*        menuOutil;
-    QStatusBar*   statusbar;
+    QMenuBar*   menubar;
+    QMenu*      menuFichier;
+    QMenu*      menuOutil;
+    QStatusBar* statusbar;
 
     void setupUi(QMainWindow* MainWindow)
     {
         if(MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(1600, 900);                                      //Window size
+        MainWindow->resize(1600, 900);    // Window size
         actionNouveau = new QAction(MainWindow);
         actionNouveau->setObjectName(QString::fromUtf8("actionNouveau"));
         actionImporter = new QAction(MainWindow);
@@ -79,14 +75,9 @@ public:
         label_3 = new QLabel(centralwidget);
         label_3->setObjectName(QString::fromUtf8("label_3"));
         label_3->setGeometry(QRect(10, 130, 51, 101));
-        label_3->setPixmap(QPixmap(
-          QString::fromUtf8("../../MelodiUS/meloiusImage/cle40x80T.png")));
-        //groupBox = new QGroupBox(centralwidget);
-        //groupBox->setObjectName(QString::fromUtf8("groupBox"));
-        //groupBox->setGeometry(QRect(0, 0, 771, 491));
-       // groupBox->setCheckable(false);
+        label_3->setPixmap(QPixmap(QString::fromUtf8("../../MelodiUS/meloiusImage/cle40x80T.png")));
 
-        ///=== LIGNE HORIZONTAL ========//
+        ///=== LIGNE HORIZONTALE ========//
         line = new QFrame(centralwidget);
         line->setObjectName(QString::fromUtf8("line"));
         line->setGeometry(QRect(10, 130, 1600, 21));
@@ -112,20 +103,14 @@ public:
         line_5->setGeometry(QRect(10, 210, 1600, 21));
         line_5->setFrameShape(QFrame::HLine);
         line_5->setFrameShadow(QFrame::Sunken);
-        ///=== LIGNE VERTICAL ========//
+
+        ///=== LIGNE VERTICALE ========//
         line_6 = new QFrame(centralwidget);
         line_6->setObjectName(QString::fromUtf8("line_6"));
         line_6->setGeometry(QRect(250, 140, 20, 81));
         line_6->setFrameShape(QFrame::VLine);
         line_6->setFrameShadow(QFrame::Sunken);
 
-      /*  comboBox = new QComboBox(centralwidget);              //Je les trouve pas mal moins belle
-        comboBox->setObjectName(QString::fromUtf8("comboBox"));
-        comboBox->setGeometry(QRect(90, 150, 41, 22));
-        comboBox_2 = new QComboBox(centralwidget);
-        comboBox_2->setObjectName(QString::fromUtf8("comboBox_2"));
-        comboBox_2->setGeometry(QRect(90, 190, 41, 22));
-        */
         spinBox = new QSpinBox(centralwidget);
         spinBox->setObjectName(QString::fromUtf8("spinBox"));
         spinBox->setGeometry(QRect(50, 150, 42, 22));
@@ -181,14 +166,12 @@ public:
           "MainWindow",
           "<html><head/><body><p>MelodiUS V0.3   UwU Solide Performance</p></body></html>",
           nullptr));
-      //  centralwidget->setTitle(
+        //  centralwidget->setTitle(
         //  QCoreApplication::translate("MainWindow", "Affichage partition", nullptr));
         pushButtonA->setText(QCoreApplication::translate("MainWindow", "A", nullptr));
         menuFichier->setTitle(QCoreApplication::translate("MainWindow", "Fichier", nullptr));
         menuOutil->setTitle(QCoreApplication::translate("MainWindow", "Outil", nullptr));
     }    // retranslateUi
-
-
 };
 
 namespace Ui

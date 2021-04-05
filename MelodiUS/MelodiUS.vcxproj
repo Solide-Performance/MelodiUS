@@ -155,6 +155,7 @@
     <ClInclude Include="include\fpga.h" />
     <ClInclude Include="include\generator.h" />
     <ClInclude Include="include\globaldef.h" />
+    <ClInclude Include="include\gui.h" />
     <CustomBuild Include="include\mainwindow.h">
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">include\mainwindow.h;release\moc_predefs.h;E:\Programmes\Qt\6.0.1\msvc2019_64\bin\moc.exe;%(AdditionalInputs)</AdditionalInputs>
       <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">E:\Programmes\Qt\6.0.1\msvc2019_64\bin\moc.exe  -DUNICODE -D_UNICODE -DWIN32 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -DWIN64 -DQT_DISABLE_DEPRECATED_BEFORE=0x060000 -DNDEBUG -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB --compiler-flavor=msvc --include E:/GitHub/MelodiUS/MelodiUS/release/moc_predefs.h -IE:/Programmes/Qt/6.0.1/msvc2019_64/mkspecs/win32-msvc -IE:/GitHub/MelodiUS/MelodiUS -IE:/GitHub/MelodiUS/MelodiUS/include -IE:/GitHub/MelodiUS/MelodiUS/portaudio -IE:/GitHub/MelodiUS/MelodiUS/source -IE:/GitHub/MelodiUS/MelodiUS -IE:/GitHub/MelodiUS/MelodiUS/include -IE:/GitHub/MelodiUS/MelodiUS/source -IE:/GitHub/MelodiUS/MelodiUS/portaudio -IE:/GitHub/MelodiUS/MelodiUS/CommunicationFPGA -IE:/GitHub/MelodiUS/MelodiUS -IE:/Programmes/Qt/6.0.1/msvc2019_64/include -IE:/Programmes/Qt/6.0.1/msvc2019_64/include/QtWidgets -IE:/Programmes/Qt/6.0.1/msvc2019_64/include/QtGui -IE:/Programmes/Qt/6.0.1/msvc2019_64/include/QtCore include\mainwindow.h -o release\moc_mainwindow.cpp</Command>
