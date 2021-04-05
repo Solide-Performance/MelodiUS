@@ -20,8 +20,7 @@ HEADERS      += ./include/generator.h
 HEADERS      += ./include/mainwindow.h ./include/mainwindow_ui.h
 
 
-SOURCES      += ./source/main.cpp \
-    source/gui.cpp
+SOURCES      += ./source/main.cpp
 SOURCES      += ./source/recorder.cpp ./source/recording.cpp
 SOURCES      += ./source/fpga.cpp
 SOURCES      += ./source/playback.cpp
