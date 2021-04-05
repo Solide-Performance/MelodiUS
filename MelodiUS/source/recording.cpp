@@ -15,7 +15,7 @@ const SAMPLE& Recording::operator[](size_t index) const
 
 SAMPLE& Recording::operator[](size_t index)
 {
-    return const_cast<SAMPLE&>(const_cast<const Recording*>(this)->operator[](index));  // NOLINT
+    return const_cast<SAMPLE&>(const_cast<const Recording*>(this)->operator[](index));    // NOLINT
 }
 #pragma endregion
 
@@ -70,6 +70,17 @@ std::vector<SAMPLE>::const_iterator Recording::end() const
 {
     return m_samples.cend();
 }
+
+
+void Recording::clear()
+{
+    m_samples.clear();
+    m_framesPerBuffer = 0;
+    m_numChannels     = 0;
+    m_sampleRate      = 0;
+}
+
+
 #pragma endregion
 
 

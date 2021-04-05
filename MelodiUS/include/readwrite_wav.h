@@ -104,10 +104,10 @@ class WAV_Reader
     size_t        dataSizeOffset = 0;
     unsigned long dataSize       = 0;
 
-    unsigned long      frameRate       = 0;
-    unsigned short     samplesPerFrame = 0;
-    long unsigned int  bytesPerSecond  = 0;
-    short unsigned int bytesPerBlock   = 0;
+    unsigned long      frameRate      = 0;
+    unsigned short     numChannels    = 0;
+    long unsigned int  bytesPerSecond = 0;
+    short unsigned int bytesPerBlock  = 0;
 
 public:
     WAV_Reader()                  = delete;
@@ -153,9 +153,9 @@ public:
         return frameRate;
     }
 
-    [[nodiscard]] unsigned short get_SamplesPerFrame() const
+    [[nodiscard]] unsigned short get_NumChannels() const
     {
-        return samplesPerFrame;
+        return numChannels;
     }
 
     [[nodiscard]] long unsigned int get_BytesPerSecond() const
