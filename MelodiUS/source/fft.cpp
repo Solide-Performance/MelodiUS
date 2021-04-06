@@ -19,87 +19,37 @@
 /*****************************************************************************/
 /* Constants --------------------------------------------------------------- */
 constexpr int    MAX_DEPTH       = 4;
-constexpr double MIN_GUITAR_FREQ = 75.0;
+constexpr double MIN_GUITAR_FREQ = 75.;
+constexpr double MAX_GUITAR_FREQ = 1350.;
 
 
 /*****************************************************************************/
 /* Function definitions ---------------------------------------------------- */
-size_t FindPeak(const std::vector<complex_t>& v,
-                std::vector<size_t>           ignoredPeaks = {},
-                size_t                        trueBegin    = 1)
+size_t FindPeak(const std::vector<complex_t>& v, size_t begin, size_t end)
 {
     /* clang-format off */
     return std::distance(v.begin(),
-                         std::max_element(v.begin() + trueBegin,
-                                          v.end() - v.size() / 2,
-                                          [v, ignoredPeaks](const complex_t& c1, const complex_t& c2)
+                         std::max_element(v.begin() + begin,
+                                          v.end() - (v.size() / 2) - end,
+                                          [](const complex_t& c1, const complex_t& c2)
                                           {
-                                              for (size_t ignoredPeak : ignoredPeaks)
-                                              {
-                                                  if(c1 == v[ignoredPeak] || c2 == v[ignoredPeak])
-                                                  {
-                                                      return false;
-                                                  }
-                                              }
                                               return std::abs(c1) < std::abs(c2);
                                           }));
     /* clang-format on */
 }
 
-size_t ComparePeaks(const std::vector<complex_t>& v, size_t peak1, size_t peak2)
-{
-    constexpr int amplitudeMargin = 200;
-    float         num             = abs(abs(v[peak1]) - abs(v[peak2]));
-    if(num < amplitudeMargin)
-    {
-        return std::min(peak1, peak2);
-    }
-}
-
 
 double FindFrequency(const Recording& audio)
 {
-    // Benchmark total{"Total"};
-    // To take only a single channel
-    /* clang-format off */
-    auto lmbd = [&, N = audio.getNumChannels()](const SAMPLE& c) mutable
-                {
-                    (void)c;
-                    return static_cast<bool>(--N == 0 ? N = audio.getNumChannels() : false);
-                };
-    /* clang-format on */
-
-    /*std::vector<complex_t> v(audio.getNumSamples() / audio.getNumChannels());
-    std::copy_if(audio.begin(), audio.end(), v.begin(), lmbd);*/
     std::vector<complex_t> v(audio.begin(), audio.end());
 
     // Calculate FFT
     FFT(v);
 
-
-    size_t peak  = FindPeak(v);
-   /* size_t peak2 = FindPeak(v, {peak});
-
-    peak = ComparePeaks(v, peak, peak2);*/
-
-
+    size_t beginSample = MIN_GUITAR_FREQ * audio.getNumSeconds();
+    size_t endSample   = MAX_GUITAR_FREQ * audio.getNumSeconds();
+    size_t peak        = FindPeak(v, beginSample, endSample);
     double freq = peak / audio.getNumSeconds();
-    /*std::vector<size_t> badPeaks{};
-    while(freq < MIN_GUITAR_FREQ)
-    {
-        badPeaks.push_back(peak);
-
-        if (badPeaks.size() > 10)
-        {
-            return -1.;
-        }
-
-        size_t newPeak = FindPeak(v, badPeaks, *std::max_element(badPeaks.begin(), badPeaks.end()));
-        peak           = ComparePeaks(v, peak2, newPeak);
-
-        double freq = peak / audio.getNumSeconds();
-    }*/
-
     return freq;
 }
 

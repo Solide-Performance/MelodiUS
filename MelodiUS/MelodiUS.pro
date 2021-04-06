@@ -31,6 +31,7 @@ win32 {
     TEMPLATE     = vcapp
     CONFIG       += c++17
     CONFIG       += /external:W0
+	QT           += core gui widgets
     QMAKE_CXXFLAGS_WARN_ON ~= s/-W3/-W4
 
     # Libraries

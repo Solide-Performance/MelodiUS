@@ -224,12 +224,14 @@ void analyse_note(std::vector<size_t> debuts, std::vector<size_t> fins, size_t r
     }
 
     /* Get lowest layer of fraction */
-    int64_t max_ratio =
-      *std::max_element(liste_ratios.begin(),
-                        liste_ratios.end(),
-                        [rejected = fractions.size() - 1](int64_t greatest, int64_t val) {
-                            return val == rejected ? false : greatest < val;
-                        });
+    /* clang-format off */
+    int64_t max_ratio = *std::max_element(liste_ratios.begin(),
+                                          liste_ratios.end(),
+                                          [rejected = fractions.size() - 1](int64_t greatest, int64_t val)
+                                          {
+                                              return val == rejected ? false : greatest < val;
+                                          });
+    /* clang-format off */
 
     std::cout << max_ratio << std::endl;
     for(int64_t i = 0; i < liste_duree.size(); i++)
