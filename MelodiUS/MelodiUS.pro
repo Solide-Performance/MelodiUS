@@ -14,6 +14,7 @@ HEADERS      += ./include/generator.h
 HEADERS      += ./include/detection_rythme.h
 HEADERS      += ./include/fft.h
 HEADERS      += ./include/tuning.h
+HEADERS      += ./include/note.h
 
 
 # Sources

@@ -77,6 +77,9 @@
     <ClInclude Include="include\globaldef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\note.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="include\playback.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -93,9 +96,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="include\tuning.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="note.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
