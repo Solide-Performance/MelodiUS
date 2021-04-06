@@ -72,6 +72,30 @@ int main(int argc, char* argv[])
 void menuHandler()
 {
     Recording rec;
+    std::string path = "guitare/";
+    for(const std::filesystem::directory_entry& entry : std::filesystem::directory_iterator(path))
+    {
+        std::cout << entry.path() << std::endl;
+        try
+        {
+            rec = LoadFromWav(entry.path().generic_string());
+            if(rec.isValid())
+            {
+                analyse_rythme(rec);
+            }
+            else
+            {
+                std::cout << "Must read valid audio" << std::endl;
+            }
+        }
+        catch(const std::exception& ex)
+        {
+            std::cout << "Could not read .wav file" << ex.what() << std::endl;
+        }
+    }
+    while(1)
+    {
+    }
 
     while(true)
     {
