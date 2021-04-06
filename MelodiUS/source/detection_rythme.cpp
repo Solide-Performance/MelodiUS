@@ -154,14 +154,15 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
         notes[i] = Recording{
           beginIt, endIt, rec.getSampleRate(), rec.getFramesPerBuffer(), rec.getNumChannels()};
 
-        double freq = FindFrequency(notes[i]);
-        std::cout << "Note " << i + 1 << " : " << freq << "Hz (" << FindNoteFromFreq(freq)
+        double freq     = FindFrequency(notes[i]);
+        auto [str, val] = FindNoteFromFreq(freq);
+        std::cout << "Note " << i + 1 << " : " << freq << "Hz (" << str
                   << ")\tSamples: " << debut_note[i] << " to " << fin_note[i] << "("
                   << fin_note[i] - debut_note[i] << ")" << std::endl;
     }
     std::cout << std::endl;
     std::cout << std::endl;
-    
+
     analyse_note(debut_note, fin_note, volume_plat.size());
 
     return notes;

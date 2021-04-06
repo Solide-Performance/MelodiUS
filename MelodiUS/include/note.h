@@ -1,64 +1,25 @@
 #pragma once
+#include <array>
 
-enum NoteType;
-enum NoteValue;
-
-class Note
-{
-public:
-    const NoteType  noteType;
-    const NoteValue noteValue;
-
-    Note(NoteType nt, NoteValue nv) : noteType{nt}, noteValue{nv}
-    {
-    }
-};
-
-
-enum NoteType
+#pragma region Note type and value enums
+enum class NoteType
 {
     Ronde,
     Blanche,
     Noire,
     Croche,
     DoubleCroche,
-    TripleCroche,
     Pause,
     DemiPause,
     Silence,
     DemiSilence,
-    QuartSilence
+    QuartSilence,
+    UNKNOWN
 };
-enum NoteValue
+
+enum class NoteValue : int64_t
 {
-    C0,
-    C0,
-    Cs0,
-    E0,
-    F0,
-    Fs0,
-    G0,
-    Gs0,
-    A0,
-    As0,
-    B0,
-    C1,
-    Cs1,
-    D1,
-    Ds1,
-    E1,
-    F1,
-    Fs1,
-    G1,
-    Gs1,
-    A1,
-    As1,
-    B1,
-    C2,
-    Cs2,
-    D2,
-    Ds2,
-    E2,
+    E2 = 0,
     F2,
     Fs2,
     G2,
@@ -103,39 +64,33 @@ enum NoteValue
     As5,
     B5,
     C6,
-    Cs6,
-    D6,
-    Ds6,
-    E6,
-    F6,
-    Fs6,
-    G6,
-    Gs6,
-    A6,
-    As6,
-    B6,
-    C7,
-    Cs7,
-    D7,
-    Ds7,
-    E7,
-    F7,
-    Fs7,
-    G7,
-    Gs7,
-    A7,
-    As7,
-    B7,
-    C8,
-    Cs8,
-    D8,
-    Ds8,
-    E8,
-    F8,
-    Fs8,
-    G8,
-    Gs8,
-    A8,
-    As8,
-    B8
+    UNKNOWN
 };
+#pragma endregion
+
+
+class Note
+{
+public:
+    const NoteType  noteType;
+    const NoteValue noteValue;
+
+    constexpr Note() : noteType{NoteType::UNKNOWN}, noteValue{NoteValue::UNKNOWN}
+    {
+    }
+    constexpr Note(NoteType nt, NoteValue nv) : noteType{nt}, noteValue{nv}
+    {
+    }
+
+    bool isSharp()
+    {
+        static std::array<bool, static_cast<int64_t>(NoteValue::UNKNOWN) + 1> lookupTable{
+          false, false, true, false, true, false, true, false, false, true, false, true,
+          false, false, true, false, true, false, true, false, false, true, false, true,
+          false, false, true, false, true, false, true, false, false, true, false, true,
+          false, false, true, false, true, false, true, false, false, false};
+
+        return lookupTable[static_cast<int64_t>(noteValue)];
+    }
+};
+

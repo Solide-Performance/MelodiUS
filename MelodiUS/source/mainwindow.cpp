@@ -2,11 +2,12 @@
 #include "mainwindow_ui.h"
 
 #include <iostream>
+#include <thread>
 
 #include "generator.h"
 #include "playback.h"
 #include "recording.h"
-#include <thread>
+#include "widget_note.h"
 
 static Recording rec{};
 
@@ -46,7 +47,7 @@ void MainWindow::stopRecord()
 
 void MainWindow::on_pushButton_clicked()    // Label existe deja line 74 mainwindow_ui.h
 {
-    static QLabel* label_A = new QLabel(ui->centralwidget);
+    /*static QLabel* label_A = new QLabel(ui->centralwidget);
 
     QPixmap pixmap = (QString::fromUtf8("../../MelodiUS/meloiusImage/noir.png"));
 
@@ -64,7 +65,10 @@ void MainWindow::on_pushButton_clicked()    // Label existe deja line 74 mainwin
     label_A->setPixmap(pixmap);
     label_A->setMask(pixmap.mask());
 
-    label_A->show();
+    label_A->show();*/
+
+    NoteWidget* A = new NoteWidget{this, Note{NoteType::Noire, NoteValue::A4}, 300};
+    A->show();
 }
 
 MainWindow::~MainWindow()
