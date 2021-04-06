@@ -43,7 +43,7 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
     float               maximum      = 0.f;
     const float         marge_bruit  = 0.0005f;
     const float         marge_volume = 0.005f;
-    const float         marge_note   = 0.05f;
+    const float         marge_note   = 0.1f;
 
     for(size_t i = 0; i < taille - 1; i++)
     {
