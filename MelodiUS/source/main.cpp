@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
 void menuHandler()
 {
     Recording rec;
-    /*std::string path = "tests/test_gamme/";
+    std::string path = "tests/test_gamme/";
     for(const std::filesystem::directory_entry& entry : std::filesystem::recursive_directory_iterator(path))
     {
         std::cout << entry.path() << std::endl;
@@ -96,7 +96,7 @@ void menuHandler()
     while(1)
     {
     }
-    */
+    
     while(true)
     {
         std::cout << std::endl;
