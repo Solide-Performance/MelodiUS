@@ -49,7 +49,7 @@ double FindFrequency(const Recording& audio)
     size_t beginSample = MIN_GUITAR_FREQ * audio.getNumSeconds();
     size_t endSample   = MAX_GUITAR_FREQ * audio.getNumSeconds();
     size_t peak        = FindPeak(v, beginSample, endSample);
-    double freq = peak / audio.getNumSeconds();
+    double freq        = peak / audio.getNumSeconds();
     return freq;
 }
 

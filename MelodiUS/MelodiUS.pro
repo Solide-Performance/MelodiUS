@@ -15,9 +15,9 @@ HEADERS      += ./include/detection_rythme.h
 HEADERS      += ./include/fft.h
 HEADERS      += ./include/tuning.h
 HEADERS      += ./include/note.h
+HEADERS      += ./include/mainwindow.h ./include/mainwindow_ui.h
+HEADERS      += ./include/gui.h
 
-
-# Sources
 SOURCES      += ./source/main.cpp
 SOURCES      += ./source/fpga.cpp
 SOURCES      += ./source/recorder.cpp
@@ -25,6 +25,8 @@ SOURCES      += ./source/playback.cpp
 SOURCES      += ./source/readwrite_wav.cpp
 SOURCES      += ./source/generator.cpp
 SOURCES      += ./source/detection_rythme.cpp
+SOURCES      += ./source/mainwindow.cpp
+SOURCES      += ./source/gui.cpp
 SOURCES      += ./source/fft.cpp
 
 win32 {
@@ -32,7 +34,7 @@ win32 {
     TEMPLATE     = vcapp
     CONFIG       += c++17
     CONFIG       += /external:W0
-	QT           += core gui widgets
+    QT           += core gui widgets
     QMAKE_CXXFLAGS_WARN_ON ~= s/-W3/-W4
 
     # Libraries

@@ -42,7 +42,13 @@
     <ClCompile Include="source\generator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="source\gui.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="source\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="source\mainwindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="source\playback.cpp">
@@ -77,6 +83,15 @@
     <ClInclude Include="include\globaldef.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="include\gui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <CustomBuild Include="include\mainwindow.h">
+      <Filter>Header Files</Filter>
+    </CustomBuild>
+    <ClInclude Include="include\mainwindow_ui.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="include\note.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -100,6 +115,12 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="debug\moc_mainwindow.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
+    <ClCompile Include="release\moc_mainwindow.cpp">
+      <Filter>Generated Files</Filter>
+    </ClCompile>
     <CustomBuild Include="debug\moc_predefs.h.cbt">
       <Filter>Generated Files</Filter>
     </CustomBuild>

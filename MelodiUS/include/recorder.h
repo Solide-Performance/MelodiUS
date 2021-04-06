@@ -10,7 +10,7 @@
 constexpr size_t SAMPLE_RATE       = 44100;
 constexpr size_t FRAMES_PER_BUFFER = 512;
 constexpr size_t NUM_CHANNELS      = 2;
-constexpr size_t NUM_SECONDS       = 4;
+constexpr size_t NUM_SECONDS       = 60;
 
 /* #define DITHER_FLAG     (paDitherOff) */
 constexpr bool DITHER_FLAG = false;
@@ -33,6 +33,8 @@ struct paTestData
                                size_t sampleRate      = SAMPLE_RATE,
                                size_t framesPerBuffer = FRAMES_PER_BUFFER,
                                size_t numChannels     = NUM_CHANNELS);
+
+void Recording_SetStopPolicy(const std::function<bool()>& newPolicy);
 
 [[nodiscard]] std::vector<short> Samples_FloatToShort(const std::vector<float>& inVec);
 [[nodiscard]] std::vector<float> Samples_ShortToFloat(const std::vector<short>& inVec);
