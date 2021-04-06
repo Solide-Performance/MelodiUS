@@ -59,7 +59,7 @@ void MainWindow::on_pushButton_clicked()    // Label existe deja line 74 mainwin
     int y_si  = 120;
 
     std::cout << "ceci est le bouton A" << std::endl;
-    label_A->setObjectName(QString::fromUtf8("label"));
+
     label_A->setGeometry(QRect(300, y_la, 20, 80));
     label_A->setPixmap(pixmap);
     label_A->setMask(pixmap.mask());
