@@ -8,7 +8,8 @@
 ********************************************************************************/
 
 #include <QtCore/QVariant>
-#include <QtGui/QAction>
+#include <QtWidgets/QAction>
+#include <QtGui/QBitmap>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QFrame>

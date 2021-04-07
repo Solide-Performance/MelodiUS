@@ -29,8 +29,8 @@ constexpr double epsilon = 0.005;
 /* Function definitions ---------------------------------------------------- */
 std::vector<Recording> analyse_rythme(const Recording& rec)
 {
-    const size_t       dt            = rec.getSampleRate() / 20;
-    const size_t       sample_cutoff = rec.getSampleRate() / 5;
+    const size_t       dt            = rec.getSampleRate() / 6;
+    size_t             sample_cutoff = rec.getSampleRate() / 5;
     std::vector<float> tableau       = rec.getSamples();
     size_t             taille        = tableau.size();
 
@@ -40,10 +40,9 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
     std::vector<float>  derive_double(taille);
     std::vector<size_t> debut_note{};
     std::vector<size_t> fin_note{};
-    float               maximum      = 0.f;
-    const float         marge_bruit  = 0.0005f;
-    const float         marge_volume = 0.005f;
-    const float         marge_note   = 0.05f;
+    float               maximum     = 0.f;
+    const float         marge_bruit = 0.0005f;
+    const float         marge_note  = 0.001f;
 
     for(size_t i = 0; i < taille - 1; i++)
     {
@@ -89,7 +88,10 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
             debut_note.push_back(i);
         }
     }
-
+    if(debut_note.size() == 0)
+    {
+        return {{}};
+    }
     for(size_t i = 0; i < debut_note.size() - 1; i++)
     {
         size_t sampleLength = debut_note[i + 1] - debut_note[i];
@@ -115,6 +117,36 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
             }
         }
         fin_note.push_back(std::min(i, volume_plat.size() - 1));
+    }
+
+    size_t maxLength = 0;
+    for(size_t i = 0; i < debut_note.size(); i++)
+    {
+        maxLength = std::max(maxLength, fin_note[i] - debut_note[i]);
+    }
+
+    sample_cutoff = maxLength / 18;
+
+    for(size_t i = 0; i < debut_note.size() - 1; i++)
+    {
+        size_t sampleLength = fin_note[i] - debut_note[i];
+        if(sampleLength < sample_cutoff)
+        {
+            // Removes note (merge with next)
+            fin_note.erase(fin_note.begin() + i);
+            debut_note.erase(debut_note.begin() + i + 1);
+        }
+    }
+
+    for(size_t i = 0; i < debut_note.size() - 1; i++)
+    {
+        size_t sampleLength = fin_note[i + 1] - debut_note[i + 1];
+
+        if((sampleLength) < (fin_note[i] - debut_note[i]) / 8)
+        {
+            fin_note.erase(fin_note.begin() + i);
+            debut_note.erase(debut_note.begin() + i + 1);
+        }
     }
 
     /*std::ofstream f{"test.txt"};
@@ -161,7 +193,7 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
     }
     std::cout << std::endl;
     std::cout << std::endl;
-    
+
     analyse_note(debut_note, fin_note, volume_plat.size());
 
     return notes;
