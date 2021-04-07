@@ -24,9 +24,9 @@ class FPGA
     static CommunicationFPGA* m_fpga;
 #endif
 
-    static std::thread        m_listener;
-    static bool               m_run;
-    static std::array<int, 4> m_adc;    // Stuck with `int` because of CommunicationFPGA lib
+    static std::thread*        m_listener;
+    static bool*               m_run;
+    static std::array<int, 4>* m_adc;    // Stuck with `int` because of CommunicationFPGA lib
 
 public:
     static void Init();

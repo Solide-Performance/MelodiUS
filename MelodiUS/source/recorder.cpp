@@ -39,7 +39,7 @@
 /*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
 #ifndef LINUX_
-#include "portaudio.h"
+#include "portaudio/portaudio.h"
 #include <conio.h>    // Used for _kbhit example, can be removed
 #endif
 

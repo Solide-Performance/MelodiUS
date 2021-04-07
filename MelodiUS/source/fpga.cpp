@@ -30,7 +30,7 @@
         if(success)                                                                                \
         {                                                                                          \
             success =                                                                              \
-              m_fpga->lireRegistre(FPGA::Registers::ADC##channelNumber, m_adc[channelNumber]);     \
+              m_fpga->lireRegistre(FPGA::Registers::ADC##channelNumber, (*m_adc)[channelNumber]);  \
         }                                                                                          \
         else                                                                                       \
         {                                                                                          \
@@ -43,7 +43,10 @@
 /*****************************************************************************/
 /* Static member definitions ----------------------------------------------- */
 #ifndef LINUX_
-CommunicationFPGA* FPGA::m_fpga = nullptr;
+CommunicationFPGA*  FPGA::m_fpga     = nullptr;
+bool*               FPGA::m_run      = nullptr;
+std::thread*        FPGA::m_listener = nullptr;
+std::array<int, 4>* FPGA::m_adc      = nullptr;
 #else
 void* FPGA::m_fpga = nullptr;
 #endif
@@ -58,26 +61,26 @@ void FPGA::Init()
 #ifndef LINUX_
         m_fpga = new CommunicationFPGA{};
 
-        m_run      = true;
-        m_listener = std::thread{listenerThread};
-        m_adc      = {0, 0, 0, 0};
+        m_run      = new bool(true);
+        m_listener = new std::thread{listenerThread};
+        m_adc      = new std::array<int, 4>{0, 0, 0, 0};
 #endif
     }
 }
 void FPGA::DeInit()
 {
-    m_run = false;
+    *m_run = false;
     WriteLED(0x00);
     // delete m_fpga;
 
-    m_listener.join();
+    m_listener->join();
 }
 
 void FPGA::listenerThread()
 {
     CHECK_ENABLED();
 
-    while(m_run == true)
+    while(*m_run == true)
     {
         bool success = true;
         READ_CHANNEL(0);
@@ -114,18 +117,18 @@ std::array<uint8_t, 4> FPGA::getADC()
 {
     CHECK_ENABLED(EMPTY_ADC_ARRAY);
 
-    return std::array<uint8_t, 4>{static_cast<uint8_t>(m_adc[0]),
-                                  static_cast<uint8_t>(m_adc[1]),
-                                  static_cast<uint8_t>(m_adc[2]),
-                                  static_cast<uint8_t>(m_adc[3])};
+    return std::array<uint8_t, 4>{static_cast<uint8_t>((*m_adc)[0]),
+                                  static_cast<uint8_t>((*m_adc)[1]),
+                                  static_cast<uint8_t>((*m_adc)[2]),
+                                  static_cast<uint8_t>((*m_adc)[3])};
 }
 uint8_t FPGA::getADC(size_t channel)
 {
     CHECK_ENABLED(0xFF);
 
-    if (channel < 4)
+    if(channel < 4)
     {
-        return static_cast<uint8_t>(m_adc[channel]);
+        return static_cast<uint8_t>((*m_adc)[channel]);
     }
     else
     {

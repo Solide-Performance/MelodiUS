@@ -7,7 +7,7 @@
 #include "generator.h"
 #include "playback.h"
 #include "recording.h"
-#include "widget_note.h"
+#include "widgets/widget_note.h"
 
 static Recording rec{};
 
