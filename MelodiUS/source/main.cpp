@@ -73,9 +73,9 @@ void menuHandler()
 {
     Recording rec;
 
-    /*std::string path = "tests/sounds/";
-    for(const std::filesystem::directory_entry& entry :
-        std::filesystem::directory_iterator(path))
+
+    std::string path = "tests/test_gamme/";
+    for(const std::filesystem::directory_entry& entry : std::filesystem::recursive_directory_iterator(path))
     {
         std::cout << entry.path() << ": ";
         try
@@ -99,7 +99,7 @@ void menuHandler()
     }
     while(1)
     {
-    }*/
+    }
 
     while(true)
     {
