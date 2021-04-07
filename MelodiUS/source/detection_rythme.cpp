@@ -29,7 +29,7 @@ constexpr double epsilon = 0.005;
 /* Function definitions ---------------------------------------------------- */
 std::vector<Recording> analyse_rythme(const Recording& rec)
 {
-    const size_t       dt            = rec.getSampleRate() / 8;
+    const size_t       dt            = rec.getSampleRate() / 9;
     size_t             sample_cutoff = rec.getSampleRate() / 5;
     std::vector<float> tableau       = rec.getSamples();
     size_t             taille        = tableau.size();
