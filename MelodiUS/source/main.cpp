@@ -6,12 +6,12 @@
 #include "fpga.h"
 #include "generator.h"
 #include "globaldef.h"
+#include "gui.h"
 #include "playback.h"
 #include "readwrite_wav.h"
 #include "recorder.h"
 #include "recording.h"
 #include "tuning.h"
-#include "gui.h"
 
 #ifndef LINUX_
 #include "fpga.h"
@@ -44,7 +44,7 @@ void setupFPGA();
 int main(int argc, char* argv[])
 {
     /* Invoke GUI */
-    std::thread gui{mainOfGui, argc, argv};
+    //std::thread gui{mainOfGui, argc, argv};
 
     /* portaudio init */
     std::thread portAudioInitThread(setupPortaudio);
@@ -62,7 +62,7 @@ int main(int argc, char* argv[])
     FPGA::DeInit();
 #endif
 
-    gui.join();
+    //gui.join();
     return 0;
 }
 
@@ -74,8 +74,9 @@ void menuHandler()
     Recording rec;
 
 
-    std::string path = "tests/test_gamme/";
-    for(const std::filesystem::directory_entry& entry : std::filesystem::recursive_directory_iterator(path))
+     std::string path = "tests/test_gamme/";
+     for(const std::filesystem::directory_entry& entry :
+     std::filesystem::recursive_directory_iterator(path))
     {
         std::cout << entry.path() << ": ";
         try
@@ -83,9 +84,10 @@ void menuHandler()
             rec = LoadFromWav(entry.path().generic_string());
             if(rec.isValid())
             {
-                double           freq = FindFrequency(rec);
+                /*double           freq = FindFrequency(rec);
                 auto [NoteName, NoteVal] = FindNoteFromFreq(freq);
-                std::cout << NoteName << " (" << freq << ")" << std::endl;
+                std::cout << NoteName << " (" << freq << ")" << std::endl;*/
+                analyse_rythme(rec);
             }
             else
             {
@@ -97,7 +99,7 @@ void menuHandler()
             std::cout << "Could not read .wav file" << ex.what() << std::endl;
         }
     }
-    while(1)
+     while(1)
     {
     }
 
@@ -243,8 +245,10 @@ void menuHandler()
             {
                 if(rec.isValid())
                 {
-                    int freq = static_cast<int>(FindFrequency(rec));
-                    std::cout << "Main frequency of signal: " << freq << std::endl;
+                    int freq                  = static_cast<int>(FindFrequency(rec));
+                    auto [NoteName, NoteType] = FindNoteFromFreq(freq);
+                    std::cout << "Main frequency of " << NoteName << " signal: " << freq
+                              << std::endl;
                 }
                 else
                 {

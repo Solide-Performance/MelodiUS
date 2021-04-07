@@ -24,13 +24,13 @@ constexpr int    MAX_DEPTH             = 4;
 constexpr double MIN_GUITAR_FREQ       = 75.;
 constexpr double MAX_GUITAR_FREQ       = 1350.;
 constexpr size_t IGNORE_FREQ_MARGIN    = 75; /* Ignores 25Hz on each side of peaks */
-constexpr size_t PEAKS_TO_CHECK        = 3;
-constexpr double AMPLITUDE_MARGIN_MULT = db_to_lin(-10.0); /* -10dB */
+constexpr size_t PEAKS_TO_CHECK        = 5;
+constexpr double AMPLITUDE_MARGIN_MULT = db_to_lin(-12.0); /* -12dB */
 
 
 /*****************************************************************************/
 /* Function definitions ---------------------------------------------------- */
-size_t FindPeak(const std::vector<complex_t>& v, size_t begin, size_t end, size_t seconds)
+size_t FindPeak(const std::vector<complex_t>& v, size_t begin, size_t end, double seconds)
 {
     size_t samplesToIgnore = IGNORE_FREQ_MARGIN * seconds;
 
@@ -90,10 +90,20 @@ size_t FindPeak(const std::vector<complex_t>& v, size_t begin, size_t end, size_
                                         {
                                             return a.val > minPeak;
                                         });
+
+
+
+    std::array<double, PEAKS_TO_CHECK> freqs;
+    std::transform(peaks.begin(),
+                   peaks.end(),
+                   freqs.begin(),
+                   [seconds](const max_elem_t& val)
+                   {
+                       return val.index / seconds;
+                   });
     /* clang-format on */
 
-
-
+    double chosenFreq = max_elem.index / seconds;
     return max_elem.index;
 }
 
