@@ -2,11 +2,13 @@
 /*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
 #ifndef LINUX_
-#include "CommunicationFPGA.h"
+#include "CommunicationFPGA/CommunicationFPGA.h"
 #endif
 
 #include "globaldef.h"
+#include <array>
 #include <string>
+#include <thread>
 #include <vector>
 
 
@@ -22,54 +24,46 @@ class FPGA
     static CommunicationFPGA* m_fpga;
 #endif
 
-    FPGA(); /* The constructor is private to avoid instanciation */
+    static std::thread        m_listener;
+    static bool               m_run;
+    static std::array<int, 4> m_adc;    // Stuck with `int` because of CommunicationFPGA lib
 
 public:
-    /* --------------------------------- */
-    /* Types                             */
-    enum class Port
-    {
-        A,
-        B,
-        C,
-        D,
-    };
-
     static void Init();
     static void DeInit();
 
     /* --------------------------------- */
     /* Accessors                         */
-    static bool        isOk();
-    static std::string errorMsg();
-
-    /* Pin is a value from 0 to 3 */
-    static bool    readPin(Port port, uint8_t pin);
-    static uint8_t readPort(Port port);
+    [[nodiscard]] static bool                   isOk();
+    [[nodiscard]] static std::string            errorMsg();
+    [[nodiscard]] static std::array<uint8_t, 4> getADC();
+    [[nodiscard]] static uint8_t                getADC(size_t channel);
 
     static void WriteLED(uint8_t val);
 
 private:
     /* --------------------------------- */
+    /* Methods                           */
+    FPGA() = default; /* The constructor is private to avoid instanciation */
+
+    static void listenerThread();
+
+    /* --------------------------------- */
     /* Types                             */
     enum Registers : int
     {
         /* Ports, these values might change */
-        READ_A  = 0,
-        WRITE_A = 1,
-        READ_B  = 2,
-        WRITE_B = 3,
-        READ_C  = 4,
-        WRITE_C = 5,
-        READ_D  = 6,
-        WRITE_D = 7,
-        SWITCH  = 8,
-        BUTTON  = 9,
-        LED     = 10,
-        AN0     = 11,
-        AN1     = 12,
-        AN2     = 13,
-        AN3     = 14
+        BUTTON       = 0,
+        SWITCH       = 1,
+        TIME_COUNTER = 2,
+        ADC0         = 3,
+        ADC1         = 4,
+        ADC2         = 5,
+        ADC3         = 6,
+        AN0          = 7,
+        AN1          = 8,
+        DOT          = 9,
+        LED          = 10,
     };
 };
 

@@ -27,108 +27,195 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\detection_rythme.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
+    <Filter Include="Source Files\fasttrigo" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="fasttrigo\fasttrigo.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\fasttrigo</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Source Files\source" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\detection_rythme.cpp">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="source\fft.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\source</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="source\fpga.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\source</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="source\generator.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\source</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="source\gui.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\source</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="source\main.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\source</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="source\mainwindow.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\source</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="source\playback.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\source</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="source\readwrite_wav.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\source</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="source\recorder.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>Source Files\source</Filter>
     </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files\CommunicationFPGA" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommunicationFPGA\CommunicationFPGA.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\detection_rythme.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="fasttrigo\fasttrigo.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fft.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\fpga.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\generator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\globaldef.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\gui.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <CustomBuild Include="include\mainwindow.h">
-      <Filter>Header Files</Filter>
-    </CustomBuild>
-    <ClInclude Include="include\mainwindow_ui.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\note.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\playback.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="portaudio\portaudio.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\readwrite_wav.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\recorder.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\recording.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="include\tuning.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="widget_note.h">
-      <Filter>Header Files</Filter>
+      <Filter>Header Files\CommunicationFPGA</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="debug\moc_mainwindow.cpp">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
-    <ClCompile Include="release\moc_mainwindow.cpp">
-      <Filter>Generated Files</Filter>
-    </ClCompile>
-    <CustomBuild Include="debug\moc_predefs.h.cbt">
-      <Filter>Generated Files</Filter>
+    <Filter Include="Header Files\fasttrigo" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="fasttrigo\fasttrigo.h">
+      <Filter>Header Files\fasttrigo</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files\include" />
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files\include\widgets" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\widgets\widget_note.h">
+      <Filter>Header Files\include\widgets</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\detection_rythme.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\fft.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\fpga.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\generator.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\globaldef.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\gui.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="include\mainwindow.h">
+      <Filter>Header Files\include</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\mainwindow_ui.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\note.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\playback.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\readwrite_wav.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\recorder.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\recording.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\tuning.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Header Files\portaudio" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="portaudio\portaudio.h">
+      <Filter>Header Files\portaudio</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Generated Files\debug" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="debug\moc_mainwindow.cpp">
+      <Filter>Generated Files\debug</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <CustomBuild Include="debug\moc_predefs.h.cbt">
+      <Filter>Generated Files\debug</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Generated Files\release" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="release\moc_mainwindow.cpp">
+      <Filter>Generated Files\release</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <CustomBuild Include="release\moc_predefs.h.cbt">
-      <Filter>Generated Files</Filter>
+      <Filter>Generated Files\release</Filter>
     </CustomBuild>
   </ItemGroup>
 </Project>

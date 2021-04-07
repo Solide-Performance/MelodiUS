@@ -5,6 +5,42 @@
 
 
 /*****************************************************************************/
+/* Macros ------------------------------------------------------------------ */
+#ifndef LINUX_
+#define CHECK_ENABLED(x)                                                                           \
+    do                                                                                             \
+    {                                                                                              \
+        if(!m_fpga)                                                                                \
+        {                                                                                          \
+            return x;                                                                              \
+        }                                                                                          \
+    } while(false)
+#else
+#define CHECK_ENABLED(x) return x
+#endif
+
+/* clang-format off */
+#define EMPTY_ADC_ARRAY std::array<uint8_t, 4>{0xFF, 0xFF, 0xFF, 0xFF}
+/* clang-format on */
+
+#define READ_CHANNEL(channelNumber)                                                                \
+    do                                                                                             \
+    {                                                                                              \
+        static_assert(channelNumber >= 0 && channelNumber < 4);                                    \
+        if(success)                                                                                \
+        {                                                                                          \
+            success =                                                                              \
+              m_fpga->lireRegistre(FPGA::Registers::ADC##channelNumber, m_adc[channelNumber]);     \
+        }                                                                                          \
+        else                                                                                       \
+        {                                                                                          \
+            std::cerr << "Error while reading channel #" #channelNumber << '\n'                    \
+                      << errorMsg() << std::endl;                                                  \
+        }                                                                                          \
+    } while(false)
+
+
+/*****************************************************************************/
 /* Static member definitions ----------------------------------------------- */
 #ifndef LINUX_
 CommunicationFPGA* FPGA::m_fpga = nullptr;
@@ -15,129 +51,91 @@ void* FPGA::m_fpga = nullptr;
 
 /*****************************************************************************/
 /* Public methods definitions ---------------------------------------------- */
-
 void FPGA::Init()
 {
     if(m_fpga == nullptr)
     {
 #ifndef LINUX_
         m_fpga = new CommunicationFPGA{};
+
+        m_run      = true;
+        m_listener = std::thread{listenerThread};
+        m_adc      = {0, 0, 0, 0};
 #endif
     }
 }
 void FPGA::DeInit()
 {
+    m_run = false;
     WriteLED(0x00);
     // delete m_fpga;
+
+    m_listener.join();
+}
+
+void FPGA::listenerThread()
+{
+    CHECK_ENABLED();
+
+    while(m_run == true)
+    {
+        bool success = true;
+        READ_CHANNEL(0);
+        READ_CHANNEL(1);
+        READ_CHANNEL(2);
+        READ_CHANNEL(3);
+
+        /* Sleep for 100 ms */
+        std::this_thread::sleep_for(std::chrono::milliseconds{100});
+    }
 }
 
 /* --------------------------------- */
 /* Accessors                         */
 bool FPGA::isOk()
 {
-    if(!m_fpga)
-    {
-        return false;
-    }
+    CHECK_ENABLED(false);
 
-#ifdef LINUX_
-    return false;
-#else
+#ifndef LINUX_
     return m_fpga->estOk();
 #endif
 }
 
 std::string FPGA::errorMsg()
 {
-#ifdef LINUX_
-    return "No FPGA support on Linux";
-#else
-    if(!m_fpga)
-    {
-        return "";
-    }
+    CHECK_ENABLED("");
+
+#ifndef LINUX_
     return m_fpga->messageErreur();
 #endif
 }
 
-uint8_t FPGA::readPort(Port port)
+std::array<uint8_t, 4> FPGA::getADC()
 {
-    if(!m_fpga)
-    {
-        return 0x00;
-    }
+    CHECK_ENABLED(EMPTY_ADC_ARRAY);
 
-#ifdef LINUX_
-    return 0x00;
-#else
-    int  retval  = 0;
-    bool success = true;
-
-    switch(port)
-    {
-        case Port::A:
-            success = m_fpga->lireRegistre(Registers::READ_A, retval);
-            break;
-        case Port::B:
-            success = m_fpga->lireRegistre(Registers::READ_B, retval);
-            break;
-        case Port::C:
-            success = m_fpga->lireRegistre(Registers::READ_C, retval);
-            break;
-        case Port::D:
-            success = m_fpga->lireRegistre(Registers::READ_D, retval);
-            break;
-
-        default:
-            std::cerr << "Wrong port to read from" << std::endl;
-            return std::numeric_limits<uint8_t>::max();
-    }
-
-    if(!success)
-    {
-        std::cerr << "Error while reading from port" << std::endl;
-        return std::numeric_limits<uint8_t>::max();
-    }
-
-    return static_cast<uint8_t>(retval);
-#endif
+    return std::array<uint8_t, 4>{static_cast<uint8_t>(m_adc[0]),
+                                  static_cast<uint8_t>(m_adc[1]),
+                                  static_cast<uint8_t>(m_adc[2]),
+                                  static_cast<uint8_t>(m_adc[3])};
 }
-
-bool FPGA::readPin(Port port, uint8_t pin)
+uint8_t FPGA::getADC(size_t channel)
 {
-    if(!m_fpga)
+    CHECK_ENABLED(0xFF);
+
+    if (channel < 4)
     {
-        return false;
+        return static_cast<uint8_t>(m_adc[channel]);
     }
-
-#ifdef LINUX_
-    return false;
-#else
-    if(pin > 0x04)
+    else
     {
-        std::cerr << "Wrong pin to read from" << std::endl;
-        return false;
+        return 0xFF;
     }
-
-    bool    val     = false;
-    uint8_t portVal = readPort(port);
-
-    if(portVal != std::numeric_limits<uint8_t>::max())
-    {
-        val = static_cast<bool>(portVal & (0x01 << pin));
-    }
-
-    return val;
-#endif
 }
-
 
 void FPGA::WriteLED(uint8_t val)
 {
-    if(!m_fpga)
-    {
-        return;
-    }
+    CHECK_ENABLED();
 
 #ifndef LINUX_
     m_fpga->ecrireRegistre(Registers::LED, val);
