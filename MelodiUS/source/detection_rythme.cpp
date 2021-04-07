@@ -29,7 +29,7 @@ constexpr double epsilon = 0.005;
 /* Function definitions ---------------------------------------------------- */
 std::vector<Recording> analyse_rythme(const Recording& rec)
 {
-    const size_t       dt            = rec.getSampleRate() / 6;
+    const size_t       dt            = rec.getSampleRate() / 9;
     size_t             sample_cutoff = rec.getSampleRate() / 5;
     std::vector<float> tableau       = rec.getSamples();
     size_t             taille        = tableau.size();
@@ -42,7 +42,7 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
     std::vector<size_t> fin_note{};
     float               maximum     = 0.f;
     const float         marge_bruit = 0.0005f;
-    const float         marge_note  = 0.001f;
+    const float         marge_note  = 0.003f;
 
     for(size_t i = 0; i < taille - 1; i++)
     {
@@ -126,7 +126,7 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
     }
 
     sample_cutoff = maxLength / 18;
-
+    /* essayer de mettre en place un lien avec les fft
     for(size_t i = 0; i < debut_note.size() - 1; i++)
     {
         size_t sampleLength = fin_note[i] - debut_note[i];
@@ -137,17 +137,8 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
             debut_note.erase(debut_note.begin() + i + 1);
         }
     }
+    */
 
-    for(size_t i = 0; i < debut_note.size() - 1; i++)
-    {
-        size_t sampleLength = fin_note[i + 1] - debut_note[i + 1];
-
-        if((sampleLength) < (fin_note[i] - debut_note[i]) / 8)
-        {
-            fin_note.erase(fin_note.begin() + i);
-            debut_note.erase(debut_note.begin() + i + 1);
-        }
-    }
 
     /*std::ofstream f{"test.txt"};
     for(int i = 0; i < taille; i++)
