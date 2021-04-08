@@ -7,9 +7,14 @@
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
+#include <QtGlobal>
+#if QT_VERSION >= 0x060000
+#include <QtGui/QAction>
+#else
+#include <QtWidgets/QAction>
+#endif
 #include <QtCore/QVariant>
 #include <QtGui/QBitmap>
-#include <QtGui/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QFrame>

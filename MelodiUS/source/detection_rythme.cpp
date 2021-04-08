@@ -168,6 +168,7 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
         }
     }*/
 
+    std::cout << std::endl;
     std::vector<Recording> notes(debut_note.size());
     for(size_t i = 0; i < notes.size(); i++)
     {
@@ -183,8 +184,7 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
                   << ")\tSamples: " << debut_note[i] << " to " << fin_note[i] << "("
                   << fin_note[i] - debut_note[i] << ")" << std::endl;
     }
-    std::cout << std::endl;
-    std::cout << std::endl;
+    std::cout << std::endl << std::endl;
 
     analyse_note(debut_note, fin_note, volume_plat.size());
 

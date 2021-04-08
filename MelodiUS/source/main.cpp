@@ -34,8 +34,9 @@ constexpr size_t FREQ_MIN    = 50;
 /*****************************************************************************/
 /* Function declarations --------------------------------------------------- */
 void menuHandler();
+void fpgaMenuHandler();
 void setupPortaudio();
-void setupFPGA();
+bool setupFPGA();
 
 
 /*****************************************************************************/
@@ -49,10 +50,17 @@ int main(int argc, char* argv[])
     std::thread portAudioInitThread(setupPortaudio);
 
     /* CommunicationFPGA init */
-    setupFPGA();
+    bool fpgaControlMode = setupFPGA();
 
-    /* Menu display and command handling */
-    menuHandler();
+    if(fpgaControlMode == false)
+    {
+        /* Menu display and command handling */
+        menuHandler();
+    }
+    else
+    {
+        fpgaMenuHandler();
+    }
 
 /* Close portaudio & FPGA*/
 #ifndef LINUX_
@@ -197,7 +205,7 @@ void menuHandler()
                 break;
             }
 
-            /* Load and Playback .wav file */
+            /* Load .wav file */
             case 5:
             {
                 std::cout << " - Load & Playback - \nFilename:" << std::endl;
@@ -212,15 +220,6 @@ void menuHandler()
                 catch(const std::exception& ex)
                 {
                     std::cout << "Could not read .wav file" << ex.what() << std::endl;
-                }
-
-                if(rec.isValid())
-                {
-                    // Playback(rec);
-                }
-                else
-                {
-                    std::cout << "Must read valid audio" << std::endl;
                 }
                 break;
             }
@@ -265,16 +264,73 @@ void menuHandler()
     }
 }
 
-void setupFPGA()
+void fpgaMenuHandler()
 {
-    FPGA::Init();
+    std::cout << "\n ----- MelodiUS ----- \n";
+    std::cout << "A       - Start/Stop recording\n";
+    std::cout << "EY      - Playback recorded audio\n";
+    std::cout << "AE      - Load .wav file\n";
+    std::cout << "I       - Analysis\n";
+    std::cout << "<BonMatin> - Exit\n" << std::endl;
+    std::printf(" Filter1\t  Filter2\t  Filter3\t  Filter4\n");
+
+    Recording rec;
 
     // clang-format off
-    FPGA::setPhonemeCallback(Phoneme::a,  []{std::cout << "Phoneme A\n"  << std::endl;});
-    FPGA::setPhonemeCallback(Phoneme::ey, []{std::cout << "Phoneme EY\n" << std::endl;});
-    FPGA::setPhonemeCallback(Phoneme::ae, []{std::cout << "Phoneme AE\n" << std::endl;});
-    FPGA::setPhonemeCallback(Phoneme::i,  []{std::cout << "Phoneme I\n"  << std::endl;});
+    FPGA::setPhonemeCallback(Phoneme::a, [&rec]() mutable
+                                         {
+                                             rec = Record(60);
+                                         });
+
+    FPGA::setPhonemeCallback(Phoneme::ey, [&rec]()
+                                          {
+                                              if(rec.isValid())
+                                              {
+                                                  Playback(rec);
+                                              }
+                                          });
+
+    FPGA::setPhonemeCallback(Phoneme::ae, [&rec]() mutable
+                                          {
+                                              std::cout << "\n.wav file path: " << std::endl;
+
+                                              std::string consoleString{};
+                                              std::cin >> consoleString;
+
+
+                                              rec.clear();
+
+                                              try
+                                              {
+                                                  rec = LoadFromWav(consoleString);
+                                              }
+                                              catch(const std::exception& ex)
+                                              {
+                                                  std::cout << "Could not read .wav file" << ex.what() << std::endl;
+                                              }
+                                         });
+
+    FPGA::setPhonemeCallback(Phoneme::i, [&rec]() 
+                                         {
+                                             if(rec.isValid())
+                                             {
+                                                 analyse_rythme(rec);
+                                             }
+                                         });
     // clang-format on
+
+    FPGA::StartListener();
+
+    while(1)
+    {
+    }
+}
+
+bool setupFPGA()
+{
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
+    FPGA::Init();
 
     FPGA::WriteLED(0xFF);
     if(!FPGA::isOk())
@@ -282,13 +338,14 @@ void setupFPGA()
         std::cerr << "FPGA Connection Failed: " << FPGA::errorMsg() << std::endl;
         FPGA::DeInit();
         // throw std::exception();
+        return false;
     }
     else
     {
         std::cout << "FPGA Connection Successful" << std::endl;
     }
 
-    FPGA::StartListener();
+    return true;
 }
 
 

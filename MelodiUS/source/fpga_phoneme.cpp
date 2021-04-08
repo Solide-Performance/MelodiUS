@@ -122,11 +122,23 @@ void FPGA::listenerThread()
         READ_CHANNEL(2);
         READ_CHANNEL(3);
 
-        uint8_t adc1 = static_cast<uint8_t>((*m_adc)[0]);
-        uint8_t adc2 = static_cast<uint8_t>((*m_adc)[1]);
-        uint8_t adc3 = static_cast<uint8_t>((*m_adc)[2]);
-        uint8_t adc4 = static_cast<uint8_t>((*m_adc)[3]);
-        printf("\r 0x%2X | 0x%2X | 0x%2X | 0x%2X", adc1, adc2, adc3, adc4);
+        uint8_t adc1  = static_cast<uint8_t>((*m_adc)[0]);
+        uint8_t adc2  = static_cast<uint8_t>((*m_adc)[1]);
+        uint8_t adc3  = static_cast<uint8_t>((*m_adc)[2]);
+        uint8_t adc4  = static_cast<uint8_t>((*m_adc)[3]);
+        int     adc1p = adc1 / 255.f * 100.f;
+        int     adc2p = adc2 / 255.f * 100.f;
+        int     adc3p = adc3 / 255.f * 100.f;
+        int     adc4p = adc4 / 255.f * 100.f;
+        std::printf("\r 0x%2X (%2.d%%)\t| 0x%2X (%2.d%%)\t| 0x%2X (%2.d%%)\t| 0x%2X (%2.d%%)",
+                    adc1,
+                    adc1p,
+                    adc2,
+                    adc2p,
+                    adc3,
+                    adc3p,
+                    adc4,
+                    adc4p);
 
         /* Check for phonemes in the buttons */
         checkButtonPhonemes();
