@@ -56,7 +56,7 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;include;source;.;portaudio;CommunicationFPGA;fasttrigo;..\..\Qt\6.0.1\msvc2019_64\include;..\..\Qt\6.0.1\msvc2019_64\include\QtWidgets;..\..\Qt\6.0.1\msvc2019_64\include\QtGui;..\..\Qt\6.0.1\msvc2019_64\include\QtCore;release;/include;..\..\Qt\6.0.1\msvc2019_64\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;include;source;.;..\..\Qt\6.0.1\msvc2019_64\include;..\..\Qt\6.0.1\msvc2019_64\include\QtWidgets;..\..\Qt\6.0.1\msvc2019_64\include\QtGui;..\..\Qt\6.0.1\msvc2019_64\include\QtCore;release;/include;..\..\Qt\6.0.1\msvc2019_64\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -permissive- -Zc:__cplusplus -Zc:externConstexpr -utf-8 -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>release\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -66,7 +66,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ObjectFileName>release\</ObjectFileName>
       <Optimization>MaxSpeed</Optimization>
-      <PreprocessorDefinitions>_CONSOLE;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;QT_DISABLE_DEPRECATED_BEFORE=0x060000;NDEBUG;QT_NO_DEBUG;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CONSOLE;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;NDEBUG;QT_NO_DEBUG;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
       <ProgramDataBaseFileName></ProgramDataBaseFileName>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -76,7 +76,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>C:\Qt\6.0.1\msvc2019_64\lib\Qt6Widgets.lib;C:\Qt\6.0.1\msvc2019_64\lib\Qt6Gui.lib;C:\Qt\6.0.1\msvc2019_64\lib\Qt6Core.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalOptions>./portaudio_x64.lib ./CommunicationFPGA-release.lib &quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot; %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>./portaudio_x64.lib ./CommunicationFPGA/CommunicationFPGA-release.lib &quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot; %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <GenerateDebugInformation>false</GenerateDebugInformation>
@@ -94,12 +94,12 @@
       <WarningLevel>0</WarningLevel>
     </Midl>
     <ResourceCompile>
-      <PreprocessorDefinitions>_CONSOLE;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;QT_DISABLE_DEPRECATED_BEFORE=0x060000;NDEBUG;QT_NO_DEBUG;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CONSOLE;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;NDEBUG;QT_NO_DEBUG;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">
     <ClCompile>
-      <AdditionalIncludeDirectories>.;include;source;.;portaudio;CommunicationFPGA;fasttrigo;..\..\Qt\6.0.1\msvc2019_64\include;..\..\Qt\6.0.1\msvc2019_64\include\QtWidgets;..\..\Qt\6.0.1\msvc2019_64\include\QtGui;..\..\Qt\6.0.1\msvc2019_64\include\QtCore;debug;/include;..\..\Qt\6.0.1\msvc2019_64\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.;include;source;.;..\..\Qt\6.0.1\msvc2019_64\include;..\..\Qt\6.0.1\msvc2019_64\include\QtWidgets;..\..\Qt\6.0.1\msvc2019_64\include\QtGui;..\..\Qt\6.0.1\msvc2019_64\include\QtCore;debug;/include;..\..\Qt\6.0.1\msvc2019_64\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -permissive- -Zc:__cplusplus -Zc:externConstexpr -utf-8 -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
       <AssemblerListingLocation>debug\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
@@ -109,7 +109,7 @@
       <LanguageStandard>stdcpp17</LanguageStandard>
       <ObjectFileName>debug\</ObjectFileName>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_CONSOLE;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;QT_DISABLE_DEPRECATED_BEFORE=0x060000;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CONSOLE;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -118,7 +118,7 @@
     </ClCompile>
     <Link>
       <AdditionalDependencies>C:\Qt\6.0.1\msvc2019_64\lib\Qt6Widgetsd.lib;C:\Qt\6.0.1\msvc2019_64\lib\Qt6Guid.lib;C:\Qt\6.0.1\msvc2019_64\lib\Qt6Cored.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalOptions>./portaudio_x64.lib ./CommunicationFPGA-debug.lib &quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot; %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>./portaudio_x64.lib ./CommunicationFPGA/CommunicationFPGA-debug.lib &quot;/MANIFESTDEPENDENCY:type=&apos;win32&apos; name=&apos;Microsoft.Windows.Common-Controls&apos; version=&apos;6.0.0.0&apos; publicKeyToken=&apos;6595b64144ccf1df&apos; language=&apos;*&apos; processorArchitecture=&apos;*&apos;&quot; %(AdditionalOptions)</AdditionalOptions>
       <DataExecutionPrevention>true</DataExecutionPrevention>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <IgnoreImportLibrary>true</IgnoreImportLibrary>
@@ -133,56 +133,97 @@
       <WarningLevel>0</WarningLevel>
     </Midl>
     <ResourceCompile>
-      <PreprocessorDefinitions>_CONSOLE;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;QT_DISABLE_DEPRECATED_BEFORE=0x060000;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CONSOLE;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="source\detection_rythme.cpp" />
     <ClCompile Include="fasttrigo\fasttrigo.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\detection_rythme.cpp" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="source\fft.cpp" />
-    <ClCompile Include="source\fpga.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\fpga_phoneme.cpp" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="source\generator.cpp" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="source\gui.cpp" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="source\main.cpp" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="source\mainwindow.cpp" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="source\playback.cpp" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="source\readwrite_wav.cpp" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="source\recorder.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CommunicationFPGA\CommunicationFPGA.h" />
-    <ClInclude Include="include\detection_rythme.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="fasttrigo\fasttrigo.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\widgets\widget_note.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\detection_rythme.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="include\fft.h" />
-    <ClInclude Include="include\fpga.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\fpga_phoneme.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="include\generator.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="include\globaldef.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="include\gui.h" />
-    <CustomBuild Include="include\mainwindow.h">
-      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">include\mainwindow.h;release\moc_predefs.h;C:\Qt\6.0.1\msvc2019_64\bin\moc.exe;%(AdditionalInputs)</AdditionalInputs>
-      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">C:\Qt\6.0.1\msvc2019_64\bin\moc.exe  -DUNICODE -D_UNICODE -DWIN32 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -DWIN64 -DQT_DISABLE_DEPRECATED_BEFORE=0x060000 -DNDEBUG -DQT_NO_DEBUG -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB --compiler-flavor=msvc --include C:/MelodiUS/MelodiUS/release/moc_predefs.h -IC:/Qt/6.0.1/msvc2019_64/mkspecs/win32-msvc -IC:/MelodiUS/MelodiUS -IC:/MelodiUS/MelodiUS/include -IC:/MelodiUS/MelodiUS/source -IC:/MelodiUS/MelodiUS -IC:/MelodiUS/MelodiUS/portaudio -IC:/MelodiUS/MelodiUS/CommunicationFPGA -IC:/MelodiUS/MelodiUS/fasttrigo -IC:/Qt/6.0.1/msvc2019_64/include -IC:/Qt/6.0.1/msvc2019_64/include/QtWidgets -IC:/Qt/6.0.1/msvc2019_64/include/QtGui -IC:/Qt/6.0.1/msvc2019_64/include/QtCore -I/usr/include/c++/10 -I/usr/include/x86_64-linux-gnu/c++/10 -I/usr/include/c++/10/backward -I/usr/lib/gcc/x86_64-linux-gnu/10/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include include\mainwindow.h -o release\moc_mainwindow.cpp</Command>
-      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">MOC include/mainwindow.h</Message>
-      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">release\moc_mainwindow.cpp;%(Outputs)</Outputs>
-      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">include\mainwindow.h;debug\moc_predefs.h;C:\Qt\6.0.1\msvc2019_64\bin\moc.exe;%(AdditionalInputs)</AdditionalInputs>
-      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">C:\Qt\6.0.1\msvc2019_64\bin\moc.exe  -DUNICODE -D_UNICODE -DWIN32 -D_ENABLE_EXTENDED_ALIGNED_STORAGE -DWIN64 -DQT_DISABLE_DEPRECATED_BEFORE=0x060000 -DQT_WIDGETS_LIB -DQT_GUI_LIB -DQT_CORE_LIB --compiler-flavor=msvc --include C:/MelodiUS/MelodiUS/debug/moc_predefs.h -IC:/Qt/6.0.1/msvc2019_64/mkspecs/win32-msvc -IC:/MelodiUS/MelodiUS -IC:/MelodiUS/MelodiUS/include -IC:/MelodiUS/MelodiUS/source -IC:/MelodiUS/MelodiUS -IC:/MelodiUS/MelodiUS/portaudio -IC:/MelodiUS/MelodiUS/CommunicationFPGA -IC:/MelodiUS/MelodiUS/fasttrigo -IC:/Qt/6.0.1/msvc2019_64/include -IC:/Qt/6.0.1/msvc2019_64/include/QtWidgets -IC:/Qt/6.0.1/msvc2019_64/include/QtGui -IC:/Qt/6.0.1/msvc2019_64/include/QtCore -I/usr/include/c++/10 -I/usr/include/x86_64-linux-gnu/c++/10 -I/usr/include/c++/10/backward -I/usr/lib/gcc/x86_64-linux-gnu/10/include -I/usr/local/include -I/usr/include/x86_64-linux-gnu -I/usr/include include\mainwindow.h -o debug\moc_mainwindow.cpp</Command>
-      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">MOC include/mainwindow.h</Message>
-      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">debug\moc_mainwindow.cpp;%(Outputs)</Outputs>
-    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\mainwindow.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="include\mainwindow_ui.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\note.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="include\playback.h" />
-    <ClInclude Include="portaudio\portaudio.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="include\readwrite_wav.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="include\recorder.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="include\recording.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="include\tuning.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="debug\moc_mainwindow.cpp">
-      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">true</ExcludedFromBuild>
-    </ClCompile>
-    <ClCompile Include="release\moc_mainwindow.cpp">
-      <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClInclude Include="portaudio\portaudio.h" />
+  </ItemGroup>
+  <ItemGroup>
     <CustomBuild Include="debug\moc_predefs.h.cbt">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">true</ExcludedFromBuild>
@@ -191,6 +232,8 @@
       <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">Generate moc_predefs.h</Message>
       <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">debug\moc_predefs.h;%(Outputs)</Outputs>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
     <CustomBuild Include="release\moc_predefs.h.cbt">
       <FileType>Document</FileType>
       <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">..\..\Qt\6.0.1\msvc2019_64\mkspecs\features\data\dummy.cpp;%(AdditionalInputs)</AdditionalInputs>

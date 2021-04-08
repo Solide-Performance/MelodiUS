@@ -1,7 +1,7 @@
 /*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
 #ifndef LINUX_
-#include "portaudio.h"
+#include "portaudio/portaudio.h"
 #endif
 
 #include "playback.h"

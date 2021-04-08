@@ -1,21 +1,20 @@
-/*****************************************************************************/
+﻿/*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
 #include "benchmark.h"
 #include "detection_rythme.h"
 #include "fft.h"
-#include "fpga.h"
+#include "fpga_phoneme.h"
 #include "generator.h"
 #include "globaldef.h"
+#include "gui.h"
 #include "playback.h"
 #include "readwrite_wav.h"
 #include "recorder.h"
 #include "recording.h"
 #include "tuning.h"
-#include "gui.h"
 
 #ifndef LINUX_
-#include "fpga.h"
-#include "portaudio.h"
+#include "portaudio/portaudio.h"
 #endif
 
 #include <filesystem>
@@ -35,8 +34,9 @@ constexpr size_t FREQ_MIN    = 50;
 /*****************************************************************************/
 /* Function declarations --------------------------------------------------- */
 void menuHandler();
+void fpgaMenuHandler();
 void setupPortaudio();
-void setupFPGA();
+bool setupFPGA();
 
 
 /*****************************************************************************/
@@ -44,16 +44,23 @@ void setupFPGA();
 int main(int argc, char* argv[])
 {
     /* Invoke GUI */
-    std::thread gui{mainOfGui, argc, argv};
+     std::thread gui{mainOfGui, argc, argv};
 
     /* portaudio init */
     std::thread portAudioInitThread(setupPortaudio);
 
     /* CommunicationFPGA init */
-    setupFPGA();
+    bool fpgaControlMode = setupFPGA();
 
-    /* Menu display and command handling */
-    menuHandler();
+    if(fpgaControlMode == false)
+    {
+        /* Menu display and command handling */
+        menuHandler();
+    }
+    else
+    {
+        fpgaMenuHandler();
+    }
 
 /* Close portaudio & FPGA*/
 #ifndef LINUX_
@@ -62,7 +69,8 @@ int main(int argc, char* argv[])
     FPGA::DeInit();
 #endif
 
-    gui.join();
+     gui.join();
+
     return 0;
 }
 
@@ -72,31 +80,36 @@ int main(int argc, char* argv[])
 void menuHandler()
 {
     Recording rec;
-    std::string path = "tests/test_gamme/";
-    for(const std::filesystem::directory_entry& entry : std::filesystem::recursive_directory_iterator(path))
-    {
-        std::cout << entry.path() << std::endl;
-        try
-        {
-            rec = LoadFromWav(entry.path().generic_string());
-            if(rec.isValid())
-            {
-                analyse_rythme(rec);
-            }
-            else
-            {
-                std::cout << "Must read valid audio" << std::endl;
-            }
-        }
-        catch(const std::exception& ex)
-        {
-            std::cout << "Could not read .wav file" << ex.what() << std::endl;
-        }
-    }
-    while(1)
-    {
-    }
-    
+
+    // std::string path = "tests/test_gamme/";
+    // for(const std::filesystem::directory_entry& entry :
+    //    std::filesystem::recursive_directory_iterator(path))
+    //{
+    //    std::cout << entry.path() << ": ";
+    //    try
+    //    {
+    //        rec = LoadFromWav(entry.path().generic_string());
+    //        if(rec.isValid())
+    //        {
+    //            /*double           freq = FindFrequency(rec);
+    //            auto [NoteName, NoteVal] = FindNoteFromFreq(freq);
+    //            std::cout << NoteName << " (" << freq << ")" << std::endl;*/
+    //            analyse_rythme(rec);
+    //        }
+    //        else
+    //        {
+    //            std::cout << "Must read valid audio" << std::endl;
+    //        }
+    //    }
+    //    catch(const std::exception& ex)
+    //    {
+    //        std::cout << "Could not read .wav file" << ex.what() << std::endl;
+    //    }
+    //}
+    // while(1)
+    //{
+    //}
+
     while(true)
     {
         std::cout << std::endl;
@@ -193,7 +206,7 @@ void menuHandler()
                 break;
             }
 
-            /* Load and Playback .wav file */
+            /* Load .wav file */
             case 5:
             {
                 std::cout << " - Load & Playback - \nFilename:" << std::endl;
@@ -208,15 +221,6 @@ void menuHandler()
                 catch(const std::exception& ex)
                 {
                     std::cout << "Could not read .wav file" << ex.what() << std::endl;
-                }
-
-                if(rec.isValid())
-                {
-                    // Playback(rec);
-                }
-                else
-                {
-                    std::cout << "Must read valid audio" << std::endl;
                 }
                 break;
             }
@@ -239,8 +243,10 @@ void menuHandler()
             {
                 if(rec.isValid())
                 {
-                    int freq = static_cast<int>(FindFrequency(rec));
-                    std::cout << "Main frequency of signal: " << freq << std::endl;
+                    int freq                  = static_cast<int>(FindFrequency(rec));
+                    auto [NoteName, NoteType] = FindNoteFromFreq(freq);
+                    std::cout << "Main frequency of " << NoteName << " signal: " << freq
+                              << std::endl;
                 }
                 else
                 {
@@ -259,20 +265,88 @@ void menuHandler()
     }
 }
 
-void setupFPGA()
+void fpgaMenuHandler()
 {
+    std::cout << "\n ----- MelodiUS ----- \n";
+    std::cout << "A       - Start/Stop recording\n";
+    std::cout << "EY      - Playback recorded audio\n";
+    std::cout << "AE      - Load .wav file\n";
+    std::cout << "I       - Analysis\n";
+    std::cout << "<BonMatin> - Exit\n" << std::endl;
+    std::printf(" Filter1\t  Filter2\t  Filter3\t  Filter4\n");
+
+    Recording rec;
+
+    // clang-format off
+    FPGA::SetPhonemeCallback(Phoneme::a, [&rec]() mutable
+                                         {
+                                             rec = Record(60);
+                                         });
+
+    FPGA::SetPhonemeCallback(Phoneme::ey, [&rec]()
+                                          {
+                                              if(rec.isValid())
+                                              {
+                                                  Playback(rec);
+                                              }
+                                          });
+
+    FPGA::SetPhonemeCallback(Phoneme::ae, [&rec]() mutable
+                                          {
+                                              std::cout << "\n.wav file path: " << std::endl;
+
+                                              std::string consoleString{};
+                                              std::cin >> consoleString;
+
+
+                                              rec.clear();
+
+                                              try
+                                              {
+                                                  rec = LoadFromWav(consoleString);
+                                              }
+                                              catch(const std::exception& ex)
+                                              {
+                                                  std::cout << "Could not read .wav file" << ex.what() << std::endl;
+                                              }
+                                         });
+
+    FPGA::SetPhonemeCallback(Phoneme::i, [&rec]() 
+                                         {
+                                             if(rec.isValid())
+                                             {
+                                                 analyse_rythme(rec);
+                                             }
+                                         });
+    // clang-format on
+
+    FPGA::StartListener();
+
+    while(1)
+    {
+    }
+}
+
+bool setupFPGA()
+{
+    std::this_thread::sleep_for(std::chrono::seconds(1));
+
     FPGA::Init();
 
     FPGA::WriteLED(0xFF);
     if(!FPGA::isOk())
     {
-        std::cerr << "FPGA Connection Failed: " << FPGA::errorMsg() << std::endl;
+        std::cerr << "FPGA Connection Failed: " << FPGA::ErrorMsg() << std::endl;
+        FPGA::DeInit();
         // throw std::exception();
+        return false;
     }
     else
     {
         std::cout << "FPGA Connection Successful" << std::endl;
     }
+
+    return true;
 }
 
 

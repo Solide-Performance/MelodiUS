@@ -2,17 +2,13 @@
 #define MAINWINDOW_H
 
 #include <QtWidgets/QMainWindow>
+#include "mainwindow_ui.h"
 
-QT_BEGIN_NAMESPACE
-namespace Ui
-{
-class MainWindow;
-}
-QT_END_NAMESPACE
+
 
 class MainWindow : public QMainWindow
 {
-    Q_OBJECT
+    
 public slots:
    void on_pushButton_clicked();
    void startRecord();
@@ -23,6 +19,6 @@ public:
     ~MainWindow();
 
 private:
-    Ui::MainWindow* ui;
+    Ui_MainWindow ui;
 };
 #endif    // MAINWINDOW_H

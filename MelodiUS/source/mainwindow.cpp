@@ -2,27 +2,28 @@
 #include "mainwindow_ui.h"
 
 #include <iostream>
+#include <thread>
 
 #include "generator.h"
 #include "playback.h"
 #include "recording.h"
-#include <thread>
+#include "widgets/widget_note.h"
 
 static Recording rec{};
 
-MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWindow)
+MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(this)
 {
-    ui->setupUi(this);
+    ui.setupUi(this);
 
-    QObject::connect(ui->pushButtonA, &QPushButton::clicked, this, &MainWindow::on_pushButton_clicked);
-    QObject::connect(ui->buttonRecord, &QPushButton::clicked, this, &MainWindow::startRecord);
-    QObject::connect(ui->buttonStopRecord, &QPushButton::clicked, this, &MainWindow::stopRecord);
+    QObject::connect(&ui.pushButtonA, &QPushButton::clicked, this, &MainWindow::on_pushButton_clicked);
+    QObject::connect(&ui.buttonRecord, &QPushButton::clicked, this, &MainWindow::startRecord);
+    QObject::connect(&ui.buttonStopRecord, &QPushButton::clicked, this, &MainWindow::stopRecord);
 }
 std::thread what_if_another_thread_fixes_it;
 void        MainWindow::startRecord()
 {
-    ui->buttonRecord->hide();
-    ui->buttonStopRecord->show();
+    ui.buttonRecord.hide();
+    ui.buttonStopRecord.show();
 
     Recording_SetStopPolicy(std::function<bool()>{});
 
@@ -32,8 +33,8 @@ void        MainWindow::startRecord()
 }
 void MainWindow::stopRecord()
 {
-    ui->buttonStopRecord->hide();
-    ui->buttonRecord->show();
+    ui.buttonStopRecord.hide();
+    ui.buttonRecord.show();
 
     Recording_SetStopPolicy([]() {
         return true;
@@ -45,7 +46,7 @@ void MainWindow::stopRecord()
 
 void MainWindow::on_pushButton_clicked()    // Label existe deja line 74 mainwindow_ui.h
 {
-    static QLabel* label_A = new QLabel(ui->centralwidget);
+    /*static QLabel* label_A = new QLabel(ui->centralwidget);
 
     QPixmap pixmap = (QString::fromUtf8("../../MelodiUS/meloiusImage/noir.png"));
 
@@ -63,10 +64,12 @@ void MainWindow::on_pushButton_clicked()    // Label existe deja line 74 mainwin
     label_A->setPixmap(pixmap);
     label_A->setMask(pixmap.mask());
 
-    label_A->show();
+    label_A->show();*/
+
+    NoteWidget* A = new NoteWidget{this, Note{NoteType::Noire, NoteValue::A4}, 300};
+    A->show();
 }
 
 MainWindow::~MainWindow()
 {
-    delete ui;
 }

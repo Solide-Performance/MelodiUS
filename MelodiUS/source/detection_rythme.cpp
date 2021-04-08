@@ -168,6 +168,7 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
         }
     }*/
 
+    std::cout << std::endl;
     std::vector<Recording> notes(debut_note.size());
     for(size_t i = 0; i < notes.size(); i++)
     {
@@ -177,13 +178,13 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
         notes[i] = Recording{
           beginIt, endIt, rec.getSampleRate(), rec.getFramesPerBuffer(), rec.getNumChannels()};
 
-        double freq = FindFrequency(notes[i]);
-        std::cout << "Note " << i + 1 << " : " << freq << "Hz (" << FindNoteFromFreq(freq)
+        double freq     = FindFrequency(notes[i]);
+        auto [str, val] = FindNoteFromFreq(freq);
+        std::cout << "Note " << i + 1 << " : " << freq << "Hz (" << str
                   << ")\tSamples: " << debut_note[i] << " to " << fin_note[i] << "("
                   << fin_note[i] - debut_note[i] << ")" << std::endl;
     }
-    std::cout << std::endl;
-    std::cout << std::endl;
+    std::cout << std::endl << std::endl;
 
     analyse_note(debut_note, fin_note, volume_plat.size());
 
@@ -244,12 +245,14 @@ void analyse_note(std::vector<size_t> debuts, std::vector<size_t> fins, size_t r
     }
 
     /* Get lowest layer of fraction */
-    int64_t max_ratio =
-      *std::max_element(liste_ratios.begin(),
-                        liste_ratios.end(),
-                        [rejected = fractions.size() - 1](int64_t greatest, int64_t val) {
-                            return val == rejected ? false : greatest < val;
-                        });
+    /* clang-format off */
+    int64_t max_ratio = *std::max_element(liste_ratios.begin(),
+                                          liste_ratios.end(),
+                                          [rejected = fractions.size() - 1](int64_t greatest, int64_t val)
+                                          {
+                                              return val == rejected ? false : greatest < val;
+                                          });
+    /* clang-format off */
 
     std::cout << max_ratio << std::endl;
     for(int64_t i = 0; i < liste_duree.size(); i++)

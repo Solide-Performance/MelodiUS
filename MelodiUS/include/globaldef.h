@@ -11,6 +11,8 @@
 #include <stdexcept>
 #include <type_traits>
 
+#include <gcem/gcem.hpp>
+
 
 /*****************************************************************************/
 /* Constants --------------------------------------------------------------- */
@@ -25,6 +27,17 @@ constexpr uint8_t CHAR_BIT = 8;
 /* Macros ------------------------------------------------------------------ */
 #define sizeof_array(x)    static_cast<size_t>(sizeof(x) / sizeof((x)[0]))    // NOLINT
 #define LABEL_TO_STRING(x) #x    // NOLINT
+
+
+template<typename T>
+constexpr void SAFE_DELETE(T** x)
+{
+    if(*x && x)
+    {
+        delete *x;
+        *x = nullptr;
+    }
+}
 
 
 /* Epsilon is a margin between the two floating point values */
@@ -46,7 +59,7 @@ constexpr floating db_to_lin(floating dB)
     static_assert(std::is_floating_point<floating>::value,
                   "Argument must be a floating point type");
 
-    return std::pow<floating>(10, dB / 20.0);
+    return gcem::pow(10.0, dB / 20.0);
 }
 
 template<typename floating>
@@ -55,8 +68,14 @@ constexpr floating lin_to_db(floating lin)
     static_assert(std::is_floating_point<floating>::value,
                   "Argument must be a floating point type");
 
-    return 20 * std::log10<floating>(lin);
+    return 20 * (gcem::log(lin) / gcem::log(10.0));
 }
+
+
+/*****************************************************************************/
+/* Utility ----------------------------------------------------------------- */
+static auto EMPTY_FUNCTION = []() {
+};
 
 
 /*****************************************************************************/

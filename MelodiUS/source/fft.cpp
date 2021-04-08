@@ -2,7 +2,9 @@
 /* Includes ---------------------------------------------------------------- */
 #include "fft.h"
 #include "globaldef.h"
+
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <iostream>
 #include <thread>
@@ -18,25 +20,91 @@
 
 /*****************************************************************************/
 /* Constants --------------------------------------------------------------- */
-constexpr int    MAX_DEPTH       = 4;
-constexpr double MIN_GUITAR_FREQ = 75.0;
+constexpr int    MAX_DEPTH             = 4;
+constexpr double MIN_GUITAR_FREQ       = 75.;
+constexpr double MAX_GUITAR_FREQ       = 1350.;
+constexpr size_t IGNORE_FREQ_MARGIN    = 75; /* Ignores 25Hz on each side of peaks */
+constexpr size_t PEAKS_TO_CHECK        = 5;
+constexpr double AMPLITUDE_MARGIN_MULT = db_to_lin(-12.0); /* -12dB */
 
 
 /*****************************************************************************/
 /* Function definitions ---------------------------------------------------- */
-size_t FindPeak(const std::vector<complex_t>& v,
-                std::vector<size_t>           ignoredPeaks = {},
-                size_t                        trueBegin    = 1)
+size_t FindPeak(const std::vector<complex_t>& v, size_t begin, size_t end, double seconds)
 {
+    size_t samplesToIgnore = IGNORE_FREQ_MARGIN * seconds;
+
+    struct max_elem_t
+    {
+        float  val   = 0.f;
+        size_t index = 0;
+    };
+    std::array<max_elem_t, PEAKS_TO_CHECK> peaks{};
+
+
+    for(size_t p = 0; p < PEAKS_TO_CHECK; p++)
+    {
+        max_elem_t max_elem;
+        for(size_t i = begin; i < end; i++)
+        {
+            /* Count samples only outside the already checked peaks */
+            /* clang-format off */
+            size_t count = std::count_if(peaks.begin(), peaks.end(),
+                                         [i, samplesToIgnore](max_elem_t peak)
+                                         {
+                                             return (i > peak.index - samplesToIgnore && 
+                                                     i < peak.index + samplesToIgnore);
+                                         });
+            /* clang-format on */
+            if(count > 0)
+            {
+                continue;
+            }
+
+
+            if(abs(v[i]) > max_elem.val)
+            {
+                max_elem.val   = abs(v[i]);
+                max_elem.index = i;
+            }
+        }
+        peaks[p] = max_elem;
+    }
+
     /* clang-format off */
-    return std::distance(v.begin(),
-                         std::max_element(v.begin() + trueBegin,
-                                          v.end() - v.size() / 2,
-                                          [](const complex_t& c1, const complex_t& c2)
-                                          {
-                                              return std::abs(c1) < std::abs(c2);
-                                          }));
+    std::sort(peaks.begin(), peaks.end(),
+              [](const max_elem_t& a, const max_elem_t& b)
+              {
+                  return a.index < b.index;
+              });
+    float maxPeak = std::max_element(peaks.begin(),
+                                     peaks.end(),
+                                     [](const max_elem_t& max, const max_elem_t& current)
+                                     {
+                                         return max.val < current.val;
+                                     })->val;
+    float minPeak = maxPeak * AMPLITUDE_MARGIN_MULT;
+
+    max_elem_t max_elem = *std::find_if(peaks.begin(), peaks.end(),
+                                        [minPeak](const max_elem_t& a)
+                                        {
+                                            return a.val > minPeak;
+                                        });
+
+
+
+    std::array<double, PEAKS_TO_CHECK> freqs;
+    std::transform(peaks.begin(),
+                   peaks.end(),
+                   freqs.begin(),
+                   [seconds](const max_elem_t& val)
+                   {
+                       return val.index / seconds;
+                   });
     /* clang-format on */
+
+    double chosenFreq = max_elem.index / seconds;
+    return max_elem.index;
 }
 
 
@@ -47,8 +115,10 @@ double FindFrequency(const Recording& audio)
     // Calculate FFT
     FFT(v);
 
-    size_t peak  = FindPeak(v);
-    double freq = peak / audio.getNumSeconds();
+    size_t beginSample = MIN_GUITAR_FREQ * audio.getNumSeconds();
+    size_t endSample   = MAX_GUITAR_FREQ * audio.getNumSeconds();
+    size_t peak        = FindPeak(v, beginSample, endSample, audio.getNumSeconds());
+    double freq        = peak / audio.getNumSeconds();
     return freq;
 }
 
