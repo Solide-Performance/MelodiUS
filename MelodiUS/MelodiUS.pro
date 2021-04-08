@@ -6,7 +6,7 @@ INCLUDEPATH += ./include ./source ./
 
 # Headers
 HEADERS += ./include/globaldef.h
-HEADERS += ./include/fpga.h
+HEADERS += ./include/fpga_phoneme.h
 HEADERS += ./include/recorder.h
 HEADERS += ./include/recording.h
 HEADERS += ./include/playback.h
@@ -18,7 +18,7 @@ HEADERS += ./include/tuning.h
 HEADERS += ./include/note.h
 
 SOURCES += ./source/main.cpp
-SOURCES += ./source/fpga.cpp
+SOURCES += ./source/fpga_phoneme.cpp
 SOURCES += ./source/recorder.cpp
 SOURCES += ./source/playback.cpp
 SOURCES += ./source/readwrite_wav.cpp

@@ -9,7 +9,7 @@
 
 #include <QtCore/QVariant>
 #include <QtGui/QBitmap>
-#include <QtWidgets/QAction>
+#include <QtGui/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QFrame>

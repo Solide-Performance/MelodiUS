@@ -1,9 +1,9 @@
-/*****************************************************************************/
+﻿/*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
 #include "benchmark.h"
 #include "detection_rythme.h"
 #include "fft.h"
-#include "fpga.h"
+#include "fpga_phoneme.h"
 #include "generator.h"
 #include "globaldef.h"
 #include "gui.h"
@@ -14,7 +14,6 @@
 #include "tuning.h"
 
 #ifndef LINUX_
-#include "fpga.h"
 #include "portaudio/portaudio.h"
 #endif
 
@@ -44,7 +43,7 @@ void setupFPGA();
 int main(int argc, char* argv[])
 {
     /* Invoke GUI */
-    //std::thread gui{mainOfGui, argc, argv};
+    // std::thread gui{mainOfGui, argc, argv};
 
     /* portaudio init */
     std::thread portAudioInitThread(setupPortaudio);
@@ -62,7 +61,7 @@ int main(int argc, char* argv[])
     FPGA::DeInit();
 #endif
 
-    //gui.join();
+    // gui.join();
     return 0;
 }
 
@@ -73,35 +72,34 @@ void menuHandler()
 {
     Recording rec;
 
-
-     std::string path = "tests/test_gamme/";
-     for(const std::filesystem::directory_entry& entry :
-     std::filesystem::recursive_directory_iterator(path))
-    {
-        std::cout << entry.path() << ": ";
-        try
-        {
-            rec = LoadFromWav(entry.path().generic_string());
-            if(rec.isValid())
-            {
-                /*double           freq = FindFrequency(rec);
-                auto [NoteName, NoteVal] = FindNoteFromFreq(freq);
-                std::cout << NoteName << " (" << freq << ")" << std::endl;*/
-                analyse_rythme(rec);
-            }
-            else
-            {
-                std::cout << "Must read valid audio" << std::endl;
-            }
-        }
-        catch(const std::exception& ex)
-        {
-            std::cout << "Could not read .wav file" << ex.what() << std::endl;
-        }
-    }
-     while(1)
-    {
-    }
+    // std::string path = "tests/test_gamme/";
+    // for(const std::filesystem::directory_entry& entry :
+    //    std::filesystem::recursive_directory_iterator(path))
+    //{
+    //    std::cout << entry.path() << ": ";
+    //    try
+    //    {
+    //        rec = LoadFromWav(entry.path().generic_string());
+    //        if(rec.isValid())
+    //        {
+    //            /*double           freq = FindFrequency(rec);
+    //            auto [NoteName, NoteVal] = FindNoteFromFreq(freq);
+    //            std::cout << NoteName << " (" << freq << ")" << std::endl;*/
+    //            analyse_rythme(rec);
+    //        }
+    //        else
+    //        {
+    //            std::cout << "Must read valid audio" << std::endl;
+    //        }
+    //    }
+    //    catch(const std::exception& ex)
+    //    {
+    //        std::cout << "Could not read .wav file" << ex.what() << std::endl;
+    //    }
+    //}
+    // while(1)
+    //{
+    //}
 
     while(true)
     {
@@ -271,6 +269,13 @@ void setupFPGA()
 {
     FPGA::Init();
 
+    // clang-format off
+    FPGA::setPhonemeCallback(Phoneme::a,  []{std::cout << "Phoneme A\n"  << std::endl;});
+    FPGA::setPhonemeCallback(Phoneme::ey, []{std::cout << "Phoneme EY\n" << std::endl;});
+    FPGA::setPhonemeCallback(Phoneme::ae, []{std::cout << "Phoneme AE\n" << std::endl;});
+    FPGA::setPhonemeCallback(Phoneme::i,  []{std::cout << "Phoneme I\n"  << std::endl;});
+    // clang-format on
+
     FPGA::WriteLED(0xFF);
     if(!FPGA::isOk())
     {
@@ -282,6 +287,8 @@ void setupFPGA()
     {
         std::cout << "FPGA Connection Successful" << std::endl;
     }
+
+    FPGA::StartListener();
 }
 
 
