@@ -69,7 +69,8 @@ int main(int argc, char* argv[])
     FPGA::DeInit();
 #endif
 
-    // gui.join();
+     gui.join();
+
     return 0;
 }
 
