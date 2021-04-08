@@ -105,9 +105,11 @@ public:
     {
         // if(mainWindow->objectName().isEmpty())
         mainWindow->resize(1600, 900);
+        groupBoxMenu.setGeometry(0, 0, 250, 900);
+        groupBoxPartition.setGeometry(250, 0, 1000, 1000);
 
-        label.setGeometry(QRect(4, 489, 851, 91));
-        label.setText("MelodiUS V1.0   UwU Solide Performance");
+        label.setGeometry(QRect(10,800, 851, 91));
+        label.setText("MelodiUS V1.3   UwU Solide Performance");
 
         label_3.setGeometry(QRect(10, 130, 51, 101));
         label_3.setPixmap(QPixmap(QString::fromUtf8("../../MelodiUS/meloiusImage/cle40x80T.png")));
@@ -157,22 +159,22 @@ public:
 
 
 
-        buttonRecord.setGeometry(QRect(50, 300, 93, 28));
+        buttonRecord.setGeometry(QRect(100, 50, 100, 100));
         buttonRecord.setText("Record");
 
-        buttonStopRecord.setGeometry(QRect(50, 300, 93, 28));
+        buttonStopRecord.setGeometry(QRect(100, 50, 100, 100));
         buttonStopRecord.setText("Stop Recording");
         buttonStopRecord.hide();
 
         buttonPlay.setGeometry(QRect(100, 200, 100, 100));
+        buttonRecord.setText("Play");
         QRegion cercle(QRect(100, 200, 75, 75));
 
         buttonProcess.setGeometry(QRect(100, 350, 100, 100));
+        buttonRecord.setText("Process");
 
         buttonSaveLoad.setGeometry(QRect(100, 500, 100, 100));
-        // QPushButton #buttonSaveLoad{border-radius :10 px} never worked yet.
-        // https://doc.qt.io/qt-5/stylesheet-examples.html
-
+        buttonRecord.setText("Save| Load");
 
         mainWindow->setCentralWidget(&centralwidget);
     }
