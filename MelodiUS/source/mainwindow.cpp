@@ -67,7 +67,7 @@ void MainWindow::on_pushButton_clicked()    // Label existe deja line 74 mainwin
 
     label_A->show();*/
 
-    NoteWidget* A = new NoteWidget{this, Note{NoteType::Noire, NoteValue::A4}, 300};
+    NoteWidget* A = new NoteWidget{this, Note{NoteType::Blanche, NoteValue::A4}, 300};
     A->show();
 }
 

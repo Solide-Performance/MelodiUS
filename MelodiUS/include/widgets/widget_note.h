@@ -40,14 +40,19 @@ public:
     void show()
     {
         if(m_noteHead)
+        {
             m_noteHead->show();
+        }
         if(m_noteSharp)
+        {
             m_noteSharp->show();
+        }
         if(m_noteTail)
             m_noteTail->show();
         if(m_noteTailEnd)
             m_noteTailEnd->show();
     }
+
     void hide()
     {
         m_noteHead->hide();
@@ -74,9 +79,9 @@ private:
         static const std::array<QString, static_cast<int64_t>(NoteValue::UNKNOWN)> lookupTable{
           "images/ronde.png",
           "images/blancheHead.png",
-          "images/noirHead.png",
-          "images/crocheHead.png",
-          "images/doubleCrocheHead.png",
+          "images/noireHead.png",
+          "images/noireHead.png",   /* Les croches */
+          "images/noireHead.png",
           "images/pause.png",
           "images/demiPause.png",
           "images/silence.png",
