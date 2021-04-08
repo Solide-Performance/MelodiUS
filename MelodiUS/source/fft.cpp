@@ -20,19 +20,20 @@
 
 /*****************************************************************************/
 /* Constants --------------------------------------------------------------- */
-constexpr int    MAX_DEPTH             = 4;
-constexpr double MIN_GUITAR_FREQ       = 75.;
-constexpr double MAX_GUITAR_FREQ       = 1350.;
-constexpr size_t IGNORE_FREQ_MARGIN    = 75; /* Ignores 25Hz on each side of peaks */
-constexpr size_t PEAKS_TO_CHECK        = 5;
-constexpr double AMPLITUDE_MARGIN_MULT = db_to_lin(-12.0); /* -12dB */
+constexpr int    MAX_DEPTH                      = 4;
+constexpr double MIN_GUITAR_FREQ                = 75.;
+constexpr double MAX_GUITAR_FREQ                = 1350.;
+constexpr size_t FREQ_MARGIN                    = 75; /* Ignores 25Hz on each side of peaks */
+constexpr size_t PEAKS_TO_CHECK                 = 5;
+constexpr double AMPLITUDE_MARGIN_MULT          = db_to_lin(-10.0); /* -10dB */
+constexpr double AMPLITUDE_MARGIN_MULT_HARMONIC = db_to_lin(-15.0); /* -15dB */
 
 
 /*****************************************************************************/
 /* Function definitions ---------------------------------------------------- */
 size_t FindPeak(const std::vector<complex_t>& v, size_t begin, size_t end, double seconds)
 {
-    size_t samplesToIgnore = IGNORE_FREQ_MARGIN * seconds;
+    size_t samplesToIgnore = FREQ_MARGIN * seconds;
 
     struct max_elem_t
     {
@@ -77,18 +78,28 @@ size_t FindPeak(const std::vector<complex_t>& v, size_t begin, size_t end, doubl
               {
                   return a.index < b.index;
               });
-    float maxPeak = std::max_element(peaks.begin(),
-                                     peaks.end(),
-                                     [](const max_elem_t& max, const max_elem_t& current)
-                                     {
-                                         return max.val < current.val;
-                                     })->val;
-    float minPeak = maxPeak * AMPLITUDE_MARGIN_MULT;
+    max_elem_t maxPeak = *std::max_element(peaks.begin(),
+                                           peaks.end(),
+                                           [](const max_elem_t& max, const max_elem_t& current)
+                                           {
+                                               return max.val < current.val;
+                                           });
+
+    float minPeak = maxPeak.val * AMPLITUDE_MARGIN_MULT;
+    float minHarmonic = maxPeak.val * AMPLITUDE_MARGIN_MULT_HARMONIC;
 
     max_elem_t max_elem = *std::find_if(peaks.begin(), peaks.end(),
-                                        [minPeak](const max_elem_t& a)
+                                        [minHarmonic, minPeak, maxPeak](const max_elem_t& a)
                                         {
-                                            return a.val > minPeak;
+                                            if (a.index > ((maxPeak.index / 2) - FREQ_MARGIN) &&
+                                                a.index < ((maxPeak.index / 2) + FREQ_MARGIN))
+                                            {
+                                                return a.val > minHarmonic;
+                                            }
+                                            else
+                                            {
+                                                return a.val > minPeak;
+                                            }
                                         });
 
 

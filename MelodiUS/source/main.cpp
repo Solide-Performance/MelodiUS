@@ -82,7 +82,6 @@ void menuHandler()
     Recording rec;
 
 
-
     while(true)
     {
         std::cout << std::endl;
