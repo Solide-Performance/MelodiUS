@@ -82,21 +82,28 @@ void FPGA::Init()
 }
 void FPGA::DeInit()
 {
-    *m_run = false;
+    if(m_run)
+    {
+        *m_run = false;
+    }
     WriteLED(0x00);
 
     try
     {
-        m_listener->join();
+        if(m_listener)
+        {
+            m_listener->join();
+            delete m_listener;
+            m_listener = nullptr;
+        }
 
         // delete m_fpga;
-        delete m_run;
-        delete m_listener;
-        delete m_adc;
-        delete m_phonemeCallbacks;
-        delete m_currentPhoneme;
-        delete m_oldPhoneme;
-        delete m_phonemeCounter;
+        SAFE_DELETE(&m_run);
+        SAFE_DELETE(&m_adc);
+        SAFE_DELETE(&m_phonemeCallbacks);
+        SAFE_DELETE(&m_currentPhoneme);
+        SAFE_DELETE(&m_oldPhoneme);
+        SAFE_DELETE(&m_phonemeCounter);
     }
     catch(...)
     {
@@ -295,7 +302,7 @@ void FPGA::DisplayADC()
     /* Two-digits BCD */
     uint8_t adc     = (*m_adc)[switches] / 255.f * 100.f;
     uint8_t adcTemp = adc % 10;
-    adc = ((adc / 10) % 10) << 4;
+    adc             = ((adc / 10) % 10) << 4;
     adc |= adcTemp;
 
     /* Print percentage value */

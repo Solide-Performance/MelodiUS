@@ -174,7 +174,7 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
     }
 
     Recording recording{&data.recordedSamples[0],
-                        &data.recordedSamples[data.frameIndex],
+                        &data.recordedSamples[data.frameIndex * numChannels],
                         sampleRate,
                         framesPerBuffer,
                         numChannels};

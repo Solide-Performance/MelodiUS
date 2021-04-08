@@ -26,7 +26,18 @@ constexpr uint8_t CHAR_BIT = 8;
 /*****************************************************************************/
 /* Macros ------------------------------------------------------------------ */
 #define sizeof_array(x)    static_cast<size_t>(sizeof(x) / sizeof((x)[0]))    // NOLINT
-#define LABEL_TO_STRING(x) #x                                                 // NOLINT
+#define LABEL_TO_STRING(x) #x    // NOLINT
+
+
+template<typename T>
+constexpr void SAFE_DELETE(T** x)
+{
+    if(*x && x)
+    {
+        delete *x;
+        *x = nullptr;
+    }
+}
 
 
 /* Epsilon is a margin between the two floating point values */
@@ -63,7 +74,8 @@ constexpr floating lin_to_db(floating lin)
 
 /*****************************************************************************/
 /* Utility ----------------------------------------------------------------- */
-static auto EMPTY_FUNCTION = [](){};
+static auto EMPTY_FUNCTION = []() {
+};
 
 
 /*****************************************************************************/
