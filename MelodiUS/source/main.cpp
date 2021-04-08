@@ -44,7 +44,7 @@ bool setupFPGA();
 int main(int argc, char* argv[])
 {
     /* Invoke GUI */
-    // std::thread gui{mainOfGui, argc, argv};
+     std::thread gui{mainOfGui, argc, argv};
 
     /* portaudio init */
     std::thread portAudioInitThread(setupPortaudio);
