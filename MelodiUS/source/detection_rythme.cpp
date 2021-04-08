@@ -4,8 +4,8 @@
 #include "globaldef.h"
 
 #include "fft.h"
+#include "note.h"
 #include "tuning.h"
-
 #include <algorithm>
 #include <cmath>
 #include <fstream>
@@ -119,57 +119,10 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
         fin_note.push_back(std::min(i, volume_plat.size() - 1));
     }
 
-    size_t maxLength = 0;
-    for(size_t i = 0; i < debut_note.size(); i++)
-    {
-        maxLength = std::max(maxLength, fin_note[i] - debut_note[i]);
-    }
-
-    sample_cutoff = maxLength / 18;
-    /* essayer de mettre en place un lien avec les fft
-    for(size_t i = 0; i < debut_note.size() - 1; i++)
-    {
-        size_t sampleLength = fin_note[i] - debut_note[i];
-        if(sampleLength < sample_cutoff)
-        {
-            // Removes note (merge with next)
-            fin_note.erase(fin_note.begin() + i);
-            debut_note.erase(debut_note.begin() + i + 1);
-        }
-    }
-    */
-
-
-    /*std::ofstream f{"test.txt"};
-    for(int i = 0; i < taille; i++)
-    {
-        bool valDebut = false;
-        bool valFin   = false;
-        if(std::find(debut_note.begin(), debut_note.end(), i) != debut_note.end())
-        {
-            valDebut = true;
-        }
-        if(std::find(fin_note.begin(), fin_note.end(), i) != fin_note.end())
-        {
-            valFin = true;
-        }
-        f << i << '\t' << volume[i] << '\t' << volume_plat[i] << '\t' << derive_double[i] << '\t'
-          << valDebut << '\t' << valFin << '\n';
-    }
-    f.close();*/
-
-
-    /*for(size_t i = 0; i < debut_note.size(); i++)
-    {
-        if(debut_note[i] != 0)
-        {
-            std::cout << debut_note[i] << " | " << fin_note[i] << "\t | "
-                      << (fin_note[i] - debut_note[i]) << '\n';
-        }
-    }*/
 
     std::cout << std::endl;
     std::vector<Recording> notes(debut_note.size());
+    std::vector<NoteValue> valeur_note(debut_note.size());
     for(size_t i = 0; i < notes.size(); i++)
     {
         const float* beginIt = &tableau[debut_note[i]];
@@ -179,20 +132,25 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
           beginIt, endIt, rec.getSampleRate(), rec.getFramesPerBuffer(), rec.getNumChannels()};
 
         double freq     = FindFrequency(notes[i]);
+        
         auto [str, val] = FindNoteFromFreq(freq);
+        valeur_note[i]  = val;
         std::cout << "Note " << i + 1 << " : " << freq << "Hz (" << str
                   << ")\tSamples: " << debut_note[i] << " to " << fin_note[i] << "("
                   << fin_note[i] - debut_note[i] << ")" << std::endl;
     }
     std::cout << std::endl << std::endl;
 
-    analyse_note(debut_note, fin_note, volume_plat.size());
+    analyse_note(debut_note, fin_note, volume_plat.size(),valeur_note);
 
     return notes;
 }
 
 
-void analyse_note(std::vector<size_t> debuts, std::vector<size_t> fins, size_t recordingLength)
+void analyse_note(std::vector<size_t>    debuts,
+                  std::vector<size_t>    fins,
+                  size_t                 recordingLength,
+                  std::vector<NoteValue> valeur_note)
 {
     std::vector<int64_t> liste_duree;
     std::vector<int64_t> liste_ratios;
@@ -252,14 +210,225 @@ void analyse_note(std::vector<size_t> debuts, std::vector<size_t> fins, size_t r
                                           {
                                               return val == rejected ? false : greatest < val;
                                           });
-    /* clang-format off */
+    /* clang-format on */
 
+    std::vector<Note> liste_symbole;
+    if(max_ratio == 0)
+    {
+        int j = 0;
+        for(int i = 0; i < liste_ratios.size(); i++)
+        {
+            if(i%2==0)
+            {
+
+                if(liste_ratios[i] == 0)
+                {
+                    liste_symbole.push_back(Note(NoteType::Noire, valeur_note[j]));
+                }
+                j++;
+            }
+            else
+            {
+
+                if(liste_ratios[i] == 0)
+                {
+                    liste_symbole.push_back(Note(NoteType::Silence, NoteValue::UNKNOWN));
+                }
+            }
+        }
+    }
+    else if(max_ratio == 1)
+    {
+        int j = 0;
+        for(int i = 0; i < liste_ratios.size(); i++)
+        {
+            if(i % 2 == 0)
+            {
+
+                if(liste_ratios[i] == 0)
+                {
+                    liste_symbole.push_back(Note(NoteType::Noire, valeur_note[j]));
+                }
+                else if(liste_ratios[i] == 1)
+                {
+                    liste_symbole.push_back(Note(NoteType::Croche, valeur_note[j]));
+                }
+                j++;
+            }
+            else
+            {
+
+                if(liste_ratios[i] == 0)
+                {
+                    liste_symbole.push_back(Note(NoteType::Silence, NoteValue::UNKNOWN));
+                }
+                else if(liste_ratios[i] == 1)
+                {
+                    liste_symbole.push_back(Note(NoteType::DemiSilence, valeur_note[j]));
+                }
+            }
+        }
+    }
+    else if(max_ratio == 2)
+    {
+        int j = 0;
+        for(int i = 0; i < liste_ratios.size(); i++)
+        {
+            if(i % 2 == 0)
+            {
+
+                if(liste_ratios[i] == 0)
+                {
+                    liste_symbole.push_back(Note(NoteType::Blanche, valeur_note[j]));
+                }
+                else if(liste_ratios[i] == 1)
+                {
+                    liste_symbole.push_back(Note(NoteType::Noire, valeur_note[j]));
+                }
+                else if(liste_ratios[i] == 2)
+                {
+                    liste_symbole.push_back(Note(NoteType::Croche, valeur_note[j]));
+                }
+                j++;
+            }
+            else
+            {
+
+                if(liste_ratios[i] == 0)
+                {
+                    liste_symbole.push_back(Note(NoteType::DemiPause, NoteValue::UNKNOWN));
+                }
+                else if(liste_ratios[i] == 1)
+                {
+                    liste_symbole.push_back(Note(NoteType::Silence, valeur_note[j]));
+                }
+                else if(liste_ratios[i] == 2)
+                {
+                    liste_symbole.push_back(Note(NoteType::DemiSilence, valeur_note[j]));
+                }
+            }
+        }
+    }
+    else if(max_ratio == 3)
+    {
+        int j = 0;
+        for(int i = 0; i < liste_ratios.size(); i++)
+        {
+            if(i % 2 == 0)
+            {
+
+                if(liste_ratios[i] == 0)
+                {
+                    liste_symbole.push_back(Note(NoteType::Ronde, valeur_note[j]));
+                }
+                else if(liste_ratios[i] == 1)
+                {
+                    liste_symbole.push_back(Note(NoteType::Blanche, valeur_note[j]));
+                }
+                else if(liste_ratios[i] == 2)
+                {
+                    liste_symbole.push_back(Note(NoteType::Noire, valeur_note[j]));
+                }
+                else if(liste_ratios[i] == 3)
+                {
+                    liste_symbole.push_back(Note(NoteType::Croche, valeur_note[j]));
+                }
+                j++;
+            }
+            else
+            {
+
+                if(liste_ratios[i] == 0)
+                {
+                    liste_symbole.push_back(Note(NoteType::Pause, NoteValue::UNKNOWN));
+                }
+                else if(liste_ratios[i] == 1)
+                {
+                    liste_symbole.push_back(Note(NoteType::DemiPause, valeur_note[j]));
+                }
+                else if(liste_ratios[i] == 2)
+                {
+                    liste_symbole.push_back(Note(NoteType::Silence, valeur_note[j]));
+                }
+                else if(liste_ratios[i] == 3)
+                {
+                    liste_symbole.push_back(Note(NoteType::DemiSilence, valeur_note[j]));
+                }
+            }
+        }
+    }
+    else if(max_ratio == 4)
+    {
+        int j = 0;
+        for(int i = 0; i < liste_ratios.size(); i++)
+        {
+            if(i % 2 == 0)
+            {
+
+                if(liste_ratios[i] == 0)
+                {
+                    liste_symbole.push_back(Note(NoteType::Ronde, valeur_note[j]));
+                }
+                else if(liste_ratios[i] == 1)
+                {
+                    liste_symbole.push_back(Note(NoteType::Blanche, valeur_note[j]));
+                }
+                else if(liste_ratios[i] == 2)
+                {
+                    liste_symbole.push_back(Note(NoteType::Noire, valeur_note[j]));
+                }
+                else if(liste_ratios[i] == 3)
+                {
+                    liste_symbole.push_back(Note(NoteType::Croche, valeur_note[j]));
+                }
+                else if(liste_ratios[i] == 4)
+                {
+                    liste_symbole.push_back(Note(NoteType::DoubleCroche, valeur_note[j]));
+                }
+                j++;
+            }
+            else
+            {
+
+                if(liste_ratios[i] == 0)
+                {
+                    liste_symbole.push_back(Note(NoteType::Pause, NoteValue::UNKNOWN));
+                }
+                else if(liste_ratios[i] == 1)
+                {
+                    liste_symbole.push_back(Note(NoteType::DemiPause, valeur_note[j]));
+                }
+                else if(liste_ratios[i] == 2)
+                {
+                    liste_symbole.push_back(Note(NoteType::Silence, valeur_note[j]));
+                }
+                else if(liste_ratios[i] == 3)
+                {
+                    liste_symbole.push_back(Note(NoteType::DemiSilence, valeur_note[j]));
+                }
+                else if(liste_ratios[i] == 4)
+                {
+                    liste_symbole.push_back(Note(NoteType::QuartSilence, valeur_note[j]));
+                }
+            }
+        }
+    }
+    // easter egg
+    else
+    {
+        std::cout << "you just broke the fourth wall" << std::endl;
+    }
+    /* clang-format off */
     std::cout << max_ratio << std::endl;
     for(int64_t i = 0; i < liste_duree.size(); i++)
     {
         int64_t duree = liste_duree[i];
         int64_t ratio = liste_ratios[i];
         std::cout << duree << '\t' << ratio << '\n';
+    }
+    for(int64_t i = 0; i < liste_symbole.size(); i++)
+    {
+        std::cout << (int)liste_symbole[i].noteType << '\t' << (int)liste_symbole[i].noteValue << '\n';
     }
     std::cout << std::endl;
 }

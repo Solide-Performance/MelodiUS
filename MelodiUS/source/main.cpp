@@ -44,7 +44,7 @@ bool setupFPGA();
 int main(int argc, char* argv[])
 {
     /* Invoke GUI */
-     std::thread gui{mainOfGui, argc, argv};
+    std::thread gui{mainOfGui, argc, argv};
 
     /* portaudio init */
     std::thread portAudioInitThread(setupPortaudio);
@@ -69,7 +69,7 @@ int main(int argc, char* argv[])
     FPGA::DeInit();
 #endif
 
-     gui.join();
+    gui.join();
 
     return 0;
 }
@@ -81,34 +81,7 @@ void menuHandler()
 {
     Recording rec;
 
-    // std::string path = "tests/test_gamme/";
-    // for(const std::filesystem::directory_entry& entry :
-    //    std::filesystem::recursive_directory_iterator(path))
-    //{
-    //    std::cout << entry.path() << ": ";
-    //    try
-    //    {
-    //        rec = LoadFromWav(entry.path().generic_string());
-    //        if(rec.isValid())
-    //        {
-    //            /*double           freq = FindFrequency(rec);
-    //            auto [NoteName, NoteVal] = FindNoteFromFreq(freq);
-    //            std::cout << NoteName << " (" << freq << ")" << std::endl;*/
-    //            analyse_rythme(rec);
-    //        }
-    //        else
-    //        {
-    //            std::cout << "Must read valid audio" << std::endl;
-    //        }
-    //    }
-    //    catch(const std::exception& ex)
-    //    {
-    //        std::cout << "Could not read .wav file" << ex.what() << std::endl;
-    //    }
-    //}
-    // while(1)
-    //{
-    //}
+
 
     while(true)
     {
@@ -121,6 +94,7 @@ void menuHandler()
         std::cout << "5 - Load .wav file\n";
         std::cout << "6 - Rythm analysis\n";
         std::cout << "7 - Find main frequency of signal\n";
+        std::cout << "8 - Analysis of a folder and subdirs\n";
         std::cout << "0 - Exit" << std::endl;
 
         int menuVal = 0;
@@ -254,6 +228,35 @@ void menuHandler()
                 }
 
                 break;
+            }
+
+            case 8:
+            {
+
+                std::cout << " - Load a folder and subdirs - \nFilename:" << std::endl;
+                std::string path;
+                std::cin >> path;
+                for(const std::filesystem::directory_entry& entry :
+                    std::filesystem::recursive_directory_iterator(path))
+                {
+                    std::cout << entry.path() << ": ";
+                    try
+                    {
+                        rec = LoadFromWav(entry.path().generic_string());
+                        if(rec.isValid())
+                        {
+                            analyse_rythme(rec);
+                        }
+                        else
+                        {
+                            std::cout << "Must read valid audio" << std::endl;
+                        }
+                    }
+                    catch(const std::exception& ex)
+                    {
+                        std::cout << "Could not read .wav file" << ex.what() << std::endl;
+                    }
+                }
             }
 
             /* Exit */

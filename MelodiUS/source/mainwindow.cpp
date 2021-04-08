@@ -9,6 +9,8 @@
 #include "recording.h"
 #include "widgets/widget_note.h"
 
+//using namespace Ui_MainWindow;
+
 static Recording rec{};
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(this)
@@ -46,28 +48,10 @@ void MainWindow::stopRecord()
 
 void MainWindow::on_pushButton_clicked()    // Label existe deja line 74 mainwindow_ui.h
 {
-    /*static QLabel* label_A = new QLabel(ui->centralwidget);
+   
 
-    QPixmap pixmap = (QString::fromUtf8("../../MelodiUS/meloiusImage/noir.png"));
-
-    int y_do  = 180;
-    int y_re  = 170;                    //Switcher les valeur pour les référant avec la groupe box
-    int y_mi  = 160;
-    int y_fa  = 150;
-    int y_sol = 140;
-    int y_la  = (ui->line_4->y() + ui->line_3->y()) / 2 - pixmap.height() + 5;
-    int y_si  = 120;
-
-    std::cout << "ceci est le bouton A" << std::endl;
-
-    label_A->setGeometry(QRect(300, y_la, 20, 80));
-    label_A->setPixmap(pixmap);
-    label_A->setMask(pixmap.mask());
-
-    label_A->show();*/
-
-    NoteWidget* A = new NoteWidget{this, Note{NoteType::Noire, NoteValue::A4}, 300};
-    A->show();
+    NoteWidget A{&ui.groupBoxPartition, Note{NoteType::Noire, NoteValue::A4}, 300};
+    A.show();
 }
 
 MainWindow::~MainWindow()

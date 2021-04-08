@@ -63,13 +63,13 @@ public:
     QRegion circle;
 
 
-    Ui_MainWindow()              = delete;
+    Ui_MainWindow()               = delete;
     Ui_MainWindow(Ui_MainWindow&) = delete;
     Ui_MainWindow(QMainWindow* mainwindow)
     : centralwidget(mainwindow),
 
-      groupBoxMenu(&centralwidget),
       groupBoxPartition(&centralwidget),
+      groupBoxMenu(&centralwidget),
 
       label(&groupBoxMenu),
       label_3(&groupBoxPartition),
@@ -96,8 +96,6 @@ public:
 
 
 
-
-
     {
     }
 
@@ -108,11 +106,11 @@ public:
         groupBoxMenu.setGeometry(0, 0, 250, 900);
         groupBoxPartition.setGeometry(250, 0, 1000, 1000);
 
-        label.setGeometry(QRect(10,800, 851, 91));
+        label.setGeometry(QRect(10, 600,500, 800));
         label.setText("MelodiUS V1.3   UwU Solide Performance");
 
         label_3.setGeometry(QRect(10, 130, 51, 101));
-        label_3.setPixmap(QPixmap(QString::fromUtf8("../../MelodiUS/meloiusImage/cle40x80T.png")));
+        label_3.setPixmap(QPixmap(QString::fromUtf8("images/cle40x80T.png")));
 
         ///=== LIGNE HORIZONTALE ========//
 
@@ -167,14 +165,14 @@ public:
         buttonStopRecord.hide();
 
         buttonPlay.setGeometry(QRect(100, 200, 100, 100));
-        buttonRecord.setText("Play");
+        buttonPlay.setText("Play");
         QRegion cercle(QRect(100, 200, 75, 75));
 
         buttonProcess.setGeometry(QRect(100, 350, 100, 100));
-        buttonRecord.setText("Process");
+        buttonProcess.setText("Process");
 
         buttonSaveLoad.setGeometry(QRect(100, 500, 100, 100));
-        buttonRecord.setText("Save| Load");
+        buttonSaveLoad.setText("Save| Load");
 
         mainWindow->setCentralWidget(&centralwidget);
     }
