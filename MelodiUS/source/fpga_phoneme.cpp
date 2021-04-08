@@ -35,7 +35,7 @@
         else                                                                                       \
         {                                                                                          \
             std::cerr << "Error while reading channel #" #channelNumber << '\n'                    \
-                      << errorMsg() << std::endl;                                                  \
+                      << ErrorMsg() << std::endl;                                                  \
         }                                                                                          \
     } while(false)
 
@@ -105,10 +105,10 @@ void FPGA::DeInit()
 
 void FPGA::StartListener()
 {
-    m_listener = new std::thread{listenerThread};
+    m_listener = new std::thread{ListenerThread};
 }
 
-void FPGA::listenerThread()
+void FPGA::ListenerThread()
 {
     CHECK_ENABLED();
 
@@ -141,17 +141,20 @@ void FPGA::listenerThread()
                     adc4p);
 
         /* Check for phonemes in the buttons */
-        checkButtonPhonemes();
+        CheckButtonPhonemes();
 
         /* Check for phonemes in the ADC channel */
-        checkADCPhonemes();
+        CheckADCPhonemes();
+
+        /* Display ADC value (selected with switches) on the 7-segment display */
+        DisplayADC();
 
         /* Sleep for 100 ms */
         std::this_thread::sleep_for(std::chrono::milliseconds{100});
     }
 }
 
-void FPGA::checkADCPhonemes()
+void FPGA::CheckADCPhonemes()
 {
     /* This function uses a mask that is enabled at each detected phoneme level */
     /* The mask values are :
@@ -227,12 +230,12 @@ void FPGA::checkADCPhonemes()
         {
             *m_phonemeCounter = std::numeric_limits<size_t>::max();
 
-            callCallback(*m_currentPhoneme);
+            CallCallback(*m_currentPhoneme);
         }
     }
 }
 
-void FPGA::checkButtonPhonemes()
+void FPGA::CheckButtonPhonemes()
 {
     bool success = true;
 
@@ -241,39 +244,66 @@ void FPGA::checkButtonPhonemes()
     success     = m_fpga->lireRegistre(Registers::BUTTON, buttons);
     if(!success)
     {
-        std::cerr << "Error while reading FPGA buttons" << std::endl;
+        std::cerr << "Error while reading FPGA buttons\n" << ErrorMsg() << std::endl;
         return;
     }
 
     /* Check for BTN0 press */
     if((buttons & 0x01) != 0)
     {
-        callCallback(Phoneme::a);
+        CallCallback(Phoneme::a);
     }
     /* Check for BTN1 press */
     if((buttons & 0x02) != 0)
     {
-        callCallback(Phoneme::ey);
+        CallCallback(Phoneme::ey);
     }
     /* Check for BTN2 press */
     if((buttons & 0x04) != 0)
     {
-        callCallback(Phoneme::ae);
+        CallCallback(Phoneme::ae);
     }
     /* Check for BTN3 press */
     if((buttons & 0x08) != 0)
     {
-        callCallback(Phoneme::i);
+        CallCallback(Phoneme::i);
     }
 }
 
-void FPGA::callCallback(Phoneme channel)
+void FPGA::CallCallback(Phoneme channel)
 {
     /* Call callback function */
     auto callback = (*m_phonemeCallbacks)[static_cast<uint8_t>(channel)];
     if(callback)
     {
         callback();
+    }
+}
+
+void FPGA::DisplayADC()
+{
+    int  switches = 0;
+    bool success  = m_fpga->lireRegistre(Registers::SWITCH, switches);
+    if(!success)
+    {
+        std::cerr << "Error while reading FPGA switches\n" << ErrorMsg() << std::endl;
+        return;
+    }
+
+    switches &= 0b11;
+
+    /* Two-digits BCD */
+    uint8_t adc     = (*m_adc)[switches] / 255.f * 100.f;
+    uint8_t adcTemp = adc % 10;
+    adc = ((adc / 10) % 10) << 4;
+    adc |= adcTemp;
+
+    /* Print percentage value */
+    success = m_fpga->ecrireRegistre(Registers::AN1, adc);
+    if(!success)
+    {
+        std::cerr << "Error while writing FPGA 7-segments\n" << ErrorMsg() << std::endl;
+        return;
     }
 }
 
@@ -288,7 +318,7 @@ bool FPGA::isOk()
 #endif
 }
 
-std::string FPGA::errorMsg()
+std::string FPGA::ErrorMsg()
 {
     CHECK_ENABLED("");
 
@@ -297,7 +327,7 @@ std::string FPGA::errorMsg()
 #endif
 }
 
-std::array<uint8_t, 4> FPGA::getADC()
+std::array<uint8_t, 4> FPGA::GetADC()
 {
     CHECK_ENABLED(EMPTY_ADC_ARRAY);
 
@@ -306,7 +336,7 @@ std::array<uint8_t, 4> FPGA::getADC()
                                   static_cast<uint8_t>((*m_adc)[2]),
                                   static_cast<uint8_t>((*m_adc)[3])};
 }
-uint8_t FPGA::getADC(size_t channel)
+uint8_t FPGA::GetADC(size_t channel)
 {
     CHECK_ENABLED(0xFF);
 
@@ -320,7 +350,7 @@ uint8_t FPGA::getADC(size_t channel)
     }
 }
 
-Phoneme FPGA::getCurrentPhoneme()
+Phoneme FPGA::GetCurrentPhoneme()
 {
     return m_currentPhoneme ? *m_currentPhoneme : Phoneme::UNKNOWN;
 }
@@ -334,7 +364,7 @@ void FPGA::WriteLED(uint8_t val)
 #endif
 }
 
-void FPGA::setPhonemeCallback(Phoneme number, std::function<void()> callback)
+void FPGA::SetPhonemeCallback(Phoneme number, std::function<void()> callback)
 {
     /* Set new callback function is the callback parameter is callable
      * If not callable, clear the callback function */

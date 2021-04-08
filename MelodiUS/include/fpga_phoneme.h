@@ -27,7 +27,8 @@ enum class Phoneme : uint8_t
 /*****************************************************************************/
 /* Class ------------------------------------------------------------------- */
 
-/* The FPGA class is a `singleton` */
+/* The FPGA class is a `static singleton`
+   This code could be out of a class, and within a simple namespace instead. */
 class FPGA
 {
 #ifdef LINUX_
@@ -52,11 +53,11 @@ public:
     /* --------------------------------- */
     /* Accessors                         */
     [[nodiscard]] static bool                   isOk();
-    [[nodiscard]] static std::string            errorMsg();
-    [[nodiscard]] static std::array<uint8_t, 4> getADC();
-    [[nodiscard]] static uint8_t                getADC(size_t channel);
-    [[nodiscard]] static Phoneme                getCurrentPhoneme();
-    static void setPhonemeCallback(Phoneme number, std::function<void()> callback);
+    [[nodiscard]] static std::string            ErrorMsg();
+    [[nodiscard]] static std::array<uint8_t, 4> GetADC();
+    [[nodiscard]] static uint8_t                GetADC(size_t channel);
+    [[nodiscard]] static Phoneme                GetCurrentPhoneme();
+    static void SetPhonemeCallback(Phoneme number, std::function<void()> callback);
 
     static void WriteLED(uint8_t val);
 
@@ -65,10 +66,11 @@ private:
     /* Methods                           */
     FPGA() = default; /* The constructor is private to avoid instanciation */
 
-    static void listenerThread();
-    static void checkADCPhonemes();
-    static void checkButtonPhonemes();
-    static void callCallback(Phoneme channel);
+    static void ListenerThread();
+    static void CheckADCPhonemes();
+    static void CheckButtonPhonemes();
+    static void CallCallback(Phoneme channel);
+    static void DisplayADC();
 
     /* --------------------------------- */
     /* Types                             */

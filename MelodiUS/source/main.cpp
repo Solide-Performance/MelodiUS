@@ -277,12 +277,12 @@ void fpgaMenuHandler()
     Recording rec;
 
     // clang-format off
-    FPGA::setPhonemeCallback(Phoneme::a, [&rec]() mutable
+    FPGA::SetPhonemeCallback(Phoneme::a, [&rec]() mutable
                                          {
                                              rec = Record(60);
                                          });
 
-    FPGA::setPhonemeCallback(Phoneme::ey, [&rec]()
+    FPGA::SetPhonemeCallback(Phoneme::ey, [&rec]()
                                           {
                                               if(rec.isValid())
                                               {
@@ -290,7 +290,7 @@ void fpgaMenuHandler()
                                               }
                                           });
 
-    FPGA::setPhonemeCallback(Phoneme::ae, [&rec]() mutable
+    FPGA::SetPhonemeCallback(Phoneme::ae, [&rec]() mutable
                                           {
                                               std::cout << "\n.wav file path: " << std::endl;
 
@@ -310,7 +310,7 @@ void fpgaMenuHandler()
                                               }
                                          });
 
-    FPGA::setPhonemeCallback(Phoneme::i, [&rec]() 
+    FPGA::SetPhonemeCallback(Phoneme::i, [&rec]() 
                                          {
                                              if(rec.isValid())
                                              {
@@ -335,7 +335,7 @@ bool setupFPGA()
     FPGA::WriteLED(0xFF);
     if(!FPGA::isOk())
     {
-        std::cerr << "FPGA Connection Failed: " << FPGA::errorMsg() << std::endl;
+        std::cerr << "FPGA Connection Failed: " << FPGA::ErrorMsg() << std::endl;
         FPGA::DeInit();
         // throw std::exception();
         return false;
