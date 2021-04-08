@@ -14,8 +14,7 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(new Ui::MainWi
 {
     ui->setupUi(this);
 
-    QObject::connect(
-      ui->pushButtonA, &QPushButton::clicked, this, &MainWindow::on_pushButton_clicked);
+    QObject::connect(ui->pushButtonA, &QPushButton::clicked, this, &MainWindow::on_pushButton_clicked);
     QObject::connect(ui->buttonRecord, &QPushButton::clicked, this, &MainWindow::startRecord);
     QObject::connect(ui->buttonStopRecord, &QPushButton::clicked, this, &MainWindow::stopRecord);
 }
@@ -51,7 +50,7 @@ void MainWindow::on_pushButton_clicked()    // Label existe deja line 74 mainwin
     QPixmap pixmap = (QString::fromUtf8("../../MelodiUS/meloiusImage/noir.png"));
 
     int y_do  = 180;
-    int y_re  = 170;
+    int y_re  = 170;                    //Switcher les valeur pour les référant avec la groupe box
     int y_mi  = 160;
     int y_fa  = 150;
     int y_sol = 140;

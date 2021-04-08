@@ -56,6 +56,8 @@ public:
     QPushButton* buttonProcess;
     QPushButton* buttonSaveLoad;
 
+    QRegion* circle;
+
 
   
 
@@ -66,7 +68,7 @@ public:
         centralwidget = new QWidget(mainWindow);
 
         groupBoxPartition = new QGroupBox(centralwidget);
-        groupBoxPartition->setGeometry(QRect(250, 0, 1200, 900)); // On peut enlever quelque hardcode 
+        groupBoxPartition->setGeometry(QRect(250, 0, 1275, 900)); // On peut enlever quelque hardcode 
         groupBoxPartition->setCheckable(false);
 
         groupBoxMenu = new QGroupBox(centralwidget);
@@ -146,6 +148,7 @@ public:
 
         buttonPlay = new QPushButton(groupBoxMenu);
         buttonPlay->setGeometry(QRect(100, 200, 100, 100));
+        QRegion cercle(QRect(100, 200, 75, 75));
 
         buttonProcess = new QPushButton(groupBoxMenu);
         buttonProcess->setGeometry(QRect(100, 350, 100, 100));
