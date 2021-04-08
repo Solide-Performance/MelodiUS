@@ -223,9 +223,8 @@ void analyse_note(std::vector<size_t>    debuts,
 
                 if(liste_ratios[i] == 0)
                 {
-                    liste_symbole.push_back(Note(NoteType::Noire, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::Noire, valeur_note[j++]));
                 }
-                j++;
             }
             else
             {
@@ -247,13 +246,12 @@ void analyse_note(std::vector<size_t>    debuts,
 
                 if(liste_ratios[i] == 0)
                 {
-                    liste_symbole.push_back(Note(NoteType::Noire, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::Noire, valeur_note[j++]));
                 }
                 else if(liste_ratios[i] == 1)
                 {
-                    liste_symbole.push_back(Note(NoteType::Croche, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::Croche, valeur_note[j++]));
                 }
-                j++;
             }
             else
             {
@@ -264,7 +262,7 @@ void analyse_note(std::vector<size_t>    debuts,
                 }
                 else if(liste_ratios[i] == 1)
                 {
-                    liste_symbole.push_back(Note(NoteType::DemiSilence, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::DemiSilence, NoteValue::UNKNOWN));
                 }
             }
         }
@@ -279,17 +277,16 @@ void analyse_note(std::vector<size_t>    debuts,
 
                 if(liste_ratios[i] == 0)
                 {
-                    liste_symbole.push_back(Note(NoteType::Blanche, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::Blanche, valeur_note[j++]));
                 }
                 else if(liste_ratios[i] == 1)
                 {
-                    liste_symbole.push_back(Note(NoteType::Noire, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::Noire, valeur_note[j++]));
                 }
                 else if(liste_ratios[i] == 2)
                 {
-                    liste_symbole.push_back(Note(NoteType::Croche, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::Croche, valeur_note[j++]));
                 }
-                j++;
             }
             else
             {
@@ -300,11 +297,11 @@ void analyse_note(std::vector<size_t>    debuts,
                 }
                 else if(liste_ratios[i] == 1)
                 {
-                    liste_symbole.push_back(Note(NoteType::Silence, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::Silence, NoteValue::UNKNOWN));
                 }
                 else if(liste_ratios[i] == 2)
                 {
-                    liste_symbole.push_back(Note(NoteType::DemiSilence, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::DemiSilence, NoteValue::UNKNOWN));
                 }
             }
         }
@@ -319,21 +316,20 @@ void analyse_note(std::vector<size_t>    debuts,
 
                 if(liste_ratios[i] == 0)
                 {
-                    liste_symbole.push_back(Note(NoteType::Ronde, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::Ronde, valeur_note[j++]));
                 }
                 else if(liste_ratios[i] == 1)
                 {
-                    liste_symbole.push_back(Note(NoteType::Blanche, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::Blanche, valeur_note[j++]));
                 }
                 else if(liste_ratios[i] == 2)
                 {
-                    liste_symbole.push_back(Note(NoteType::Noire, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::Noire, valeur_note[j++]));
                 }
                 else if(liste_ratios[i] == 3)
                 {
-                    liste_symbole.push_back(Note(NoteType::Croche, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::Croche, valeur_note[j++]));
                 }
-                j++;
             }
             else
             {
@@ -344,15 +340,15 @@ void analyse_note(std::vector<size_t>    debuts,
                 }
                 else if(liste_ratios[i] == 1)
                 {
-                    liste_symbole.push_back(Note(NoteType::DemiPause, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::DemiPause, NoteValue::UNKNOWN));
                 }
                 else if(liste_ratios[i] == 2)
                 {
-                    liste_symbole.push_back(Note(NoteType::Silence, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::Silence, NoteValue::UNKNOWN));
                 }
                 else if(liste_ratios[i] == 3)
                 {
-                    liste_symbole.push_back(Note(NoteType::DemiSilence, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::DemiSilence, NoteValue::UNKNOWN));
                 }
             }
         }
@@ -367,25 +363,24 @@ void analyse_note(std::vector<size_t>    debuts,
 
                 if(liste_ratios[i] == 0)
                 {
-                    liste_symbole.push_back(Note(NoteType::Ronde, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::Ronde, valeur_note[j++]));
                 }
                 else if(liste_ratios[i] == 1)
                 {
-                    liste_symbole.push_back(Note(NoteType::Blanche, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::Blanche, valeur_note[j++]));
                 }
                 else if(liste_ratios[i] == 2)
                 {
-                    liste_symbole.push_back(Note(NoteType::Noire, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::Noire, valeur_note[j++]));
                 }
                 else if(liste_ratios[i] == 3)
                 {
-                    liste_symbole.push_back(Note(NoteType::Croche, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::Croche, valeur_note[j++]));
                 }
                 else if(liste_ratios[i] == 4)
                 {
-                    liste_symbole.push_back(Note(NoteType::DoubleCroche, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::DoubleCroche, valeur_note[j++]));
                 }
-                j++;
             }
             else
             {
@@ -396,19 +391,19 @@ void analyse_note(std::vector<size_t>    debuts,
                 }
                 else if(liste_ratios[i] == 1)
                 {
-                    liste_symbole.push_back(Note(NoteType::DemiPause, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::DemiPause, NoteValue::UNKNOWN));
                 }
                 else if(liste_ratios[i] == 2)
                 {
-                    liste_symbole.push_back(Note(NoteType::Silence, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::Silence, NoteValue::UNKNOWN));
                 }
                 else if(liste_ratios[i] == 3)
                 {
-                    liste_symbole.push_back(Note(NoteType::DemiSilence, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::DemiSilence, NoteValue::UNKNOWN));
                 }
                 else if(liste_ratios[i] == 4)
                 {
-                    liste_symbole.push_back(Note(NoteType::QuartSilence, valeur_note[j]));
+                    liste_symbole.push_back(Note(NoteType::QuartSilence, NoteValue::UNKNOWN));
                 }
             }
         }

@@ -4,7 +4,7 @@
 #pragma region Note type and value enums
 enum class NoteType
 {
-    Ronde,
+    Ronde = 0,
     Blanche,
     Noire,
     Croche,
