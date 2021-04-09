@@ -25,7 +25,7 @@
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QWidget>
-
+#include <QtWidgets/qprogressbar.h>
 
 class Ui_MainWindow
 {
@@ -62,7 +62,14 @@ public:
 
     QRegion circle;
 
-
+    QProgressBar bargraph1;
+    QProgressBar bargraph2;
+    QProgressBar bargraph3;
+    QProgressBar bargraph4;
+    QLabel       labelbar1;
+    QLabel       labelbar2;
+    QLabel       labelbar3;
+    QLabel       labelbar4;
     Ui_MainWindow()               = delete;
     Ui_MainWindow(Ui_MainWindow&) = delete;
     Ui_MainWindow(QMainWindow* mainwindow)
@@ -91,10 +98,15 @@ public:
       buttonPlay(&groupBoxMenu),
       buttonProcess(&groupBoxMenu),
       buttonSaveLoad(&groupBoxMenu),
-      circle(QRect(100, 200, 75, 75))
-
-
-
+      circle(QRect(100, 200, 75, 75)),
+      bargraph1(&groupBoxMenu),
+      bargraph2(&groupBoxMenu),
+      bargraph3(&groupBoxMenu),
+      bargraph4(&groupBoxMenu),
+      labelbar1(&groupBoxMenu),
+      labelbar2(&groupBoxMenu),
+      labelbar3(&groupBoxMenu),
+      labelbar4(&groupBoxMenu)
 
     {
     }
@@ -106,7 +118,7 @@ public:
         groupBoxMenu.setGeometry(0, 0, 250, 900);
         groupBoxPartition.setGeometry(250, 0, 1000, 1000);
 
-        label.setGeometry(QRect(10, 600,500, 800));
+        label.setGeometry(QRect(10, 600, 500, 800));
         label.setText("MelodiUS V1.3   UwU Solide Performance");
 
         label_3.setGeometry(QRect(10, 130, 51, 101));
@@ -173,6 +185,42 @@ public:
 
         buttonSaveLoad.setGeometry(QRect(100, 500, 100, 100));
         buttonSaveLoad.setText("Save| Load");
+
+        bargraph1.setMaximum(100);
+        bargraph1.setMinimum(0);
+        bargraph1.setOrientation(Qt::Vertical);
+        bargraph1.setGeometry(QRect(50, 700,25,100));
+        bargraph1.setValue(50);
+        bargraph1.setTextVisible(true);
+        labelbar1.setGeometry(QRect(50, 680, 10,30 ));
+        labelbar1.setText("1");
+
+        bargraph2.setMaximum(100);
+        bargraph2.setMinimum(0);
+        bargraph2.setOrientation(Qt::Vertical);
+        bargraph2.setGeometry(QRect(100, 700, 25, 100));
+        bargraph2.setValue(50);
+        bargraph2.setTextVisible(true);
+        labelbar2.setGeometry(QRect(100, 680, 10, 30));
+        labelbar2.setText("2");
+
+        bargraph3.setMaximum(100);
+        bargraph3.setMinimum(0);
+        bargraph3.setOrientation(Qt::Vertical);
+        bargraph3.setGeometry(QRect(150, 700,25,100));
+        bargraph3.setValue(50);
+        bargraph3.setTextVisible(true);
+        labelbar3.setGeometry(QRect(150, 680, 10, 30));
+        labelbar3.setText("3");
+
+        bargraph4.setMaximum(100);
+        bargraph4.setMinimum(0);
+        bargraph4.setOrientation(Qt::Vertical);
+        bargraph4.setGeometry(QRect(200, 700, 25, 100));
+        bargraph4.setValue(50);
+        bargraph4.setTextVisible(true);
+        labelbar4.setGeometry(QRect(200, 680, 10, 30));
+        labelbar4.setText("4");
 
         mainWindow->setCentralWidget(&centralwidget);
     }
