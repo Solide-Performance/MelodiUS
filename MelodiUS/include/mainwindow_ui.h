@@ -10,7 +10,54 @@
 #include "fpga_phoneme.h"
 #include "globaldef.h"
 #include <array>
-#include <mutex>
+
+
+class RoundButton : public QPushButton
+{
+    Q_DISABLE_COPY(RoundButton)
+private:
+    QPixmap image;
+
+public:
+    using QPushButton::QPushButton;
+    void SetImage(QPixmap newImage)
+    {
+        image = newImage;
+    }
+
+public slots:
+    void paintEvent(QPaintEvent*)
+    {
+        QColor background = isDown() ? QColor("grey") : QColor("lightgrey");
+        int    diameter   = qMin(height(), width()) - 4;
+
+        QPainter painter(this);
+        painter.setRenderHint(QPainter::Antialiasing, false);
+        painter.translate(width() / 2, height() / 2);
+
+        painter.setPen(QPen(QColor("grey"), 1));
+        painter.setBrush(QBrush(background));
+        painter.drawEllipse(QRect(-diameter / 2, -diameter / 2, diameter, diameter));
+
+        if(!image.isNull())
+        {
+            int xOff = (-diameter / 2) + (image.width() * 3 / 2) - 1;
+            int yOff = (-diameter / 2) + (image.height() * 3 / 2) - 1;
+            painter.drawPixmap(QRect(xOff, yOff, image.width(), image.height()), image);
+        }
+    }
+
+    void resizeEvent(QResizeEvent* event) override
+    {
+        QPushButton::resizeEvent(event);
+
+        int diameter = qMin(height(), width()) + 4;
+        int xOff     = (width() - diameter) / 2;
+        int yOff     = (height() - diameter) / 2;
+        setMask(QRegion(xOff, yOff, diameter, diameter, QRegion::Ellipse));
+    }
+};
+
 
 class Ui_MainWindow
 {
@@ -39,13 +86,13 @@ public:
 
     QPushButton pushButtonA;
 
-    QPushButton buttonRecord;
-    QPushButton buttonStopRecord;
-    QPushButton buttonPlay;
-    QPushButton buttonProcess;
+    RoundButton buttonRecord;
+    RoundButton buttonStopRecord;
+    RoundButton buttonPlay;
+    RoundButton buttonProcess;
     QPushButton buttonSaveLoad;
 
-    QRegion circle;
+    QMessageBox SLD;
 
     QProgressBar bargraph1;
     QProgressBar bargraph2;
@@ -69,6 +116,11 @@ public:
 
       label(&groupBoxMenu),
       label_3(&groupBoxPartition),
+      label_A(&groupBoxMenu),
+      label_I(&groupBoxMenu),
+      label_hey(&groupBoxMenu),
+      label_est(&groupBoxMenu),
+
 
       line(&groupBoxPartition),
       line_2(&groupBoxPartition),
@@ -87,7 +139,6 @@ public:
       buttonPlay(&groupBoxMenu),
       buttonProcess(&groupBoxMenu),
       buttonSaveLoad(&groupBoxMenu),
-      circle(QRect(100, 200, 75, 75)),
       bargraph1(&groupBoxMenu),
       bargraph2(&groupBoxMenu),
       bargraph3(&groupBoxMenu),
@@ -102,16 +153,23 @@ public:
 
     void setupUi(QMainWindow* mainWindow)
     {
-        // if(mainWindow->objectName().isEmpty())
+
+
         mainWindow->resize(1600, 900);
         groupBoxMenu.setGeometry(0, 0, 250, 900);
-        groupBoxPartition.setGeometry(250, 0, 1000, 1000);
-
         label.setGeometry(QRect(10, 600, 500, 800));
         label.setText("MelodiUS V1.3   UwU Solide Performance");
-
+        groupBoxPartition.setGeometry(250, 0, 1350, 900);
         label_3.setGeometry(QRect(10, 130, 51, 101));
         label_3.setPixmap(QPixmap(QString::fromUtf8("images/cle40x80T.png")));
+        label_A.setGeometry(QRect(50, 50, 51, 101));
+        label_A.setText("A");
+        label_I.setGeometry(QRect(50, 200, 51, 101));
+        label_I.setText("I");
+        label_hey.setGeometry(QRect(50, 350, 51, 101));
+        label_hey.setText("HEY");
+        label_est.setGeometry(QRect(50, 500, 51, 101));
+        label_est.setText("EST");
 
         ///=== LIGNE HORIZONTALE ========//
 
@@ -156,24 +214,37 @@ public:
         pushButtonA.setGeometry(QRect(70, 370, 93, 28));
         pushButtonA.setText("A");
 
-
-
         buttonRecord.setGeometry(QRect(100, 50, 100, 100));
-        buttonRecord.setText("Record");
+        /*buttonRecord.setText("Enregistrement");
+        buttonRecord.setStyleSheet("Border : none");
+        buttonRecord.setStyleSheet("background-color:gray");*/
+        buttonRecord.SetImage({"images/record.png"});
 
         buttonStopRecord.setGeometry(QRect(100, 50, 100, 100));
-        buttonStopRecord.setText("Stop Recording");
+        //buttonStopRecord.setText("Fin de l'enregistreement");
+        buttonStopRecord.SetImage({"images/stopRecord.png"});
         buttonStopRecord.hide();
 
         buttonPlay.setGeometry(QRect(100, 200, 100, 100));
-        buttonPlay.setText("Play");
-        QRegion cercle(QRect(100, 200, 75, 75));
+        buttonPlay.setText("Lecture");
+        buttonPlay.setStyleSheet("Border : none");
+        buttonPlay.setStyleSheet("background-color:gray");
 
+
+
+        buttonProcess.setText("Traitement");
         buttonProcess.setGeometry(QRect(100, 350, 100, 100));
-        buttonProcess.setText("Process");
+        buttonProcess.setStyleSheet("background-color:gray");
 
         buttonSaveLoad.setGeometry(QRect(100, 500, 100, 100));
-        buttonSaveLoad.setText("Save| Load");
+        buttonSaveLoad.setText("Sauvegarde / Charge");
+
+        SLD.setText("Solide Sauvegarde");
+        SLD.setInformativeText(
+          "Vous pouvez enregistrer votre dernier enregistrement ou utiliser un fichier existant");    // Mettre des mots plus tard!
+        SLD.setStandardButtons(QMessageBox::Save | QMessageBox::Open | QMessageBox::Cancel);
+        SLD.setDefaultButton(QMessageBox::Cancel);
+        SLD.setStyleSheet("background-color: yellow;");
 
         bargraph1.setMaximum(255);
         bargraph1.setMinimum(0);
@@ -213,5 +284,4 @@ public:
 
         mainWindow->setCentralWidget(&centralwidget);
     }
-
 };

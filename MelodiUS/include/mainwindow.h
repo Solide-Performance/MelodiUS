@@ -10,10 +10,16 @@ class MainWindow : public QMainWindow
 {
     
 public slots:
-   void on_pushButton_clicked();
+   void on_pushButtonA_clicked();
    void startRecord();
    void stopRecord();
    void updateBargraph();
+
+   void play();
+   void processing();
+   void saveOrLoad();
+   void saving();
+   void loading();
 
 public:
     MainWindow(QWidget* parent = nullptr);

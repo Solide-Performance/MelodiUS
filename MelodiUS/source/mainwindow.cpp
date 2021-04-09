@@ -18,21 +18,28 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(this)
     ui.setupUi(this);
 
     QObject::connect(
-      &ui.pushButtonA, &QPushButton::clicked, this, &MainWindow::on_pushButton_clicked);
+      &ui.pushButtonA, &QPushButton::clicked, this, &MainWindow::on_pushButtonA_clicked);
+
     QObject::connect(&ui.buttonRecord, &QPushButton::clicked, this, &MainWindow::startRecord);
     QObject::connect(&ui.buttonStopRecord, &QPushButton::clicked, this, &MainWindow::stopRecord);
-
+    QObject::connect(&ui.buttonPlay, &QPushButton::clicked, this, &MainWindow::play);
+    QObject::connect(&ui.buttonProcess, &QPushButton::clicked, this, &MainWindow::processing);
+    QObject::connect(&ui.buttonSaveLoad, &QPushButton::clicked, this, &MainWindow::saveOrLoad);
     QObject::connect(&ui.bargraphUpdater, &QTimer::timeout, this, &MainWindow::updateBargraph);
+
     ui.bargraphUpdater.start(100);
 }
 std::thread what_if_another_thread_fixes_it;
 void        MainWindow::startRecord()
 {
+    ui.buttonPlay.setEnabled(false);
+    ui.buttonProcess.setEnabled(false);
+    ui.buttonSaveLoad.setEnabled(false);
     ui.buttonRecord.hide();
     ui.buttonStopRecord.show();
 
     Recording_SetStopPolicy(std::function<bool()>{});
-
+    // Activer les bouton à la fin de la minute??
     what_if_another_thread_fixes_it = std::thread{[]() {
         rec = Record(NUM_SECONDS, SAMPLE_RATE, FRAMES_PER_BUFFER, 1);
     }};
@@ -47,10 +54,77 @@ void MainWindow::stopRecord()
     });
 
     what_if_another_thread_fixes_it.join();
-    Playback(rec);
+    ui.buttonPlay.setEnabled(true);
+    ui.buttonProcess.setEnabled(true);
+    ui.buttonSaveLoad.setEnabled(true);
+}
+void MainWindow::play()
+{
+    ui.buttonRecord.setEnabled(false);
+    ui.buttonStopRecord.setEnabled(false);
+    ui.buttonProcess.setEnabled(false);
+    ui.buttonSaveLoad.setEnabled(false);
+
+    // Playback(rec);                                Faudrait avoir un son par défaut ou avoir une
+    // autre boite contextuel qui donne acces au fichier
+
+
+    ui.buttonRecord.setEnabled(true);
+    ui.buttonStopRecord.setEnabled(true);
+    ui.buttonProcess.setEnabled(true);
+    ui.buttonSaveLoad.setEnabled(true);
+}
+void MainWindow::processing()
+{
+    ui.buttonRecord.setEnabled(false);
+    ui.buttonStopRecord.setEnabled(false);
+    ui.buttonPlay.setEnabled(false);
+    ui.buttonSaveLoad.setEnabled(false);
+
+
+
+    ui.buttonRecord.setEnabled(true);
+    ui.buttonStopRecord.setEnabled(true);
+    ui.buttonPlay.setEnabled(true);
+    ui.buttonSaveLoad.setEnabled(true);
+}
+void MainWindow::saveOrLoad()
+{
+    ui.buttonRecord.setEnabled(false);
+    ui.buttonStopRecord.setEnabled(false);
+    ui.buttonPlay.setEnabled(false);
+    ui.buttonProcess.setEnabled(false);
+
+    int select = ui.SLD.exec();
+    switch(select)
+    {
+        case QMessageBox::Save:
+            saving();
+            break;
+        case QMessageBox::Open:
+            loading();
+            break;
+        case QMessageBox::Cancel:
+            // Cancel was clicked IDK what is going on here, but the best guest is nothing
+            break;
+        default:
+            // should never be reached
+            break;
+    }
+
+    ui.buttonRecord.setEnabled(true);
+    ui.buttonStopRecord.setEnabled(true);
+    ui.buttonPlay.setEnabled(true);
+    ui.buttonProcess.setEnabled(true);
+}
+void MainWindow::saving()
+{
+}
+void MainWindow::loading()
+{
 }
 
-void MainWindow::on_pushButton_clicked()
+void MainWindow::on_pushButtonA_clicked()
 {
     NoteWidget A{&ui.groupBoxPartition, Note{NoteType::Noire, NoteValue::A4}, 300};
     A.show();

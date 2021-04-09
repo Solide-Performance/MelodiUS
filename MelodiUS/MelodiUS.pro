@@ -3,7 +3,6 @@ TARGET      = MelodiUS
 CONFIG      += warn_on qt debug_and_release console c++latest # c++20
 CONFIG      -= flat
 INCLUDEPATH += ./include ./source ./
-
 # Headers
 HEADERS += ./include/fpga_phoneme.h
 HEADERS += ./include/recorder.h
