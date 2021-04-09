@@ -1,6 +1,6 @@
 #define _MSC_EXTENSIONS 
 #define _MSC_VER 1928
-#define _MSC_FULL_VER 192829337
+#define _MSC_FULL_VER 192829334
 #define _MSC_BUILD 0
 #define _M_AMD64 100
 #define _M_X64 100
@@ -9,4 +9,3 @@
 #define _CPPRTTI 
 #define _MT 
 #define _DLL 
-#define _UTF8 

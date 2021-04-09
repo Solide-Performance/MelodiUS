@@ -58,11 +58,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\gui.cpp">
-      <Filter>Source Files\source</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="source\main.cpp">
       <Filter>Source Files\source</Filter>
     </ClCompile>
@@ -138,11 +133,6 @@
     <CustomBuild Include="include\globaldef.h">
       <Filter>Header Files\include</Filter>
     </CustomBuild>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\gui.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\mainwindow.h">

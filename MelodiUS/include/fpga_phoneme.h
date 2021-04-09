@@ -40,10 +40,11 @@ class FPGA
     static std::thread*        m_listener;
     static bool*               m_run;
     static std::array<int, 4>* m_adc;    // Stuck with `int` because of CommunicationFPGA lib
-    static std::array<std::function<void()>, 5>* m_phonemeCallbacks;
-    static Phoneme*                              m_currentPhoneme;
-    static Phoneme*                              m_oldPhoneme;
-    static size_t*                               m_phonemeCounter;
+    static std::array<std::function<void()>, 5>*        m_phonemeCallbacks;
+    static std::function<void(std::array<uint8_t, 4>)>* m_updateCallback;
+    static Phoneme*                                     m_currentPhoneme;
+    static Phoneme*                                     m_oldPhoneme;
+    static size_t*                                      m_phonemeCounter;
 
 public:
     static void Init();
@@ -58,6 +59,7 @@ public:
     [[nodiscard]] static uint8_t                GetADC(size_t channel);
     [[nodiscard]] static Phoneme                GetCurrentPhoneme();
     static void SetPhonemeCallback(Phoneme number, std::function<void()> callback);
+    static void SetUpdateCallback(std::function<void(std::array<uint8_t, 4>)> callback);
 
     static void WriteLED(uint8_t val);
 

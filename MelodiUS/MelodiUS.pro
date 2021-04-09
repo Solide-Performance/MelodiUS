@@ -49,10 +49,8 @@ win32 {
 
     HEADERS += ./include/widgets/widget_note.h
     HEADERS += ./include/mainwindow.h ./include/mainwindow_ui.h
-    HEADERS += ./include/gui.h
 
     SOURCES += ./source/mainwindow.cpp
-    SOURCES += ./source/gui.cpp
 	
 	DEFINES += USING_PCH
 	PRECOMPILED_HEADER = ./include/globaldef.h
