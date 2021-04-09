@@ -53,13 +53,14 @@ CommunicationFPGA* FPGA::m_fpga = nullptr;
 #else
 void* FPGA::m_fpga = nullptr;
 #endif
-bool*                                 FPGA::m_run              = nullptr;
-std::thread*                          FPGA::m_listener         = nullptr;
-std::array<int, 4>*                   FPGA::m_adc              = nullptr;
-std::array<std::function<void()>, 5>* FPGA::m_phonemeCallbacks = nullptr;
-Phoneme*                              FPGA::m_currentPhoneme   = nullptr;
-Phoneme*                              FPGA::m_oldPhoneme       = nullptr;
-size_t*                               FPGA::m_phonemeCounter   = nullptr;
+bool*                                        FPGA::m_run              = nullptr;
+std::thread*                                 FPGA::m_listener         = nullptr;
+std::array<int, 4>*                          FPGA::m_adc              = nullptr;
+std::array<std::function<void()>, 5>*        FPGA::m_phonemeCallbacks = nullptr;
+std::function<void(std::array<uint8_t, 4>)>* FPGA::m_updateCallback   = nullptr;
+Phoneme*                                     FPGA::m_currentPhoneme   = nullptr;
+Phoneme*                                     FPGA::m_oldPhoneme       = nullptr;
+size_t*                                      FPGA::m_phonemeCounter   = nullptr;
 
 
 /*****************************************************************************/
@@ -74,9 +75,13 @@ void FPGA::Init()
         m_run              = new bool(true);
         m_adc              = new std::array<int, 4>{0, 0, 0, 0};
         m_phonemeCallbacks = new std::array<std::function<void()>, 5>{EMPTY_FUNCTION};
-        m_currentPhoneme   = new Phoneme{Phoneme::UNKNOWN};
-        m_oldPhoneme       = new Phoneme{Phoneme::UNKNOWN};
-        m_phonemeCounter   = new size_t{0};
+        m_currentPhoneme = new Phoneme{Phoneme::UNKNOWN};
+        m_oldPhoneme     = new Phoneme{Phoneme::UNKNOWN};
+        m_phonemeCounter = new size_t{0};
+        m_updateCallback =
+          new std::function<void(std::array<uint8_t, 4>)>{[](std::array<uint8_t, 4> a) {
+              (void)a;
+          }};
 #endif
     }
 }
@@ -104,6 +109,7 @@ void FPGA::DeInit()
         SAFE_DELETE(&m_currentPhoneme);
         SAFE_DELETE(&m_oldPhoneme);
         SAFE_DELETE(&m_phonemeCounter);
+        SAFE_DELETE(&m_updateCallback);
     }
     catch(...)
     {
@@ -155,6 +161,9 @@ void FPGA::ListenerThread()
 
         /* Display ADC value (selected with switches) on the 7-segment display */
         DisplayADC();
+
+        /* Call ADC update callback */
+        m_updateCallback->operator()(GetADC());
 
         /* Sleep for 100 ms */
         std::this_thread::sleep_for(std::chrono::milliseconds{100});
@@ -382,6 +391,22 @@ void FPGA::SetPhonemeCallback(Phoneme number, std::function<void()> callback)
     else
     {
         (*m_phonemeCallbacks)[static_cast<size_t>(number)] = EMPTY_FUNCTION;
+    }
+}
+
+void FPGA::SetUpdateCallback(std::function<void(std::array<uint8_t, 4>)> callback)
+{
+    /* Set new callback function is the callback parameter is callable
+     * If not callable, clear the callback function */
+    if(callback)
+    {
+        *m_updateCallback = callback;
+    }
+    else
+    {
+        *m_updateCallback = [](std::array<uint8_t, 4> a) {
+            (void)a;
+        };
     }
 }
 

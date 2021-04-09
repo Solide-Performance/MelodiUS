@@ -58,11 +58,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="source\gui.cpp">
-      <Filter>Source Files\source</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <ClCompile Include="source\main.cpp">
       <Filter>Source Files\source</Filter>
     </ClCompile>
@@ -135,14 +130,9 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\globaldef.h">
+    <CustomBuild Include="include\globaldef.h">
       <Filter>Header Files\include</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\gui.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\mainwindow.h">
@@ -199,6 +189,14 @@
     <CustomBuild Include="debug\moc_predefs.h.cbt">
       <Filter>Generated Files\debug</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="Generated Files\include" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="include\globaldef.h.cpp">
+      <Filter>Generated Files\include</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Generated Files\release" />

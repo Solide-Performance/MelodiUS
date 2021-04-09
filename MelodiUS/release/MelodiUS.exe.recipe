@@ -2,7 +2,11 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
+<<<<<<< HEAD
       <FullPath>C:\Users\gaup1302\MelodiUS\MelodiUS\release\MelodiUS.exe</FullPath>
+=======
+      <FullPath>C:\Users\lacp3102\Documents\MelodiUS\MelodiUS\release\MelodiUS.exe</FullPath>
+>>>>>>> origin/Pascal
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

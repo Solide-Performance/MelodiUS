@@ -7,25 +7,7 @@
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#include <QtGlobal>
-#if QT_VERSION >= 0x060000
-#include <QtGui/QAction>
-#else
-#include <QtWidgets/QAction>
-#endif
-#include <QtCore/QVariant>
-#include <QtGui/QBitmap>
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QComboBox>
-#include <QtWidgets/QFrame>
-#include <QtWidgets/QGroupBox>
-#include <QtWidgets/QLabel>
-#include <QtWidgets/QMainWindow>
-#include <QtWidgets/QPushButton>
-#include <QtWidgets/QSpinBox>
-#include <QtWidgets/QStatusBar>
-#include <QtWidgets/QWidget>
-#include <QtWidgets/qprogressbar.h>
+#include "globaldef.h"
 
 class Ui_MainWindow
 {
@@ -107,7 +89,6 @@ public:
       labelbar2(&groupBoxMenu),
       labelbar3(&groupBoxMenu),
       labelbar4(&groupBoxMenu)
-
     {
     }
 
