@@ -26,9 +26,11 @@ public:
     Partition(QWidget* centralwidget, QGroupBox* partitionGroupBox)
     : PartitionGroupBox(partitionGroupBox),
       spinBox(PartitionGroupBox),
-      spinBox_2(PartitionGroupBox)
+      spinBox_2(PartitionGroupBox),
+      feuille{}
     {
-        ajoutLigne(0);
+        nbsLigne = 0;
+        ajoutLigne();
         spinBox.setGeometry(QRect(60, 150, 42, 22));
         spinBox.setValue(4);
         spinBox.setRange(1, 8);
@@ -39,12 +41,12 @@ public:
         spinBox_2.setRange(2, 8);
         spinBox_2.setSingleStep(2);
         spinBox_2.raise();
+        
     };
     ~Partition();
-
+    void                ajoutLigne();
 private:
     QGroupBox*          PartitionGroupBox;
-    void                ajoutLigne(int index);
     int                 nbsLigne;
     QSpinBox            spinBox;
     QSpinBox            spinBox_2;

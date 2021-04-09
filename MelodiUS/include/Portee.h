@@ -1,4 +1,6 @@
 #pragma once
+#include <array>
+
 #include <QtGlobal>
 #if QT_VERSION >= 0x060000
 #include <QtGui/QAction>
@@ -21,74 +23,69 @@
 class Portee
 {
 public:
+    Portee() = delete;
+    Portee(const Portee& other)
+    : Cle{(QGroupBox*)other.Cle.parent()},
+      lines{QFrame{(QGroupBox*)other.Cle.parent()},
+            QFrame{(QGroupBox*)other.Cle.parent()},
+            QFrame{(QGroupBox*)other.Cle.parent()},
+            QFrame{(QGroupBox*)other.Cle.parent()},
+            QFrame{(QGroupBox*)other.Cle.parent()},
+            QFrame{(QGroupBox*)other.Cle.parent()},
+            QFrame{(QGroupBox*)other.Cle.parent()},
+            QFrame{(QGroupBox*)other.Cle.parent()},
+            QFrame{(QGroupBox*)other.Cle.parent()},
+            QFrame{(QGroupBox*)other.Cle.parent()}}
+    {
+        for(int i = 0; i < lines.size() - 1; i++)
+        {
+            lines[i].setGeometry(other.lines[i].geometry());
+            lines[i].setFrameShape(other.lines[i].frameShape());
+            lines[i].setFrameShadow(other.lines[i].frameShadow());
+            lines[i].show();
+        }
+        Cle.setGeometry(other.Cle.geometry());
+        Cle.setPixmap(other.Cle.pixmap());
+        Cle.show();
+        Cle.lower();
+    }
+
     Portee(int n, QGroupBox* GroupBox)
     : Cle(GroupBox),
-      line(GroupBox),
-      line_2(GroupBox),
-      line_3(GroupBox),
-      line_4(GroupBox),
-      line_5(GroupBox),
-      line_6(GroupBox),
-      line_7(GroupBox),
-      line_8(GroupBox),
-      line_9(GroupBox),
-      line_10(GroupBox)
+      lines{QFrame{GroupBox},
+            QFrame{GroupBox},
+            QFrame{GroupBox},
+            QFrame{GroupBox},
+            QFrame{GroupBox},
+            QFrame{GroupBox},
+            QFrame{GroupBox},
+            QFrame{GroupBox},
+            QFrame{GroupBox},
+            QFrame{GroupBox}}
     {
         ///=== LIGNE HORIZONTALE ========//
-        
-        line.setGeometry(QRect(20, 130 + (150 * n), 950, 21));
-        line.setFrameShape(QFrame::HLine);
-        line.setFrameShadow(QFrame::Plain);
-
-        line_2.setGeometry(QRect(20, 150 + (150 * n), 950, 21));
-        line_2.setFrameShape(QFrame::HLine);
-        line_2.setFrameShadow(QFrame::Plain);
-
-        line_3.setGeometry(QRect(20, 170 + (150 * n), 950, 21));
-        line_3.setFrameShape(QFrame::HLine);
-        line_3.setFrameShadow(QFrame::Plain);
-
-        line_4.setGeometry(QRect(20, 190 + (150 * n), 950, 21));
-        line_4.setFrameShape(QFrame::HLine);
-        line_4.setFrameShadow(QFrame::Plain);
-
-        line_5.setGeometry(QRect(20, 210 + (150 * n), 950, 21));
-        line_5.setFrameShape(QFrame::HLine);
-        line_5.setFrameShadow(QFrame::Plain);
+        for(int i = 0; i < 5; i++)
+        {
+            lines[i].setGeometry(QRect(20, 130 + (20 * i) + (150 * n), 938, 21));
+            lines[i].setFrameShape(QFrame::HLine);
+            lines[i].setFrameShadow(QFrame::Plain);
+        }
         ///=== LIGNE VERTICALE ========//
+        for(int i = 6; i < 10; i++)
+        {
+            lines[i].setGeometry(QRect(237 * (i - 5), 140 + (150 * n), 20, 81));
+            lines[i].setFrameShape(QFrame::VLine);
+            lines[i].setFrameShadow(QFrame::Plain);
+        }
+        lines[5].setGeometry(QRect(10, 140 + (150 * n), 20, 81));    // debut
+        lines[5].setFrameShape(QFrame::VLine);
+        lines[5].setFrameShadow(QFrame::Plain);
 
-        line_6.setGeometry(QRect(10, 140 + (150 * n), 20, 81));    // debut
-        line_6.setFrameShape(QFrame::VLine);
-        line_6.setFrameShadow(QFrame::Plain);
-
-        line_7.setGeometry(QRect(237, 140 + (150 * n), 20, 81));
-        line_7.setFrameShape(QFrame::VLine);
-        line_7.setFrameShadow(QFrame::Plain);
-
-        line_8.setGeometry(QRect(237 * 2, 140 + (150 * n), 20, 81));
-        line_8.setFrameShape(QFrame::VLine);
-        line_8.setFrameShadow(QFrame::Plain);
-
-        line_10.setGeometry(QRect(237 * 3, 140 + (150 * n), 20, 81));
-        line_10.setFrameShape(QFrame::VLine);
-        line_10.setFrameShadow(QFrame::Plain);
-
-        line_9.setGeometry(QRect(960, 140 + (150 * n), 20, 81));
-        line_9.setFrameShape(QFrame::VLine);
-        line_9.setFrameShadow(QFrame::Plain);
-
-        Cle.setGeometry(QRect(10, 130 +(150 * n), 51, 101));
+        Cle.setGeometry(QRect(10, 130 + (150 * n), 51, 101));
         Cle.setPixmap(QPixmap(QString::fromUtf8("images/cle40x80T.png")));
+        Cle.lower();
     };
-    QFrame line;
-    QFrame line_2;
-    QFrame line_3;
-    QFrame line_4;
-    QFrame line_5;
-    QFrame line_6;
-    QFrame line_7;
-    QFrame line_8;
-    QFrame line_9;
-    QFrame line_10;
-    QLabel Cle;
+
+    std::array<QFrame, 10> lines;
+    QLabel                 Cle;
 };

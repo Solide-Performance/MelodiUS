@@ -48,10 +48,11 @@ void MainWindow::stopRecord()
 
 void MainWindow::on_pushButton_clicked()    // Label existe deja line 74 mainwindow_ui.h
 {
-   
-
+    ui.P.ajoutLigne();
+    /*
     NoteWidget A{&ui.groupBoxPartition, Note{NoteType::Noire, NoteValue::A4}, 300};
     A.show();
+    */
 }
 
 MainWindow::~MainWindow()

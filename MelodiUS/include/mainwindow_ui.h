@@ -24,6 +24,7 @@
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QScrollArea>
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QWidget>
@@ -32,9 +33,10 @@
 class Ui_MainWindow
 {
 public:
-    QWidget   centralwidget;
-    QGroupBox groupBoxPartition;
-    QGroupBox groupBoxMenu;
+    QWidget     centralwidget;
+    QGroupBox   groupBoxPartition;
+    QGroupBox   groupBoxMenu;
+    QScrollArea scrollArea;
 
     QLabel label;
     QLabel label_A;
@@ -64,11 +66,12 @@ public:
 
       groupBoxPartition(&centralwidget),
       groupBoxMenu(&centralwidget),
+      scrollArea(&centralwidget),
 
       label(&groupBoxMenu),
 
 
-      P(&centralwidget,&groupBoxPartition),
+      P(&centralwidget, &groupBoxPartition),
 
 
       pushButtonA(&groupBoxPartition),
@@ -91,12 +94,14 @@ public:
         mainWindow->resize(1600, 900);
         groupBoxMenu.setGeometry(0, 0, 250, 900);
         groupBoxPartition.setGeometry(250, 0, 1000, 1000);
-
+        scrollArea.setWidget(&groupBoxPartition);
+        scrollArea.setWidgetResizable(true);
+        scrollArea.show();
 
         label.setGeometry(QRect(10, 600, 500, 800));
         label.setText("MelodiUS V1.3   UwU Solide Performance");
 
-        
+
 
         pushButtonA.setGeometry(QRect(70, 370, 93, 28));
         pushButtonA.setText("A");
