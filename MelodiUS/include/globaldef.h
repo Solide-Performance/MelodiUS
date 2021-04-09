@@ -30,7 +30,6 @@
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
 
-
 #if QT_VERSION >= 0x060000
 #include <QtGui/QAction>
 #else
