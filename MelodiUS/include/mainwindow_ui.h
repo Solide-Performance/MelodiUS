@@ -7,25 +7,7 @@
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#include <QtGlobal>
-#if QT_VERSION >= 0x060000
-#include <QtGui/QAction>
-#else
-#include <QtWidgets/QAction>
-#endif
-#include <QtCore/QVariant>
-#include <QtGui/QBitmap>
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QComboBox>
-#include <QtWidgets/QFrame>
-#include <QtWidgets/QGroupBox>
-#include <QtWidgets/QLabel>
-#include <QtWidgets/QMainWindow>
-#include <QtWidgets/QPushButton>
-#include <QtWidgets/QSpinBox>
-#include <QtWidgets/QStatusBar>
-#include <QtWidgets/QWidget>
-
+#include "globaldef.h"
 
 class Ui_MainWindow
 {
@@ -92,10 +74,6 @@ public:
       buttonProcess(&groupBoxMenu),
       buttonSaveLoad(&groupBoxMenu),
       circle(QRect(100, 200, 75, 75))
-
-
-
-
     {
     }
 
@@ -106,7 +84,7 @@ public:
         groupBoxMenu.setGeometry(0, 0, 250, 900);
         groupBoxPartition.setGeometry(250, 0, 1000, 1000);
 
-        label.setGeometry(QRect(10, 600,500, 800));
+        label.setGeometry(QRect(10, 600, 500, 800));
         label.setText("MelodiUS V1.3   UwU Solide Performance");
 
         label_3.setGeometry(QRect(10, 130, 51, 101));

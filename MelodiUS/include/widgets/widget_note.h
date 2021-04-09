@@ -5,18 +5,14 @@
 
 #include <array>
 
-#include <QtGui/QBitmap>
-#include <QtWidgets/QLabel>
-#include <QtWidgets/QWidget>
-
 class NoteWidget
 {
 private:
     Note m_note;
 
-    QLabel* m_noteHead = nullptr;
-    QLabel* m_noteTail = nullptr;
-    QLabel* m_noteSharp = nullptr;
+    QLabel* m_noteHead    = nullptr;
+    QLabel* m_noteTail    = nullptr;
+    QLabel* m_noteSharp   = nullptr;
     QLabel* m_noteTailEnd = nullptr;
     int64_t m_tailLength;
 
@@ -48,17 +44,33 @@ public:
             m_noteSharp->show();
         }
         if(m_noteTail)
+        {
             m_noteTail->show();
+        }
         if(m_noteTailEnd)
+        {
             m_noteTailEnd->show();
+        }
     }
 
     void hide()
     {
-        m_noteHead->hide();
-        m_noteSharp->hide();
-        m_noteTail->hide();
-        m_noteTailEnd->hide();
+        if(m_noteHead)
+        {
+            m_noteHead->hide();
+        }
+        if(m_noteSharp)
+        {
+            m_noteSharp->hide();
+        }
+        if(m_noteTail)
+        {
+            m_noteTail->hide();
+        }
+        if(m_noteTailEnd)
+        {
+            m_noteTailEnd->hide();
+        }
     }
 
 private:
@@ -80,7 +92,7 @@ private:
           "images/ronde.png",
           "images/blancheHead.png",
           "images/noireHead.png",
-          "images/noireHead.png",   /* Les croches */
+          "images/noireHead.png", /* Les croches */
           "images/noireHead.png",
           "images/pause.png",
           "images/demiPause.png",

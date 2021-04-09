@@ -194,7 +194,10 @@ void FFT(std::vector<complex_t>& x, int depth)
         /* clang-format on */
 
         __m128           mm_theta     = {k, k + 1, k + 2, k + 3};
-        constexpr __m128 mm_thetamult = {-2.f * pi, -2.f * pi, -2.f * pi, -2.f * pi};
+        constexpr __m128 mm_thetamult = {-2.f * std::numbers::pi,
+                                         -2.f * std::numbers::pi,
+                                         -2.f * std::numbers::pi,
+                                         -2.f * std::numbers::pi};
 
         // https://software.intel.com/sites/landingpage/IntrinsicsGuide/#text=_mm_set_ps1
         __m128 mm_xs = _mm_set_ps1(x.size());

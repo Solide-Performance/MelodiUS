@@ -7,17 +7,38 @@
 #include <cstdint>
 #include <functional>
 #include <limits>
+#include <numbers>
 #include <numeric>
 #include <stdexcept>
 #include <type_traits>
 
 #include <gcem/gcem.hpp>
 
+#pragma region Qt Includes
+#include <QtCore/QVariant>
+#include <QtGlobal>
+#include <QtGui/QBitmap>
+#include <QtWidgets/QApplication>
+#include <QtWidgets/QComboBox>
+#include <QtWidgets/QFrame>
+#include <QtWidgets/QGroupBox>
+#include <QtWidgets/QLabel>
+#include <QtWidgets/QMainWindow>
+#include <QtWidgets/QPushButton>
+#include <QtWidgets/QSpinBox>
+#include <QtWidgets/QStatusBar>
+#include <QtWidgets/QWidget>
+
+#if QT_VERSION >= 0x060000
+#include <QtGui/QAction>
+#else
+#include <QtWidgets/QAction>
+#endif
+#pragma endregion
+
 
 /*****************************************************************************/
 /* Constants --------------------------------------------------------------- */
-constexpr double pi = 3.1415926535897932384626433;
-
 #ifdef LINUX_
 constexpr uint8_t CHAR_BIT = 8;
 #endif
@@ -26,7 +47,7 @@ constexpr uint8_t CHAR_BIT = 8;
 /*****************************************************************************/
 /* Macros ------------------------------------------------------------------ */
 #define sizeof_array(x)    static_cast<size_t>(sizeof(x) / sizeof((x)[0]))    // NOLINT
-#define LABEL_TO_STRING(x) #x    // NOLINT
+#define LABEL_TO_STRING(x) #x                                                 // NOLINT
 
 
 template<typename T>
