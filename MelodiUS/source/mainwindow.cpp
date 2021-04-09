@@ -24,6 +24,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(this)
     QObject::connect(&ui.buttonPlay, &QPushButton::clicked, this, &MainWindow::play);
     QObject::connect(&ui.buttonProcess, &QPushButton::clicked, this, &MainWindow::processing);
     QObject::connect(&ui.buttonSaveLoad, &QPushButton::clicked, this, &MainWindow::saveOrLoad);
+    QObject::connect(&ui.buttonDark, &QPushButton::clicked, this, &MainWindow::darkMode);
+    QObject::connect(&ui.buttonLight, &QPushButton::clicked, this, &MainWindow::lightMode);
 }
 std::thread what_if_another_thread_fixes_it;
 void        MainWindow::startRecord()
@@ -121,6 +123,20 @@ void MainWindow::saving()
 }
 void MainWindow::loading()
 {
+}
+void MainWindow::darkMode()
+{
+    ui.buttonDark.hide();
+    ui.buttonLight.show();
+    ui.groupBoxMenu.setStyleSheet("background-color:#2c2f33");
+    ui.groupBoxPartition.setStyleSheet("background-color:#2c2f33");
+}
+void MainWindow::lightMode()
+{   
+    ui.buttonLight.hide();
+    ui.buttonDark.show();
+    ui.groupBoxMenu.setStyleSheet("background-color:#ffffff");
+    ui.groupBoxPartition.setStyleSheet("background-color:#ffffff");
 }
 
 void MainWindow::on_pushButtonA_clicked()    // Label existe deja line 74 mainwindow_ui.h

@@ -20,12 +20,12 @@
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QLabel>
+#include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMessageBox>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
-#include <QtWidgets/QMessageBox>
-#include <QtWidgets/QLineEdit>
 #include <QtWidgets/QWidget>
 
 
@@ -48,7 +48,7 @@ protected:
                         QRegion::Ellipse));
     }
 };
-    
+
 
 class Ui_MainWindow
 {
@@ -81,9 +81,11 @@ public:
     RoundButton buttonStopRecord;
     RoundButton buttonPlay;
     RoundButton buttonProcess;
-    QPushButton buttonSaveLoad;
+    RoundButton buttonSaveLoad;
+    QPushButton buttonDark;
+    QPushButton buttonLight;
 
-    QMessageBox SLD; 
+    QMessageBox SLD;
 
 
     Ui_MainWindow()               = delete;
@@ -109,7 +111,7 @@ public:
       line_5(&groupBoxPartition),
 
       line_6(&groupBoxPartition),
-        
+
       spinBox(&groupBoxPartition),
       spinBox_2(&groupBoxPartition),
 
@@ -118,19 +120,23 @@ public:
       buttonStopRecord(&groupBoxMenu),
       buttonPlay(&groupBoxMenu),
       buttonProcess(&groupBoxMenu),
-      buttonSaveLoad(&groupBoxMenu)
+      buttonSaveLoad(&groupBoxMenu),
+      buttonDark(&groupBoxPartition),
+      buttonLight(&groupBoxPartition)
     {
     }
 
     void setupUi(QMainWindow* mainWindow)
     {
-     
-   
+
+
         mainWindow->resize(1600, 900);
         groupBoxMenu.setGeometry(0, 0, 250, 900);
+        groupBoxMenu.setStyleSheet("background-color:#ffffff");
         groupBoxPartition.setGeometry(250, 0, 1350, 900);
+        groupBoxPartition.setStyleSheet("background-color:#ffffff");
 
-        label.setGeometry(QRect(10, 775,250, 10));
+        label.setGeometry(QRect(10, 775, 250, 10));
         label.setText("MelodiUS V1.4   UwU Solide Performance");
         label_3.setGeometry(QRect(10, 130, 51, 101));
         label_3.setPixmap(QPixmap(QString::fromUtf8("images/cle40x80T.png")));
@@ -186,7 +192,7 @@ public:
         pushButtonA.setGeometry(QRect(70, 370, 93, 28));
         pushButtonA.setText("A");
 
-        buttonRecord.setGeometry(QRect(100, 50, 100, 100)); 
+        buttonRecord.setGeometry(QRect(100, 50, 100, 100));
         buttonRecord.setText("Enregistrement");
         buttonRecord.setStyleSheet("Border : none");
         buttonRecord.setStyleSheet("background-color:gray");
@@ -198,22 +204,30 @@ public:
         buttonPlay.setGeometry(QRect(100, 200, 100, 100));
         buttonPlay.setText("Lecture");
         buttonPlay.setStyleSheet("Border : none");
-        buttonPlay.setStyleSheet("background-color:gray");
-       
-        
+        buttonPlay.setStyleSheet("background-color:#ffffff");
+
+
 
         buttonProcess.setText("Traitement");
         buttonProcess.setGeometry(QRect(100, 350, 100, 100));
-        buttonProcess.setStyleSheet("background-color:gray");
 
         buttonSaveLoad.setGeometry(QRect(100, 500, 100, 100));
         buttonSaveLoad.setText("Sauvegarde / Charge");
 
+        buttonDark.setGeometry(QRect(1200, 750, 50, 20));
+        buttonDark.setText("Nuit");
+
+        buttonLight.setGeometry(QRect(1200, 750, 50, 20));
+        buttonLight.setText("Jour");
+        buttonLight.hide();
+
+
         SLD.setText("Solide Sauvegarde");
-        SLD.setInformativeText("Vous pouvez enregistrer votre dernier enregistrement ou utiliser un fichier existant"); //Mettre des mots plus tard!
+        SLD.setInformativeText(
+          "Vous pouvez enregistrer votre dernier enregistrement ou utiliser un fichier existant");    // Mettre des mots plus tard!
         SLD.setStandardButtons(QMessageBox::Save | QMessageBox::Open | QMessageBox::Cancel);
         SLD.setDefaultButton(QMessageBox::Cancel);
-        SLD.setStyleSheet("background-color: yellow;");
+     
 
         mainWindow->setCentralWidget(&centralwidget);
     }
