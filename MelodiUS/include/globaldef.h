@@ -15,6 +15,7 @@
 #include <gcem/gcem.hpp>
 
 #pragma region Qt Includes
+#include <QtCore/QTimer>
 #include <QtCore/QVariant>
 #include <QtGlobal>
 #include <QtGui/QBitmap>
@@ -24,10 +25,11 @@
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
+#include <QtWidgets/QProgressBar>
 #include <QtWidgets/QPushButton>
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
-#include <QtWidgets/QWidget>
+
 
 #if QT_VERSION >= 0x060000
 #include <QtGui/QAction>
@@ -35,6 +37,8 @@
 #include <QtWidgets/QAction>
 #endif
 #pragma endregion
+
+
 
 
 /*****************************************************************************/

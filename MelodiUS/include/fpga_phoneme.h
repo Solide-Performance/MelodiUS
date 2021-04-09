@@ -59,7 +59,6 @@ void StartListener();
 [[nodiscard]] uint8_t                GetADC(size_t channel);
 [[nodiscard]] Phoneme                GetCurrentPhoneme();
 void SetPhonemeCallback(Phoneme number, std::function<void()> callback);
-void SetUpdateCallback(std::function<void(std::array<uint8_t, 4>)> callback);
 
 void WriteLED(uint8_t val);
 

@@ -69,9 +69,6 @@ bool                                        m_run = true;
 std::thread                                 m_listener;
 std::array<int, 4>                          m_adc{};
 std::array<std::function<void()>, 5>        m_phonemeCallbacks{EMPTY_FUNCTION};
-std::function<void(std::array<uint8_t, 4>)> m_updateCallback{[](std::array<uint8_t, 4> a) {
-    (void)a;
-}};
 Phoneme                                     m_currentPhoneme = Phoneme::UNKNOWN;
 Phoneme                                     m_oldPhoneme     = Phoneme::UNKNOWN;
 size_t                                      m_phonemeCounter = 0;
@@ -154,9 +151,6 @@ void ListenerThread()
 
         /* Display ADC value (selected with switches) on the 7-segment display */
         DisplayADC();
-
-        /* Call ADC update callback */
-        m_updateCallback(GetADC());
 
         /* Sleep for 100 ms */
         std::this_thread::sleep_for(std::chrono::milliseconds{100});
@@ -384,22 +378,6 @@ void SetPhonemeCallback(Phoneme number, std::function<void()> callback)
     else
     {
         m_phonemeCallbacks[static_cast<size_t>(number)] = EMPTY_FUNCTION;
-    }
-}
-
-void SetUpdateCallback(std::function<void(std::array<uint8_t, 4>)> callback)
-{
-    /* Set new callback function is the callback parameter is callable
-     * If not callable, clear the callback function */
-    if(callback)
-    {
-        m_updateCallback = callback;
-    }
-    else
-    {
-        m_updateCallback = [](std::array<uint8_t, 4> a) {
-            (void)a;
-        };
     }
 }
 

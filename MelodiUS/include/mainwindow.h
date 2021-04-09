@@ -13,6 +13,7 @@ public slots:
    void on_pushButton_clicked();
    void startRecord();
    void stopRecord();
+   void updateBargraph();
 
 public:
     MainWindow(QWidget* parent = nullptr);
