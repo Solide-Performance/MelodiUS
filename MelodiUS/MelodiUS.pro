@@ -3,6 +3,7 @@ TARGET      = MelodiUS
 CONFIG      += warn_on qt debug_and_release console c++17
 CONFIG      -= flat
 INCLUDEPATH += ./include ./source ./
+QT += quickwidgets
 
 # Headers
 HEADERS += ./include/globaldef.h
