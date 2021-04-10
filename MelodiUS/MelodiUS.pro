@@ -3,6 +3,8 @@ TARGET      = MelodiUS
 CONFIG      += warn_on qt debug_and_release console c++latest # c++20
 CONFIG      -= flat
 INCLUDEPATH += ./include ./source ./
+
+
 # Headers
 HEADERS += ./include/fpga_phoneme.h
 HEADERS += ./include/recorder.h
@@ -17,7 +19,7 @@ HEADERS += ./include/note.h
 HEADERS += ./include/Partition.h
 HEADERS += ./include/Portee.h
 
-
+# Sources
 SOURCES += ./source/main.cpp
 SOURCES += ./source/fpga_phoneme.cpp
 SOURCES += ./source/recorder.cpp
@@ -28,6 +30,9 @@ SOURCES += ./source/detection_rythme.cpp
 SOURCES += ./source/fft.cpp
 SOURCES += ./source/Portee.cpp
 SOURCES += ./source/Partition.cpp
+
+
+# Platform-specific project settings
 win32 {
     # QT Project Settings
     TEMPLATE  = vcapp
@@ -54,11 +59,12 @@ win32 {
     HEADERS += ./include/mainwindow.h ./include/mainwindow_ui.h
 
     SOURCES += ./source/mainwindow.cpp
-	
-	DEFINES += USING_PCH
-	PRECOMPILED_HEADER = ./include/globaldef.h
+
+    # Precompiled Header
+    DEFINES += USING_PC   
+    PRECOMPILED_HEADER = ./include/globaldef.h
 }
 
 linux-g++* {
-	DEFINES += LINUX_
+    DEFINES += LINUX_
 }

@@ -7,11 +7,11 @@
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
+#include "Partition.h"
+#include "Portee.h"
 #include "fpga_phoneme.h"
 #include "globaldef.h"
 #include <array>
-#include "Partition.h"
-#include "Portee.h"
 
 
 class RoundButton : public QPushButton
@@ -64,7 +64,7 @@ public slots:
 class Ui_MainWindow
 {
 public:
-    QWidget     centralwidget;
+    QWidget centralwidget;
 
     QScrollArea scrollArea;
     QGroupBox   groupBoxPartition;
@@ -116,7 +116,6 @@ public:
 
 
       label(&groupBoxMenu),
-      label_3(&groupBoxPartition),
       label_A(&groupBoxMenu),
       label_I(&groupBoxMenu),
       label_hey(&groupBoxMenu),
@@ -133,8 +132,7 @@ public:
       buttonProcess(&groupBoxMenu),
       buttonSaveLoad(&groupBoxMenu),
       buttonDark(&groupBoxPartition),
-      buttonLight(&groupBoxPartition)
-      bargraph1(&groupBoxMenu),
+      buttonLight(&groupBoxPartition), bargraph1(&groupBoxMenu),
       bargraph2(&groupBoxMenu),
       bargraph3(&groupBoxMenu),
       bargraph4(&groupBoxMenu),
@@ -156,8 +154,6 @@ public:
 
         label.setGeometry(QRect(10, 775, 250, 10));
         label.setText("MelodiUS V1.4   UwU Solide Performance");
-        label_3.setGeometry(QRect(10, 130, 51, 101));
-        label_3.setPixmap(QPixmap(QString::fromUtf8("images/cle40x80T.png")));
         label_A.setGeometry(QRect(50, 50, 51, 101));
         label_A.setText("A");
         label_I.setGeometry(QRect(50, 200, 51, 101));
@@ -167,44 +163,6 @@ public:
         label_est.setGeometry(QRect(50, 500, 51, 101));
         label_est.setText("EST");
 
-        ///=== LIGNE HORIZONTALE ========//
-
-        line.setGeometry(QRect(10, 130, 1600, 21));
-        line.setFrameShape(QFrame::HLine);
-        line.setFrameShadow(QFrame::Sunken);
-
-        line_2.setGeometry(QRect(10, 150, 1600, 21));
-        line_2.setFrameShape(QFrame::HLine);
-        line_2.setFrameShadow(QFrame::Sunken);
-
-        line_3.setGeometry(QRect(10, 170, 1600, 21));
-        line_3.setFrameShape(QFrame::HLine);
-        line_3.setFrameShadow(QFrame::Sunken);
-
-        line_4.setGeometry(QRect(10, 190, 1600, 21));
-        line_4.setFrameShape(QFrame::HLine);
-        line_4.setFrameShadow(QFrame::Sunken);
-
-        line_5.setGeometry(QRect(10, 210, 1600, 21));
-        line_5.setFrameShape(QFrame::HLine);
-        line_5.setFrameShadow(QFrame::Sunken);
-
-        ///=== LIGNE VERTICALE ========//
-
-        line_6.setGeometry(QRect(250, 140, 20, 81));
-        line_6.setFrameShape(QFrame::VLine);
-        line_6.setFrameShadow(QFrame::Sunken);
-
-
-
-        spinBox.setGeometry(QRect(50, 150, 42, 22));
-        spinBox.setValue(4);
-        spinBox.setRange(1, 8);
-
-        spinBox_2.setGeometry(QRect(50, 190, 42, 22));
-        spinBox_2.setValue(4);
-        spinBox_2.setRange(2, 8);
-        spinBox_2.setSingleStep(2);
         groupBoxPartition.setGeometry(250, 0, 1500, 1500);
 
         scrollArea.setGeometry(250, 0, 900, 1000);
@@ -217,14 +175,9 @@ public:
         pushButtonA.setText("A");
 
         buttonRecord.setGeometry(QRect(100, 50, 100, 100));
-        /*buttonRecord.setText("Enregistrement");
->>>>>>> e235db7eba2fdbf7d96665f916453a085abf668b
-        buttonRecord.setStyleSheet("Border : none");
-        buttonRecord.setStyleSheet("background-color:gray");*/
         buttonRecord.SetImage({"images/record.png"});
 
         buttonStopRecord.setGeometry(QRect(100, 50, 100, 100));
-        //buttonStopRecord.setText("Fin de l'enregistreement");
         buttonStopRecord.SetImage({"images/stopRecord.png"});
         buttonStopRecord.hide();
 
@@ -254,7 +207,7 @@ public:
           "Vous pouvez enregistrer votre dernier enregistrement ou utiliser un fichier existant");    // Mettre des mots plus tard!
         SLD.setStandardButtons(QMessageBox::Save | QMessageBox::Open | QMessageBox::Cancel);
         SLD.setDefaultButton(QMessageBox::Cancel);
-     
+
 
         bargraph1.setMaximum(255);
         bargraph1.setMinimum(0);
