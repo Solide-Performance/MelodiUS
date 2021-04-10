@@ -16,6 +16,9 @@ HEADERS += ./include/detection_rythme.h
 HEADERS += ./include/fft.h
 HEADERS += ./include/tuning.h
 HEADERS += ./include/note.h
+HEADERS += ./include/Partition.h
+HEADERS += ./include/Portee.h
+
 
 SOURCES += ./source/main.cpp
 SOURCES += ./source/fpga_phoneme.cpp
@@ -25,7 +28,8 @@ SOURCES += ./source/readwrite_wav.cpp
 SOURCES += ./source/generator.cpp
 SOURCES += ./source/detection_rythme.cpp
 SOURCES += ./source/fft.cpp
-
+SOURCES += ./source/Portee.cpp
+SOURCES += ./source/Partition.cpp
 win32 {
     # QT Project Settings
     TEMPLATE  = vcapp

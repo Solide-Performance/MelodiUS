@@ -38,6 +38,16 @@
     <Filter Include="Source Files\source" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\Partition.cpp">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\Portee.cpp">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="source\detection_rythme.cpp">
       <Filter>Source Files\source</Filter>
     </ClCompile>
@@ -112,6 +122,16 @@
   <ItemGroup>
     <ClInclude Include="include\widgets\widget_note.h">
       <Filter>Header Files\include\widgets</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Partition.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\Portee.h">
+      <Filter>Header Files\include</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
