@@ -11,7 +11,11 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
+<<<<<<< HEAD
     <ProjectGuid>{626CC1F8-E6F6-3485-AADE-A4F500FBE133}</ProjectGuid>
+=======
+    <ProjectGuid>{C68E1DEE-9906-3A1C-83D3-FEA473B9727E}</ProjectGuid>
+>>>>>>> origin/Phil
     <RootNamespace>MelodiUS</RootNamespace>
     <Keyword>Qt4VSv1.0</Keyword>
   </PropertyGroup>
@@ -56,17 +60,26 @@
   </PropertyGroup>
   <ItemDefinitionGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">
     <ClCompile>
+<<<<<<< HEAD
       <AdditionalIncludeDirectories>.;include;source;.;..\..\Qt\6.0.1\msvc2019_64\include;..\..\Qt\6.0.1\msvc2019_64\include\QtWidgets;..\..\Qt\6.0.1\msvc2019_64\include\QtGui;..\..\Qt\6.0.1\msvc2019_64\include\QtCore;release;/include;..\..\Qt\6.0.1\msvc2019_64\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -permissive- -Zc:__cplusplus -Zc:externConstexpr -utf-8 -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
+=======
+      <AdditionalIncludeDirectories>.;include;source;.;..\..\..\..\Qt\5.15.2\msvc2019_64\include;..\..\..\..\Qt\5.15.2\msvc2019_64\include\QtWidgets;..\..\..\..\Qt\5.15.2\msvc2019_64\include\QtGui;..\..\..\..\Qt\5.15.2\msvc2019_64\include\QtANGLE;..\..\..\..\Qt\5.15.2\msvc2019_64\include\QtCore;release;/include;..\..\..\..\Qt\5.15.2\msvc2019_64\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
+>>>>>>> origin/Phil
       <AssemblerListingLocation>release\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
       <DebugInformationFormat>None</DebugInformationFormat>
       <DisableSpecificWarnings>4577;4467;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <ForcedIncludeFiles>include\globaldef.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <ObjectFileName>release\</ObjectFileName>
       <Optimization>MaxSpeed</Optimization>
-      <PreprocessorDefinitions>_CONSOLE;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;NDEBUG;QT_NO_DEBUG;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>include\globaldef.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)\MelodiUS.pch</PrecompiledHeaderOutputFile>
+      <PreprocessorDefinitions>_CONSOLE;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;USING_PCH;NDEBUG;QT_NO_DEBUG;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
       <ProgramDataBaseFileName></ProgramDataBaseFileName>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
@@ -94,22 +107,31 @@
       <WarningLevel>0</WarningLevel>
     </Midl>
     <ResourceCompile>
-      <PreprocessorDefinitions>_CONSOLE;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;NDEBUG;QT_NO_DEBUG;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CONSOLE;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;USING_PCH;NDEBUG;QT_NO_DEBUG;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">
     <ClCompile>
+<<<<<<< HEAD
       <AdditionalIncludeDirectories>.;include;source;.;..\..\Qt\6.0.1\msvc2019_64\include;..\..\Qt\6.0.1\msvc2019_64\include\QtWidgets;..\..\Qt\6.0.1\msvc2019_64\include\QtGui;..\..\Qt\6.0.1\msvc2019_64\include\QtCore;debug;/include;..\..\Qt\6.0.1\msvc2019_64\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -permissive- -Zc:__cplusplus -Zc:externConstexpr -utf-8 -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
+=======
+      <AdditionalIncludeDirectories>.;include;source;.;..\..\..\..\Qt\5.15.2\msvc2019_64\include;..\..\..\..\Qt\5.15.2\msvc2019_64\include\QtWidgets;..\..\..\..\Qt\5.15.2\msvc2019_64\include\QtGui;..\..\..\..\Qt\5.15.2\msvc2019_64\include\QtANGLE;..\..\..\..\Qt\5.15.2\msvc2019_64\include\QtCore;debug;/include;..\..\..\..\Qt\5.15.2\msvc2019_64\mkspecs\win32-msvc;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -w34100 -w34189 -w44996 -w44456 -w44457 -w44458 %(AdditionalOptions)</AdditionalOptions>
+>>>>>>> origin/Phil
       <AssemblerListingLocation>debug\</AssemblerListingLocation>
       <BrowseInformation>false</BrowseInformation>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <DisableSpecificWarnings>4577;4467;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ExceptionHandling>Sync</ExceptionHandling>
-      <LanguageStandard>stdcpp17</LanguageStandard>
+      <ForcedIncludeFiles>include\globaldef.h;%(ForcedIncludeFiles)</ForcedIncludeFiles>
+      <LanguageStandard>stdcpplatest</LanguageStandard>
       <ObjectFileName>debug\</ObjectFileName>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_CONSOLE;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeaderFile>include\globaldef.h</PrecompiledHeaderFile>
+      <PrecompiledHeaderOutputFile>$(IntDir)\MelodiUS.pch</PrecompiledHeaderOutputFile>
+      <PreprocessorDefinitions>_CONSOLE;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;USING_PCH;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PreprocessToFile>false</PreprocessToFile>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -133,7 +155,7 @@
       <WarningLevel>0</WarningLevel>
     </Midl>
     <ResourceCompile>
-      <PreprocessorDefinitions>_CONSOLE;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_CONSOLE;UNICODE;_UNICODE;WIN32;_ENABLE_EXTENDED_ALIGNED_STORAGE;WIN64;USING_PCH;QT_WIDGETS_LIB;QT_GUI_LIB;QT_CORE_LIB;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -150,9 +172,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\generator.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="source\gui.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\main.cpp" />
@@ -191,10 +210,14 @@
     <ClInclude Include="include\generator.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\globaldef.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\gui.h" />
+    <CustomBuild Include="include\globaldef.h">
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">echo /*-------------------------------------------------------------------- &gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo * Precompiled header source file used by Visual Studio.NET to generate&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo * the .pch file.&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo *&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo * Due to issues with the dependencies checker within the IDE, it&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo * sometimes fails to recompile the PCH file, if we force the IDE to&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo * create the PCH file directly from the header file.&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo *&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo * This file is auto-generated by qmake since no PRECOMPILED_SOURCE was&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo * specified, and is used as the common stdafx.cpp. The file is only&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo * generated when creating .vcxproj project files, and is not used for&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo * command line compilations by nmake.&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo *&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo * WARNING: All changes made in this file will be lost.&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo --------------------------------------------------------------------*/&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo #include &quot;globaldef.h&quot;&gt;&gt;include\globaldef.h.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">Generating precompiled header source file &apos;include\globaldef.h.cpp&apos; ...</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">include\globaldef.h.cpp;%(Outputs)</Outputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">echo /*-------------------------------------------------------------------- &gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo * Precompiled header source file used by Visual Studio.NET to generate&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo * the .pch file.&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo *&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo * Due to issues with the dependencies checker within the IDE, it&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo * sometimes fails to recompile the PCH file, if we force the IDE to&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo * create the PCH file directly from the header file.&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo *&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo * This file is auto-generated by qmake since no PRECOMPILED_SOURCE was&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo * specified, and is used as the common stdafx.cpp. The file is only&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo * generated when creating .vcxproj project files, and is not used for&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo * command line compilations by nmake.&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo *&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo * WARNING: All changes made in this file will be lost.&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo --------------------------------------------------------------------*/&gt;&gt;include\globaldef.h.cpp&#x0d;&#x0a;if errorlevel 1 goto VCEnd&#x0d;&#x0a;echo #include &quot;globaldef.h&quot;&gt;&gt;include\globaldef.h.cpp</Command>
+      <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">Generating precompiled header source file &apos;include\globaldef.h.cpp&apos; ...</Message>
+      <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">include\globaldef.h.cpp;%(Outputs)</Outputs>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\mainwindow.h" />
@@ -227,17 +250,37 @@
     <CustomBuild Include="debug\moc_predefs.h.cbt">
       <FileType>Document</FileType>
       <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">true</ExcludedFromBuild>
+<<<<<<< HEAD
       <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">..\..\Qt\6.0.1\msvc2019_64\mkspecs\features\data\dummy.cpp;%(AdditionalInputs)</AdditionalInputs>
       <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">cl -BxC:\Qt\6.0.1\msvc2019_64\bin\qmake.exe -nologo -Zc:wchar_t -FS -Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -permissive- -Zc:__cplusplus -Zc:externConstexpr -Zi -MDd -std:c++17 -utf-8 -E ..\..\Qt\6.0.1\msvc2019_64\mkspecs\features\data\dummy.cpp 2&gt;NUL &gt;debug\moc_predefs.h</Command>
+=======
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">..\..\..\..\Qt\5.15.2\msvc2019_64\mkspecs\features\data\dummy.cpp;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">cl -BxC:\Qt\5.15.2\msvc2019_64\bin\qmake.exe -nologo -Zc:wchar_t -FS -Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -Zi -MDd -std:c++latest -E ..\..\..\..\Qt\5.15.2\msvc2019_64\mkspecs\features\data\dummy.cpp 2&gt;NUL &gt;debug\moc_predefs.h</Command>
+>>>>>>> origin/Phil
       <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">Generate moc_predefs.h</Message>
       <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">debug\moc_predefs.h;%(Outputs)</Outputs>
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="include\globaldef.h.cpp">
+      <ForcedIncludeFiles Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">$(NOINHERIT)</ForcedIncludeFiles>
+      <PrecompiledHeaderFile Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">globaldef.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">Create</PrecompiledHeader>
+      <ForcedIncludeFiles Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">$(NOINHERIT)</ForcedIncludeFiles>
+      <PrecompiledHeaderFile Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">globaldef.h</PrecompiledHeaderFile>
+      <PrecompiledHeader Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <CustomBuild Include="release\moc_predefs.h.cbt">
       <FileType>Document</FileType>
+<<<<<<< HEAD
       <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">..\..\Qt\6.0.1\msvc2019_64\mkspecs\features\data\dummy.cpp;%(AdditionalInputs)</AdditionalInputs>
       <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">cl -BxC:\Qt\6.0.1\msvc2019_64\bin\qmake.exe -nologo -Zc:wchar_t -FS -Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -permissive- -Zc:__cplusplus -Zc:externConstexpr -O2 -MD -std:c++17 -utf-8 -E ..\..\Qt\6.0.1\msvc2019_64\mkspecs\features\data\dummy.cpp 2&gt;NUL &gt;release\moc_predefs.h</Command>
+=======
+      <AdditionalInputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">..\..\..\..\Qt\5.15.2\msvc2019_64\mkspecs\features\data\dummy.cpp;%(AdditionalInputs)</AdditionalInputs>
+      <Command Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">cl -BxC:\Qt\5.15.2\msvc2019_64\bin\qmake.exe -nologo -Zc:wchar_t -FS -Zc:rvalueCast -Zc:inline -Zc:strictStrings -Zc:throwingNew -Zc:referenceBinding -Zc:__cplusplus -O2 -MD -std:c++latest -E ..\..\..\..\Qt\5.15.2\msvc2019_64\mkspecs\features\data\dummy.cpp 2&gt;NUL &gt;release\moc_predefs.h</Command>
+>>>>>>> origin/Phil
       <Message Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">Generate moc_predefs.h</Message>
       <Outputs Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Release|x64&apos;">release\moc_predefs.h;%(Outputs)</Outputs>
       <ExcludedFromBuild Condition="&apos;$(Configuration)|$(Platform)&apos;==&apos;Debug|x64&apos;">true</ExcludedFromBuild>

@@ -6,12 +6,13 @@
 #include "fpga_phoneme.h"
 #include "generator.h"
 #include "globaldef.h"
-#include "gui.h"
 #include "playback.h"
 #include "readwrite_wav.h"
 #include "recorder.h"
 #include "recording.h"
 #include "tuning.h"
+
+#include "mainwindow.h"
 
 #ifndef LINUX_
 #include "portaudio/portaudio.h"
@@ -44,7 +45,14 @@ bool setupFPGA();
 int main(int argc, char* argv[])
 {
     /* Invoke GUI */
-    std::thread gui{mainOfGui, argc, argv};
+
+    std::thread gui{[](int argc, char* argv[]) {
+        QCoreApplication::addLibraryPath(".");
+        QApplication a(argc, argv);
+        MainWindow   w;
+        w.show();
+        return a.exec();
+    }, argc, argv};
 
     /* portaudio init */
     std::thread portAudioInitThread(setupPortaudio);

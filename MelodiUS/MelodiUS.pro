@@ -1,12 +1,11 @@
 # Project settings
 TARGET      = MelodiUS
-CONFIG      += warn_on qt debug_and_release console c++17
+CONFIG      += warn_on qt debug_and_release console c++latest # c++20
 CONFIG      -= flat
 INCLUDEPATH += ./include ./source ./
 QT += quickwidgets
 
 # Headers
-HEADERS += ./include/globaldef.h
 HEADERS += ./include/fpga_phoneme.h
 HEADERS += ./include/recorder.h
 HEADERS += ./include/recording.h
@@ -51,10 +50,11 @@ win32 {
 
     HEADERS += ./include/widgets/widget_note.h
     HEADERS += ./include/mainwindow.h ./include/mainwindow_ui.h
-    HEADERS += ./include/gui.h
 
     SOURCES += ./source/mainwindow.cpp
-    SOURCES += ./source/gui.cpp
+	
+	DEFINES += USING_PCH
+	PRECOMPILED_HEADER = ./include/globaldef.h
 }
 
 linux-g++* {

@@ -7,27 +7,9 @@
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
 
-#include <QtGlobal>
-#if QT_VERSION >= 0x060000
-#include <QtGui/QAction>
-#else
-#include <QtWidgets/QAction>
-#endif
-#include <QtCore/QVariant>
-#include <QtGui/QBitmap>
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QComboBox>
-#include <QtWidgets/QFrame>
-#include <QtWidgets/QGroupBox>
-#include <QtWidgets/QLabel>
-#include <QtWidgets/QLineEdit>
-#include <QtWidgets/QMainWindow>
-#include <QtWidgets/QMessageBox>
-#include <QtWidgets/QPushButton>
-#include <QtWidgets/QSpinBox>
-#include <QtWidgets/QStatusBar>
-#include <QtWidgets/QWidget>
-
+#include "fpga_phoneme.h"
+#include "globaldef.h"
+#include <array>
 
 
 class RoundButton : public QPushButton
@@ -48,6 +30,7 @@ protected:
                         QRegion::Ellipse));
     }
 };
+
 
 
 class Ui_MainWindow
@@ -87,6 +70,17 @@ public:
 
     QMessageBox SLD;
 
+    QProgressBar bargraph1;
+    QProgressBar bargraph2;
+    QProgressBar bargraph3;
+    QProgressBar bargraph4;
+    QLabel       labelbar1;
+    QLabel       labelbar2;
+    QLabel       labelbar3;
+    QLabel       labelbar4;
+    std::mutex   bargraphLock;
+
+
 
     Ui_MainWindow()               = delete;
     Ui_MainWindow(Ui_MainWindow&) = delete;
@@ -123,6 +117,15 @@ public:
       buttonSaveLoad(&groupBoxMenu),
       buttonDark(&groupBoxPartition),
       buttonLight(&groupBoxPartition)
+      circle(QRect(100, 200, 75, 75)),
+      bargraph1(&groupBoxMenu),
+      bargraph2(&groupBoxMenu),
+      bargraph3(&groupBoxMenu),
+      bargraph4(&groupBoxMenu),
+      labelbar1(&groupBoxMenu),
+      labelbar2(&groupBoxMenu),
+      labelbar3(&groupBoxMenu),
+      labelbar4(&groupBoxMenu)
     {
     }
 
@@ -135,6 +138,10 @@ public:
         groupBoxMenu.setStyleSheet("background-color:#ffffff");
         groupBoxPartition.setGeometry(250, 0, 1350, 900);
         groupBoxPartition.setStyleSheet("background-color:#ffffff");
+        groupBoxPartition.setGeometry(250, 0, 1000, 1000);
+
+        label.setGeometry(QRect(10, 600, 500, 800));
+        label.setText("MelodiUS V1.3   UwU Solide Performance");
 
         label.setGeometry(QRect(10, 775, 250, 10));
         label.setText("MelodiUS V1.4   UwU Solide Performance");
@@ -228,6 +235,52 @@ public:
         SLD.setStandardButtons(QMessageBox::Save | QMessageBox::Open | QMessageBox::Cancel);
         SLD.setDefaultButton(QMessageBox::Cancel);
      
+
+        bargraph1.setMaximum(255);
+        bargraph1.setMinimum(0);
+        bargraph1.setOrientation(Qt::Vertical);
+        bargraph1.setGeometry(QRect(50, 700, 25, 100));
+        bargraph1.setValue(50);
+        bargraph1.setTextVisible(true);
+        labelbar1.setGeometry(QRect(50, 680, 10, 30));
+        labelbar1.setText("1");
+
+        bargraph2.setMaximum(255);
+        bargraph2.setMinimum(0);
+        bargraph2.setOrientation(Qt::Vertical);
+        bargraph2.setGeometry(QRect(100, 700, 25, 100));
+        bargraph2.setValue(50);
+        bargraph2.setTextVisible(true);
+        labelbar2.setGeometry(QRect(100, 680, 10, 30));
+        labelbar2.setText("2");
+
+        bargraph3.setMaximum(255);
+        bargraph3.setMinimum(0);
+        bargraph3.setOrientation(Qt::Vertical);
+        bargraph3.setGeometry(QRect(150, 700, 25, 100));
+        bargraph3.setValue(50);
+        bargraph3.setTextVisible(true);
+        labelbar3.setGeometry(QRect(150, 680, 10, 30));
+        labelbar3.setText("3");
+
+        bargraph4.setMaximum(255);
+        bargraph4.setMinimum(0);
+        bargraph4.setOrientation(Qt::Vertical);
+        bargraph4.setGeometry(QRect(200, 700, 25, 100));
+        bargraph4.setValue(50);
+        bargraph4.setTextVisible(true);
+        labelbar4.setGeometry(QRect(200, 680, 10, 30));
+        labelbar4.setText("4");
+
+        /*auto lmbd = [this](std::array<uint8_t, 4> valeurs) {
+            std::lock_guard<std::mutex> _(bargraphLock);
+
+            bargraph1.setValue(valeurs[0]);
+            bargraph2.setValue(valeurs[1]);
+            bargraph3.setValue(valeurs[2]);
+            bargraph4.setValue(valeurs[3]);
+        };
+        FPGA::SetUpdateCallback(lmbd);*/
 
         mainWindow->setCentralWidget(&centralwidget);
     }
