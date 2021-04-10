@@ -9,7 +9,7 @@
 #include "recording.h"
 #include "widgets/widget_note.h"
 
-//using namespace Ui_MainWindow;
+// using namespace Ui_MainWindow;
 
 static Recording rec{};
 
@@ -17,7 +17,8 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(this)
 {
     ui.setupUi(this);
 
-    QObject::connect(&ui.pushButtonA, &QPushButton::clicked, this, &MainWindow::on_pushButtonA_clicked);
+    QObject::connect(
+      &ui.pushButtonA, &QPushButton::clicked, this, &MainWindow::on_pushButtonA_clicked);
 
     QObject::connect(&ui.buttonRecord, &QPushButton::clicked, this, &MainWindow::startRecord);
     QObject::connect(&ui.buttonStopRecord, &QPushButton::clicked, this, &MainWindow::stopRecord);
@@ -26,6 +27,9 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(this)
     QObject::connect(&ui.buttonSaveLoad, &QPushButton::clicked, this, &MainWindow::saveOrLoad);
     QObject::connect(&ui.buttonDark, &QPushButton::clicked, this, &MainWindow::darkMode);
     QObject::connect(&ui.buttonLight, &QPushButton::clicked, this, &MainWindow::lightMode);
+    QObject::connect(&ui.bargraphUpdater, &QTimer::timeout, this, &MainWindow::updateBargraph);
+
+    ui.bargraphUpdater.start(100);
 }
 std::thread what_if_another_thread_fixes_it;
 void        MainWindow::startRecord()
@@ -36,12 +40,11 @@ void        MainWindow::startRecord()
     ui.buttonRecord.hide();
     ui.buttonStopRecord.show();
 
-    Recording_SetStopPolicy(std::function<bool()>{});               
-                                                            //Activer les bouton à la fin de la minute??
+    Recording_SetStopPolicy(std::function<bool()>{});
+    // Activer les bouton à la fin de la minute??
     what_if_another_thread_fixes_it = std::thread{[]() {
         rec = Record(NUM_SECONDS, SAMPLE_RATE, FRAMES_PER_BUFFER, 1);
     }};
-
 }
 void MainWindow::stopRecord()
 {
@@ -63,8 +66,9 @@ void MainWindow::play()
     ui.buttonStopRecord.setEnabled(false);
     ui.buttonProcess.setEnabled(false);
     ui.buttonSaveLoad.setEnabled(false);
-     
-   // Playback(rec);                                Faudrait avoir un son par défaut ou avoir une autre boite contextuel qui donne acces au fichier
+
+    // Playback(rec);                                Faudrait avoir un son par défaut ou avoir une
+    // autre boite contextuel qui donne acces au fichier
 
 
     ui.buttonRecord.setEnabled(true);
@@ -78,14 +82,13 @@ void MainWindow::processing()
     ui.buttonStopRecord.setEnabled(false);
     ui.buttonPlay.setEnabled(false);
     ui.buttonSaveLoad.setEnabled(false);
-    
-   
+
+
 
     ui.buttonRecord.setEnabled(true);
     ui.buttonStopRecord.setEnabled(true);
     ui.buttonPlay.setEnabled(true);
     ui.buttonSaveLoad.setEnabled(true);
-
 }
 void MainWindow::saveOrLoad()
 {
@@ -115,11 +118,9 @@ void MainWindow::saveOrLoad()
     ui.buttonStopRecord.setEnabled(true);
     ui.buttonPlay.setEnabled(true);
     ui.buttonProcess.setEnabled(true);
-
 }
 void MainWindow::saving()
 {
-
 }
 void MainWindow::loading()
 {
@@ -139,12 +140,20 @@ void MainWindow::lightMode()
     ui.groupBoxPartition.setStyleSheet("background-color:#ffffff");
 }
 
-void MainWindow::on_pushButtonA_clicked()    // Label existe deja line 74 mainwindow_ui.h
+void MainWindow::on_pushButtonA_clicked()
 {
-   
-
     NoteWidget A{&ui.groupBoxPartition, Note{NoteType::Noire, NoteValue::A4}, 300};
     A.show();
+}
+
+void MainWindow::updateBargraph()
+{
+    std::array<uint8_t, 4> adcValues = FPGA::GetADC();
+
+    ui.bargraph1.setValue(adcValues[0]);
+    ui.bargraph2.setValue(adcValues[1]);
+    ui.bargraph3.setValue(adcValues[2]);
+    ui.bargraph4.setValue(adcValues[3]);
 }
 
 MainWindow::~MainWindow()

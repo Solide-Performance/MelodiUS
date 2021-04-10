@@ -4,6 +4,9 @@
 #include <iostream>
 
 
+namespace FPGA
+{
+
 /*****************************************************************************/
 /* Macros ------------------------------------------------------------------ */
 #ifndef LINUX_
@@ -29,8 +32,7 @@
         static_assert(channelNumber >= 0 && channelNumber < 4);                                    \
         if(success)                                                                                \
         {                                                                                          \
-            success =                                                                              \
-              m_fpga->lireRegistre(FPGA::Registers::ADC##channelNumber, (*m_adc)[channelNumber]);  \
+            success = m_fpga->lireRegistre(Registers::ADC##channelNumber, m_adc[channelNumber]);   \
         }                                                                                          \
         else                                                                                       \
         {                                                                                          \
@@ -47,85 +49,73 @@ constexpr size_t  COUNTER_MAX_PHONEME_THRESHOLD = 5;
 
 
 /*****************************************************************************/
-/* Static member definitions ----------------------------------------------- */
+/* Static method declarations ---------------------------------------------- */
+static void ListenerThread();
+static void CheckADCPhonemes();
+static void CheckButtonPhonemes();
+static void CallCallback(Phoneme channel);
+static void DisplayADC();
+
+
+/*****************************************************************************/
+/* Static variables -------------------------------------------------------- */
 #ifndef LINUX_
-CommunicationFPGA* FPGA::m_fpga = nullptr;
+CommunicationFPGA* m_fpga = nullptr;
 #else
-void* FPGA::m_fpga = nullptr;
+void* m_fpga = nullptr;
 #endif
-bool*                                        FPGA::m_run              = nullptr;
-std::thread*                                 FPGA::m_listener         = nullptr;
-std::array<int, 4>*                          FPGA::m_adc              = nullptr;
-std::array<std::function<void()>, 5>*        FPGA::m_phonemeCallbacks = nullptr;
-std::function<void(std::array<uint8_t, 4>)>* FPGA::m_updateCallback   = nullptr;
-Phoneme*                                     FPGA::m_currentPhoneme   = nullptr;
-Phoneme*                                     FPGA::m_oldPhoneme       = nullptr;
-size_t*                                      FPGA::m_phonemeCounter   = nullptr;
+
+bool                                        m_run = true;
+std::thread                                 m_listener;
+std::array<int, 4>                          m_adc{};
+std::array<std::function<void()>, 5>        m_phonemeCallbacks{EMPTY_FUNCTION};
+Phoneme                                     m_currentPhoneme = Phoneme::UNKNOWN;
+Phoneme                                     m_oldPhoneme     = Phoneme::UNKNOWN;
+size_t                                      m_phonemeCounter = 0;
 
 
 /*****************************************************************************/
 /* Public methods definitions ---------------------------------------------- */
-void FPGA::Init()
+void Init()
 {
     if(m_fpga == nullptr)
     {
 #ifndef LINUX_
         m_fpga = new CommunicationFPGA{};
-
-        m_run              = new bool(true);
-        m_adc              = new std::array<int, 4>{0, 0, 0, 0};
-        m_phonemeCallbacks = new std::array<std::function<void()>, 5>{EMPTY_FUNCTION};
-        m_currentPhoneme = new Phoneme{Phoneme::UNKNOWN};
-        m_oldPhoneme     = new Phoneme{Phoneme::UNKNOWN};
-        m_phonemeCounter = new size_t{0};
-        m_updateCallback =
-          new std::function<void(std::array<uint8_t, 4>)>{[](std::array<uint8_t, 4> a) {
-              (void)a;
-          }};
 #endif
     }
 }
-void FPGA::DeInit()
+
+void DeInit()
 {
     if(m_run)
     {
-        *m_run = false;
+        m_run = false;
     }
     WriteLED(0x00);
 
     try
     {
-        if(m_listener)
-        {
-            m_listener->join();
-            delete m_listener;
-            m_listener = nullptr;
-        }
+
+        m_listener.join();
 
         // delete m_fpga;
-        SAFE_DELETE(&m_run);
-        SAFE_DELETE(&m_adc);
-        SAFE_DELETE(&m_phonemeCallbacks);
-        SAFE_DELETE(&m_currentPhoneme);
-        SAFE_DELETE(&m_oldPhoneme);
-        SAFE_DELETE(&m_phonemeCounter);
-        SAFE_DELETE(&m_updateCallback);
     }
     catch(...)
     {
     }
 }
 
-void FPGA::StartListener()
+void StartListener()
 {
-    m_listener = new std::thread{ListenerThread};
+    m_listener = std::thread{ListenerThread};
 }
 
-void FPGA::ListenerThread()
+void ListenerThread()
 {
     CHECK_ENABLED();
 
-    while(*m_run == true)
+    while(m_run == true)
     {
         bool success = true;
 
@@ -135,10 +125,10 @@ void FPGA::ListenerThread()
         READ_CHANNEL(2);
         READ_CHANNEL(3);
 
-        uint8_t adc1  = static_cast<uint8_t>((*m_adc)[0]);
-        uint8_t adc2  = static_cast<uint8_t>((*m_adc)[1]);
-        uint8_t adc3  = static_cast<uint8_t>((*m_adc)[2]);
-        uint8_t adc4  = static_cast<uint8_t>((*m_adc)[3]);
+        uint8_t adc1  = static_cast<uint8_t>(m_adc[0]);
+        uint8_t adc2  = static_cast<uint8_t>(m_adc[1]);
+        uint8_t adc3  = static_cast<uint8_t>(m_adc[2]);
+        uint8_t adc4  = static_cast<uint8_t>(m_adc[3]);
         int     adc1p = adc1 / 255.f * 100.f;
         int     adc2p = adc2 / 255.f * 100.f;
         int     adc3p = adc3 / 255.f * 100.f;
@@ -162,15 +152,12 @@ void FPGA::ListenerThread()
         /* Display ADC value (selected with switches) on the 7-segment display */
         DisplayADC();
 
-        /* Call ADC update callback */
-        m_updateCallback->operator()(GetADC());
-
         /* Sleep for 100 ms */
         std::this_thread::sleep_for(std::chrono::milliseconds{100});
     }
 }
 
-void FPGA::CheckADCPhonemes()
+void CheckADCPhonemes()
 {
     /* This function uses a mask that is enabled at each detected phoneme level */
     /* The mask values are :
@@ -187,19 +174,19 @@ void FPGA::CheckADCPhonemes()
      * - 'I'  is 0b1000
      */
     uint8_t phonemeMask = 0x00;
-    if((*m_adc)[0] >= ADC_PHONEME_THRESHOLD)
+    if(m_adc[0] >= ADC_PHONEME_THRESHOLD)
     {
         phonemeMask |= 0b0001;
     }
-    if((*m_adc)[1] >= ADC_PHONEME_THRESHOLD)
+    if(m_adc[1] >= ADC_PHONEME_THRESHOLD)
     {
         phonemeMask |= 0b0010;
     }
-    if((*m_adc)[2] >= ADC_PHONEME_THRESHOLD)
+    if(m_adc[2] >= ADC_PHONEME_THRESHOLD)
     {
         phonemeMask |= 0b0100;
     }
-    if((*m_adc)[3] >= ADC_PHONEME_THRESHOLD)
+    if(m_adc[3] >= ADC_PHONEME_THRESHOLD)
     {
         phonemeMask |= 0b1000;
     }
@@ -207,51 +194,51 @@ void FPGA::CheckADCPhonemes()
     phonemeMask &= 0x0F;
     if(phonemeMask == 0b0011)
     {
-        *m_currentPhoneme = Phoneme::a;
+        m_currentPhoneme = Phoneme::a;
     }
     else if(phonemeMask == 0b1110)
     {
-        *m_currentPhoneme = Phoneme::ey;
+        m_currentPhoneme = Phoneme::ey;
     }
     else if(phonemeMask == 0b0010)
     {
-        *m_currentPhoneme = Phoneme::ae;
+        m_currentPhoneme = Phoneme::ae;
     }
     else if(phonemeMask == 0b1000)
     {
-        *m_currentPhoneme = Phoneme::i;
+        m_currentPhoneme = Phoneme::i;
     }
     else
     {
-        *m_currentPhoneme = Phoneme::UNKNOWN;
+        m_currentPhoneme = Phoneme::UNKNOWN;
     }
 
-    if(*m_currentPhoneme != *m_oldPhoneme)
+    if(m_currentPhoneme != m_oldPhoneme)
     {
         /* clang-format off */
-        *m_phonemeCounter = *m_phonemeCounter == 0 ||
-                            *m_phonemeCounter == std::numeric_limits<size_t>::max()
-                            ? 0 : *m_phonemeCounter - 1;
+        m_phonemeCounter = m_phonemeCounter == 0 ||
+                            m_phonemeCounter == std::numeric_limits<size_t>::max()
+                            ? 0 : m_phonemeCounter - 1;
         /* clang-format on */
 
-        *m_oldPhoneme = *m_currentPhoneme;
+        m_oldPhoneme = m_currentPhoneme;
     }
     else
     {
-        if(*m_phonemeCounter == std::numeric_limits<size_t>::max())
+        if(m_phonemeCounter == std::numeric_limits<size_t>::max())
         {
             /* Do nothing */
         }
-        else if(++*m_phonemeCounter >= COUNTER_MAX_PHONEME_THRESHOLD)
+        else if(++m_phonemeCounter >= COUNTER_MAX_PHONEME_THRESHOLD)
         {
-            *m_phonemeCounter = std::numeric_limits<size_t>::max();
+            m_phonemeCounter = std::numeric_limits<size_t>::max();
 
-            CallCallback(*m_currentPhoneme);
+            CallCallback(m_currentPhoneme);
         }
     }
 }
 
-void FPGA::CheckButtonPhonemes()
+void CheckButtonPhonemes()
 {
     bool success = true;
 
@@ -286,17 +273,17 @@ void FPGA::CheckButtonPhonemes()
     }
 }
 
-void FPGA::CallCallback(Phoneme channel)
+void CallCallback(Phoneme channel)
 {
     /* Call callback function */
-    auto callback = (*m_phonemeCallbacks)[static_cast<uint8_t>(channel)];
+    auto callback = m_phonemeCallbacks[static_cast<uint8_t>(channel)];
     if(callback)
     {
         callback();
     }
 }
 
-void FPGA::DisplayADC()
+void DisplayADC()
 {
     int  switches = 0;
     bool success  = m_fpga->lireRegistre(Registers::SWITCH, switches);
@@ -309,7 +296,7 @@ void FPGA::DisplayADC()
     switches &= 0b11;
 
     /* Two-digits BCD */
-    uint8_t adc     = (*m_adc)[switches] / 255.f * 100.f;
+    uint8_t adc     = m_adc[switches] / 255.f * 100.f;
     uint8_t adcTemp = adc % 10;
     adc             = ((adc / 10) % 10) << 4;
     adc |= adcTemp;
@@ -325,7 +312,7 @@ void FPGA::DisplayADC()
 
 /* --------------------------------- */
 /* Accessors                         */
-bool FPGA::isOk()
+bool isOk()
 {
     CHECK_ENABLED(false);
 
@@ -334,7 +321,7 @@ bool FPGA::isOk()
 #endif
 }
 
-std::string FPGA::ErrorMsg()
+std::string ErrorMsg()
 {
     CHECK_ENABLED("");
 
@@ -343,22 +330,22 @@ std::string FPGA::ErrorMsg()
 #endif
 }
 
-std::array<uint8_t, 4> FPGA::GetADC()
+std::array<uint8_t, 4> GetADC()
 {
     CHECK_ENABLED(EMPTY_ADC_ARRAY);
 
-    return std::array<uint8_t, 4>{static_cast<uint8_t>((*m_adc)[0]),
-                                  static_cast<uint8_t>((*m_adc)[1]),
-                                  static_cast<uint8_t>((*m_adc)[2]),
-                                  static_cast<uint8_t>((*m_adc)[3])};
+    return std::array<uint8_t, 4>{static_cast<uint8_t>(m_adc[0]),
+                                  static_cast<uint8_t>(m_adc[1]),
+                                  static_cast<uint8_t>(m_adc[2]),
+                                  static_cast<uint8_t>(m_adc[3])};
 }
-uint8_t FPGA::GetADC(size_t channel)
+uint8_t GetADC(size_t channel)
 {
     CHECK_ENABLED(0xFF);
 
     if(channel < 4)
     {
-        return static_cast<uint8_t>((*m_adc)[channel]);
+        return static_cast<uint8_t>(m_adc[channel]);
     }
     else
     {
@@ -366,12 +353,12 @@ uint8_t FPGA::GetADC(size_t channel)
     }
 }
 
-Phoneme FPGA::GetCurrentPhoneme()
+Phoneme GetCurrentPhoneme()
 {
-    return m_currentPhoneme ? *m_currentPhoneme : Phoneme::UNKNOWN;
+    return m_currentPhoneme;
 }
 
-void FPGA::WriteLED(uint8_t val)
+void WriteLED(uint8_t val)
 {
     CHECK_ENABLED();
 
@@ -380,35 +367,21 @@ void FPGA::WriteLED(uint8_t val)
 #endif
 }
 
-void FPGA::SetPhonemeCallback(Phoneme number, std::function<void()> callback)
+void SetPhonemeCallback(Phoneme number, std::function<void()> callback)
 {
     /* Set new callback function is the callback parameter is callable
      * If not callable, clear the callback function */
     if(callback)
     {
-        (*m_phonemeCallbacks)[static_cast<size_t>(number)] = callback;
+        m_phonemeCallbacks[static_cast<size_t>(number)] = callback;
     }
     else
     {
-        (*m_phonemeCallbacks)[static_cast<size_t>(number)] = EMPTY_FUNCTION;
+        m_phonemeCallbacks[static_cast<size_t>(number)] = EMPTY_FUNCTION;
     }
 }
 
-void FPGA::SetUpdateCallback(std::function<void(std::array<uint8_t, 4>)> callback)
-{
-    /* Set new callback function is the callback parameter is callable
-     * If not callable, clear the callback function */
-    if(callback)
-    {
-        *m_updateCallback = callback;
-    }
-    else
-    {
-        *m_updateCallback = [](std::array<uint8_t, 4> a) {
-            (void)a;
-        };
-    }
-}
 
 /*****************************************************************************/
 /* END OF FILE ------------------------------------------------------------- */
+}    // namespace FPGA

@@ -12,8 +12,8 @@ private:
 
     QLabel* m_noteHead    = nullptr;
     QLabel* m_noteTail    = nullptr;
-    QLabel* m_noteSharp   = nullptr;
     QLabel* m_noteTailEnd = nullptr;
+    QLabel* m_noteSharp   = nullptr;
     int64_t m_tailLength;
 
     int m_x;

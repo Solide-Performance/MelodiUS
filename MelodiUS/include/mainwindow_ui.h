@@ -15,22 +15,48 @@
 class RoundButton : public QPushButton
 {
     Q_DISABLE_COPY(RoundButton)
+private:
+    QPixmap image;
+
 public:
     using QPushButton::QPushButton;
+    void SetImage(QPixmap newImage)
+    {
+        image = newImage;
+    }
 
-protected:
+public slots:
+    void paintEvent(QPaintEvent*)
+    {
+        QColor background = isDown() ? QColor("grey") : QColor("lightgrey");
+        int    diameter   = qMin(height(), width()) - 4;
+
+        QPainter painter(this);
+        painter.setRenderHint(QPainter::Antialiasing, false);
+        painter.translate(width() / 2, height() / 2);
+
+        painter.setPen(QPen(QColor("grey"), 1));
+        painter.setBrush(QBrush(background));
+        painter.drawEllipse(QRect(-diameter / 2, -diameter / 2, diameter, diameter));
+
+        if(!image.isNull())
+        {
+            int xOff = (-diameter / 2) + (image.width() * 3 / 2) - 1;
+            int yOff = (-diameter / 2) + (image.height() * 3 / 2) - 1;
+            painter.drawPixmap(QRect(xOff, yOff, image.width(), image.height()), image);
+        }
+    }
+
     void resizeEvent(QResizeEvent* event) override
     {
         QPushButton::resizeEvent(event);
-        const QRect buttonRect = rect();
-        setMask(QRegion(buttonRect.x(),
-                        buttonRect.y(),
-                        buttonRect.width(),
-                        buttonRect.height(),
-                        QRegion::Ellipse));
+
+        int diameter = qMin(height(), width()) + 4;
+        int xOff     = (width() - diameter) / 2;
+        int yOff     = (height() - diameter) / 2;
+        setMask(QRegion(xOff, yOff, diameter, diameter, QRegion::Ellipse));
     }
 };
-
 
 
 class Ui_MainWindow
@@ -78,7 +104,7 @@ public:
     QLabel       labelbar2;
     QLabel       labelbar3;
     QLabel       labelbar4;
-    std::mutex   bargraphLock;
+    QTimer       bargraphUpdater;
 
 
 
@@ -117,7 +143,6 @@ public:
       buttonSaveLoad(&groupBoxMenu),
       buttonDark(&groupBoxPartition),
       buttonLight(&groupBoxPartition)
-      circle(QRect(100, 200, 75, 75)),
       bargraph1(&groupBoxMenu),
       bargraph2(&groupBoxMenu),
       bargraph3(&groupBoxMenu),
@@ -125,7 +150,8 @@ public:
       labelbar1(&groupBoxMenu),
       labelbar2(&groupBoxMenu),
       labelbar3(&groupBoxMenu),
-      labelbar4(&groupBoxMenu)
+      labelbar4(&groupBoxMenu),
+      bargraphUpdater(&groupBoxMenu)
     {
     }
 
@@ -200,18 +226,21 @@ public:
         pushButtonA.setText("A");
 
         buttonRecord.setGeometry(QRect(100, 50, 100, 100));
-        buttonRecord.setText("Enregistrement");
+        /*buttonRecord.setText("Enregistrement");
+>>>>>>> e235db7eba2fdbf7d96665f916453a085abf668b
         buttonRecord.setStyleSheet("Border : none");
-        buttonRecord.setStyleSheet("background-color:gray");
+        buttonRecord.setStyleSheet("background-color:gray");*/
+        buttonRecord.SetImage({"images/record.png"});
 
         buttonStopRecord.setGeometry(QRect(100, 50, 100, 100));
-        buttonStopRecord.setText("Fin de l'enregistreement");
+        //buttonStopRecord.setText("Fin de l'enregistreement");
+        buttonStopRecord.SetImage({"images/stopRecord.png"});
         buttonStopRecord.hide();
 
         buttonPlay.setGeometry(QRect(100, 200, 100, 100));
         buttonPlay.setText("Lecture");
         buttonPlay.setStyleSheet("Border : none");
-        buttonPlay.setStyleSheet("background-color:#ffffff");
+        buttonPlay.setStyleSheet("background-color:gray");
 
 
 
@@ -271,16 +300,6 @@ public:
         bargraph4.setTextVisible(true);
         labelbar4.setGeometry(QRect(200, 680, 10, 30));
         labelbar4.setText("4");
-
-        /*auto lmbd = [this](std::array<uint8_t, 4> valeurs) {
-            std::lock_guard<std::mutex> _(bargraphLock);
-
-            bargraph1.setValue(valeurs[0]);
-            bargraph2.setValue(valeurs[1]);
-            bargraph3.setValue(valeurs[2]);
-            bargraph4.setValue(valeurs[3]);
-        };
-        FPGA::SetUpdateCallback(lmbd);*/
 
         mainWindow->setCentralWidget(&centralwidget);
     }
