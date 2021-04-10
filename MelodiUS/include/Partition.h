@@ -41,10 +41,11 @@ public:
         spinBox_2.setRange(2, 8);
         spinBox_2.setSingleStep(2);
         spinBox_2.raise();
+
         
     };
     ~Partition();
-    void                ajoutLigne();
+    int                ajoutLigne();
 private:
     QGroupBox*          PartitionGroupBox;
     int                 nbsLigne;

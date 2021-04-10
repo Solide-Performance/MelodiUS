@@ -4,8 +4,11 @@ Partition::~Partition()
 {
 }
 
-void Partition::ajoutLigne()
+int Partition::ajoutLigne()
 {
-    feuille.emplace_back(nbsLigne, PartitionGroupBox);
+    feuille.push_back(Portee(nbsLigne,PartitionGroupBox));
     nbsLigne++;
+    spinBox.raise();
+    spinBox_2.raise();
+    return nbsLigne;
 }

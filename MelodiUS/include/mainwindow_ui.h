@@ -34,9 +34,11 @@ class Ui_MainWindow
 {
 public:
     QWidget     centralwidget;
+
+    QScrollArea scrollArea;
     QGroupBox   groupBoxPartition;
     QGroupBox   groupBoxMenu;
-    QScrollArea scrollArea;
+
 
     QLabel label;
     QLabel label_A;
@@ -64,9 +66,10 @@ public:
     Ui_MainWindow(QMainWindow* mainwindow)
     : centralwidget(mainwindow),
 
+      scrollArea(&centralwidget),
       groupBoxPartition(&centralwidget),
       groupBoxMenu(&centralwidget),
-      scrollArea(&centralwidget),
+
 
       label(&groupBoxMenu),
 
@@ -93,11 +96,13 @@ public:
         // if(mainWindow->objectName().isEmpty())
         mainWindow->resize(1600, 900);
         groupBoxMenu.setGeometry(0, 0, 250, 900);
-        groupBoxPartition.setGeometry(250, 0, 1000, 1000);
-        scrollArea.setWidget(&groupBoxPartition);
-        scrollArea.setWidgetResizable(true);
-        scrollArea.show();
+        groupBoxPartition.setGeometry(250, 0, 1500, 1500);
 
+        scrollArea.setGeometry(250, 0, 900, 1000);
+        scrollArea.setWidget(&groupBoxPartition);
+        scrollArea.setWidgetResizable(false);
+        scrollArea.show();
+     
         label.setGeometry(QRect(10, 600, 500, 800));
         label.setText("MelodiUS V1.3   UwU Solide Performance");
 
@@ -126,5 +131,6 @@ public:
         buttonSaveLoad.setText("Save| Load");
 
         mainWindow->setCentralWidget(&centralwidget);
+        groupBoxMenu.raise();
     }
 };
