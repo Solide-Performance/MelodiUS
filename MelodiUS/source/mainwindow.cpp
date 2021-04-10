@@ -142,8 +142,17 @@ void MainWindow::lightMode()
 
 void MainWindow::on_pushButtonA_clicked()
 {
+    int nbs=ui.P.ajoutLigne();
+   
+    if(nbs > 3)
+    {
+        ui.scrollArea.resize(ui.scrollArea.width(),1200 + ((nbs - 3) * 500));
+        ui.scrollArea.setWidgetResizable(false);
+    }
+    /*
     NoteWidget A{&ui.groupBoxPartition, Note{NoteType::Noire, NoteValue::A4}, 300};
     A.show();
+    */
 }
 
 void MainWindow::updateBargraph()

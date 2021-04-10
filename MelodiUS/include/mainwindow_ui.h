@@ -10,6 +10,8 @@
 #include "fpga_phoneme.h"
 #include "globaldef.h"
 #include <array>
+#include "Partition.h"
+#include "Portee.h"
 
 
 class RoundButton : public QPushButton
@@ -62,27 +64,22 @@ public slots:
 class Ui_MainWindow
 {
 public:
-    QWidget centralwidget;
+    QWidget     centralwidget;
 
-    QGroupBox groupBoxPartition;
-    QGroupBox groupBoxMenu;
+    QScrollArea scrollArea;
+    QGroupBox   groupBoxPartition;
+    QGroupBox   groupBoxMenu;
+
 
     QLabel label;
-    QLabel label_3;
     QLabel label_A;
     QLabel label_I;
     QLabel label_hey;
     QLabel label_est;
 
-    QFrame line;
-    QFrame line_2;
-    QFrame line_3;
-    QFrame line_4;
-    QFrame line_5;
-    QFrame line_6;
 
-    QSpinBox spinBox;
-    QSpinBox spinBox_2;
+    Partition P;
+
 
     QPushButton pushButtonA;
 
@@ -107,14 +104,16 @@ public:
     QTimer       bargraphUpdater;
 
 
-
     Ui_MainWindow()               = delete;
     Ui_MainWindow(Ui_MainWindow&) = delete;
+
     Ui_MainWindow(QMainWindow* mainwindow)
     : centralwidget(mainwindow),
 
+      scrollArea(&centralwidget),
       groupBoxPartition(&centralwidget),
       groupBoxMenu(&centralwidget),
+
 
       label(&groupBoxMenu),
       label_3(&groupBoxPartition),
@@ -124,16 +123,8 @@ public:
       label_est(&groupBoxMenu),
 
 
-      line(&groupBoxPartition),
-      line_2(&groupBoxPartition),
-      line_3(&groupBoxPartition),
-      line_4(&groupBoxPartition),
-      line_5(&groupBoxPartition),
+      P(&centralwidget, &groupBoxPartition),
 
-      line_6(&groupBoxPartition),
-
-      spinBox(&groupBoxPartition),
-      spinBox_2(&groupBoxPartition),
 
       pushButtonA(&groupBoxPartition),
       buttonRecord(&groupBoxMenu),
@@ -162,12 +153,6 @@ public:
         mainWindow->resize(1600, 900);
         groupBoxMenu.setGeometry(0, 0, 250, 900);
         groupBoxMenu.setStyleSheet("background-color:#ffffff");
-        groupBoxPartition.setGeometry(250, 0, 1350, 900);
-        groupBoxPartition.setStyleSheet("background-color:#ffffff");
-        groupBoxPartition.setGeometry(250, 0, 1000, 1000);
-
-        label.setGeometry(QRect(10, 600, 500, 800));
-        label.setText("MelodiUS V1.3   UwU Solide Performance");
 
         label.setGeometry(QRect(10, 775, 250, 10));
         label.setText("MelodiUS V1.4   UwU Solide Performance");
@@ -220,6 +205,12 @@ public:
         spinBox_2.setValue(4);
         spinBox_2.setRange(2, 8);
         spinBox_2.setSingleStep(2);
+        groupBoxPartition.setGeometry(250, 0, 1500, 1500);
+
+        scrollArea.setGeometry(250, 0, 900, 1000);
+        scrollArea.setWidget(&groupBoxPartition);
+        scrollArea.setWidgetResizable(false);
+        scrollArea.show();
 
 
         pushButtonA.setGeometry(QRect(70, 370, 93, 28));
@@ -302,5 +293,6 @@ public:
         labelbar4.setText("4");
 
         mainWindow->setCentralWidget(&centralwidget);
+        groupBoxMenu.raise();
     }
 };
