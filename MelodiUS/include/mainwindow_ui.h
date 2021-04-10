@@ -162,8 +162,8 @@ public:
         label_est.setGeometry(QRect(50, 500, 51, 101));
         label_est.setText("EST");
 
-        groupBoxPartition.setGeometry(250, 0, 1500, 1500);
-        scrollArea.setGeometry(250, 0, 1000, 1000);
+        groupBoxPartition.setGeometry(250, 0, 980, 885);
+        scrollArea.setGeometry(250, 0, 1000, groupBoxMenu.height());
         scrollArea.setWidget(&groupBoxPartition);
         scrollArea.setWidgetResizable(false);
         scrollArea.show();

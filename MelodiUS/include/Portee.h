@@ -19,6 +19,7 @@
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QWidget>
+#include <QtWidgets/QScrollBar>
 
 class Portee
 {
