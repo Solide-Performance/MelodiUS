@@ -131,8 +131,9 @@ public:
       buttonPlay(&groupBoxMenu),
       buttonProcess(&groupBoxMenu),
       buttonSaveLoad(&groupBoxMenu),
-      buttonDark(&groupBoxPartition),
-      buttonLight(&groupBoxPartition), bargraph1(&groupBoxMenu),
+      buttonDark(&groupBoxMenu),
+      buttonLight(&groupBoxMenu),
+      bargraph1(&groupBoxMenu),
       bargraph2(&groupBoxMenu),
       bargraph3(&groupBoxMenu),
       bargraph4(&groupBoxMenu),
@@ -146,13 +147,11 @@ public:
 
     void setupUi(QMainWindow* mainWindow)
     {
-
-
-        mainWindow->resize(1600, 900);
+        mainWindow->setFixedSize(1250, 900);
         groupBoxMenu.setGeometry(0, 0, 250, 900);
         groupBoxMenu.setStyleSheet("background-color:#ffffff");
 
-        label.setGeometry(QRect(10, 775, 250, 10));
+        label.setGeometry(QRect(10, 850, 250, 10));
         label.setText("MelodiUS V1.4   UwU Solide Performance");
         label_A.setGeometry(QRect(50, 50, 51, 101));
         label_A.setText("A");
@@ -164,15 +163,14 @@ public:
         label_est.setText("EST");
 
         groupBoxPartition.setGeometry(250, 0, 1500, 1500);
-
-        scrollArea.setGeometry(250, 0, 900, 1000);
+        scrollArea.setGeometry(250, 0, 1000, 1000);
         scrollArea.setWidget(&groupBoxPartition);
         scrollArea.setWidgetResizable(false);
         scrollArea.show();
 
 
-        pushButtonA.setGeometry(QRect(70, 370, 93, 28));
-        pushButtonA.setText("A");
+        pushButtonA.setGeometry(QRect(0, 0, 93, 50));
+        pushButtonA.setText("Ajouter Portee");
 
         buttonRecord.setGeometry(QRect(100, 50, 100, 100));
         buttonRecord.SetImage({"images/record.png"});
@@ -194,10 +192,11 @@ public:
         buttonSaveLoad.setGeometry(QRect(100, 500, 100, 100));
         buttonSaveLoad.setText("Sauvegarde / Charge");
 
-        buttonDark.setGeometry(QRect(1200, 750, 50, 20));
+        buttonDark.setGeometry(QRect(0, 0, 50, 20));
         buttonDark.setText("Nuit");
+        buttonDark.raise();
 
-        buttonLight.setGeometry(QRect(1200, 750, 50, 20));
+        buttonLight.setGeometry(QRect(0, 0, 50, 20));
         buttonLight.setText("Jour");
         buttonLight.hide();
 

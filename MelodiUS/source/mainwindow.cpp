@@ -146,8 +146,8 @@ void MainWindow::on_pushButtonA_clicked()
    
     if(nbs > 3)
     {
-        ui.scrollArea.resize(ui.scrollArea.width(),1200 + ((nbs - 3) * 500));
-        ui.scrollArea.setWidgetResizable(false);
+        //ui.scrollArea.resize(ui.scrollArea.width(),1200 + ((nbs - 3) * 500));
+        //ui.scrollArea.setWidgetResizable(false);
     }
     /*
     NoteWidget A{&ui.groupBoxPartition, Note{NoteType::Noire, NoteValue::A4}, 300};
