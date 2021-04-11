@@ -147,7 +147,7 @@ public:
 
     void setupUi(QMainWindow* mainWindow)
     {
-        mainWindow->setFixedSize(1250, 900);
+        mainWindow->resize(1250, 900);
         groupBoxMenu.setGeometry(0, 0, 250, 900);
         groupBoxMenu.setStyleSheet("background-color:#ffffff");
 
