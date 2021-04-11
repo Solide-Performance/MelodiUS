@@ -152,7 +152,8 @@ public:
         groupBoxMenu.setStyleSheet("background-color:#ffffff");
 
         label.setGeometry(QRect(10, 850, 250, 10));
-        label.setText("MelodiUS V1.4   UwU Solide Performance");
+        label.setText("MelodiUS V1.5   Quelle Solide Performance!");
+        
         label_A.setGeometry(QRect(50, 50, 51, 101));
         label_A.setText("A");
         label_I.setGeometry(QRect(50, 200, 51, 101));
@@ -163,6 +164,7 @@ public:
         label_est.setText("EST");
 
         groupBoxPartition.setGeometry(250, 0, 980, 885);
+        //groupBoxPartition.setStyleSheet("background-color:#ffffff");
         scrollArea.setGeometry(250, 0, 1000, groupBoxMenu.height());
         scrollArea.setWidget(&groupBoxPartition);
         scrollArea.setWidgetResizable(false);

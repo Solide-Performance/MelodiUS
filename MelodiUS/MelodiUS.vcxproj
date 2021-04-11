@@ -196,6 +196,9 @@
     <ClInclude Include="include\Portee.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Temps.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="include\detection_rythme.h" />
   </ItemGroup>
   <ItemGroup>

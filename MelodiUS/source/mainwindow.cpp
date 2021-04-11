@@ -142,16 +142,17 @@ void MainWindow::lightMode()
 
 void MainWindow::on_pushButtonA_clicked()
 {
-    int nbs=ui.P.ajoutLigne();
-   
+    int        nbs = ui.P.ajoutLigne();
     if(nbs >= 6)
     {
         ui.groupBoxPartition.resize(ui.groupBoxPartition.width(), 885 + ((nbs - 6) * 150));
-        
     }
-    NoteWidget A{&ui.groupBoxPartition, Note{NoteType::Noire, NoteValue::A4}, 300};
+    NoteWidget A{&ui.groupBoxPartition, Note{NoteType::Noire, NoteValue::A4}, 100};
     A.show();
-    
+    NoteWidget B{&ui.groupBoxPartition, Note{NoteType::Blanche, NoteValue::A5}, 150};
+    B.show();
+    NoteWidget C{&ui.groupBoxPartition, Note{NoteType::Croche, NoteValue::C4}, 200};
+    C.show();
 }
 
 void MainWindow::updateBargraph()
