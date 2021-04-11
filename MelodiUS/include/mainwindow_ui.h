@@ -14,6 +14,7 @@
 #include <array>
 
 
+
 class RoundButton : public QPushButton
 {
     Q_DISABLE_COPY(RoundButton)
@@ -67,8 +68,16 @@ public:
     QWidget centralwidget;
 
     QScrollArea scrollArea;
+
     QGroupBox   groupBoxPartition;
     QGroupBox   groupBoxMenu;
+    QMessageBox msgBoxSave;
+    QMessageBox msgBoxLoad;
+
+    QString           FileName;
+    std::string fileName;
+    QString           SaveName;
+    std::string       saveName;
 
 
     QLabel label;
@@ -76,13 +85,16 @@ public:
     QLabel label_I;
     QLabel label_hey;
     QLabel label_est;
+    QLabel labelbar1;
+    QLabel labelbar2;
+    QLabel labelbar3;
+    QLabel labelbar4;
 
 
     Partition P;
 
 
     QPushButton pushButtonA;
-
     RoundButton buttonRecord;
     RoundButton buttonStopRecord;
     RoundButton buttonPlay;
@@ -97,11 +109,10 @@ public:
     QProgressBar bargraph2;
     QProgressBar bargraph3;
     QProgressBar bargraph4;
-    QLabel       labelbar1;
-    QLabel       labelbar2;
-    QLabel       labelbar3;
-    QLabel       labelbar4;
-    QTimer       bargraphUpdater;
+
+    QTimer bargraphUpdater;
+
+
 
 
     Ui_MainWindow()               = delete;
@@ -113,6 +124,8 @@ public:
       scrollArea(&centralwidget),
       groupBoxPartition(&centralwidget),
       groupBoxMenu(&centralwidget),
+      msgBoxSave(&groupBoxMenu),
+      msgBoxLoad(&groupBoxMenu),
 
 
       label(&groupBoxMenu),
@@ -120,39 +133,56 @@ public:
       label_I(&groupBoxMenu),
       label_hey(&groupBoxMenu),
       label_est(&groupBoxMenu),
+      labelbar1(&groupBoxMenu),
+      labelbar2(&groupBoxMenu),
+      labelbar3(&groupBoxMenu),
+      labelbar4(&groupBoxMenu),
+
 
 
       P(&centralwidget, &groupBoxPartition),
 
 
       pushButtonA(&groupBoxPartition),
+
       buttonRecord(&groupBoxMenu),
       buttonStopRecord(&groupBoxMenu),
       buttonPlay(&groupBoxMenu),
       buttonProcess(&groupBoxMenu),
       buttonSaveLoad(&groupBoxMenu),
-      buttonDark(&groupBoxMenu),
-      buttonLight(&groupBoxMenu),
+      //buttonDark(&groupBoxMenu),
+      //buttonLight(&groupBoxMenu),
+
+      SLD(&groupBoxMenu),
+
       bargraph1(&groupBoxMenu),
       bargraph2(&groupBoxMenu),
       bargraph3(&groupBoxMenu),
       bargraph4(&groupBoxMenu),
-      labelbar1(&groupBoxMenu),
-      labelbar2(&groupBoxMenu),
-      labelbar3(&groupBoxMenu),
-      labelbar4(&groupBoxMenu),
-      bargraphUpdater(&groupBoxMenu)
+
+
+      bargraphUpdater(&groupBoxMenu) 
+
+    
     {
     }
 
     void setupUi(QMainWindow* mainWindow)
     {
-        mainWindow->setFixedSize(1250, 900);
+        mainWindow->showMaximized();
         groupBoxMenu.setGeometry(0, 0, 250, 900);
-        groupBoxMenu.setStyleSheet("background-color:#ffffff");
+        //groupBoxMenu.setStyleSheet("background-color:#ffffff");
+        groupBoxPartition.setGeometry(250, 0, 1500, 1500);
+        //groupBoxPartition.setStyleSheet("background-color:#ffffff");
+
+        scrollArea.setGeometry(250, 0, 1000, 1000);
+        scrollArea.setWidget(&groupBoxPartition);
+        scrollArea.setWidgetResizable(false);
+        scrollArea.show();
+
 
         label.setGeometry(QRect(10, 850, 250, 10));
-        label.setText("MelodiUS V1.4   UwU Solide Performance");
+        label.setText("MelodiUS V1.5   UwU Solide Performance");
         label_A.setGeometry(QRect(50, 50, 51, 101));
         label_A.setText("A");
         label_I.setGeometry(QRect(50, 200, 51, 101));
@@ -161,13 +191,6 @@ public:
         label_hey.setText("HEY");
         label_est.setGeometry(QRect(50, 500, 51, 101));
         label_est.setText("EST");
-
-        groupBoxPartition.setGeometry(250, 0, 1500, 1500);
-        scrollArea.setGeometry(250, 0, 1000, 1000);
-        scrollArea.setWidget(&groupBoxPartition);
-        scrollArea.setWidgetResizable(false);
-        scrollArea.show();
-
 
         pushButtonA.setGeometry(QRect(0, 0, 93, 50));
         pushButtonA.setText("Ajouter Portee");
@@ -192,13 +215,13 @@ public:
         buttonSaveLoad.setGeometry(QRect(100, 500, 100, 100));
         buttonSaveLoad.setText("Sauvegarde / Charge");
 
-        buttonDark.setGeometry(QRect(0, 0, 50, 20));
+       /* buttonDark.setGeometry(QRect(0, 0, 50, 20));
         buttonDark.setText("Nuit");
         buttonDark.raise();
 
         buttonLight.setGeometry(QRect(0, 0, 50, 20));
         buttonLight.setText("Jour");
-        buttonLight.hide();
+        buttonLight.hide();*/
 
 
         SLD.setText("Solide Sauvegarde");
@@ -206,6 +229,13 @@ public:
           "Vous pouvez enregistrer votre dernier enregistrement ou utiliser un fichier existant");    // Mettre des mots plus tard!
         SLD.setStandardButtons(QMessageBox::Save | QMessageBox::Open | QMessageBox::Cancel);
         SLD.setDefaultButton(QMessageBox::Cancel);
+
+        msgBoxSave.setText("Sous quel nom derirez vous enregistrer votre fichier");
+        msgBoxSave.setInformativeText("L'enregistrement sera sauvegarde sous la forme d'un .wav");
+        msgBoxLoad.setText("Quel document desirez vous importer ?");
+        msgBoxLoad.setInformativeText("Le fichier doit etre sous la forme .wav");
+
+
 
 
         bargraph1.setMaximum(255);

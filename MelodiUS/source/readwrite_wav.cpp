@@ -92,7 +92,7 @@ void SaveToWav(const std::string& filename, const Recording& recording)
 {
     std::vector<int16_t> shortData = Samples_FloatToShort(recording.getSamples());
 
-    WAV_Writer writer{filename, static_cast<uint32_t>(recording.getSampleRate()), 1};
+    WAV_Writer writer{filename, static_cast<uint32_t>(recording.getSampleRate()), 2}; // changer de 1 a 2 pour regler un bug
 
     writer.Write(shortData.data(), shortData.size());
 }

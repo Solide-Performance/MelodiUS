@@ -20,8 +20,8 @@ public slots:
    void saveOrLoad();
    void saving();
    void loading();
-   void darkMode();
-   void lightMode();
+  // void darkMode();
+  // void lightMode();
 
 
 public:
