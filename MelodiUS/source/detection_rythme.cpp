@@ -120,6 +120,35 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
     }
 
 
+    std::ofstream debugFile{"debug.txt"};
+    for(int i = 0; i < volume.size(); i++)
+    {
+        debugFile << i << '\t';
+        debugFile << volume[i] << '\t';
+        debugFile << volume_plat[i] << '\t';
+
+        if(std::find(debut_note.begin(), debut_note.end(), i) != debut_note.end())
+        {
+            debugFile << 1 << '\t';
+        }
+        else
+        {
+            debugFile << 0 << '\t';
+        }
+        if(std::find(fin_note.begin(), fin_note.end(), i) != fin_note.end())
+        {
+            debugFile << 1 << '\t';
+        }
+        else
+        {
+            debugFile << 0 << '\t';
+        }
+        debugFile << std::endl;
+    }
+    debugFile.close();
+    
+
+
     std::cout << std::endl;
     std::vector<Recording> notes(debut_note.size());
     std::vector<NoteValue> valeur_note(debut_note.size());
@@ -131,8 +160,8 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
         notes[i] = Recording{
           beginIt, endIt, rec.getSampleRate(), rec.getFramesPerBuffer(), rec.getNumChannels()};
 
-        double freq     = FindFrequency(notes[i]);
-        
+        double freq = FindFrequency(notes[i]);
+
         auto [str, val] = FindNoteFromFreq(freq);
         valeur_note[i]  = val;
         std::cout << "Note " << i + 1 << " : " << freq << "Hz (" << str
@@ -141,7 +170,7 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
     }
     std::cout << std::endl << std::endl;
 
-    analyse_note(debut_note, fin_note, volume_plat.size(),valeur_note);
+    analyse_note(debut_note, fin_note, volume_plat.size(), valeur_note);
 
     return notes;
 }
@@ -218,7 +247,7 @@ void analyse_note(std::vector<size_t>    debuts,
         int j = 0;
         for(int i = 0; i < liste_ratios.size(); i++)
         {
-            if(i%2==0)
+            if(i % 2 == 0)
             {
 
                 if(liste_ratios[i] == 0)
