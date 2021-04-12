@@ -94,7 +94,7 @@ void SaveToWav(const std::string& filename, const Recording& recording)
 
     WAV_Writer writer{filename,
                       static_cast<uint32_t>(recording.getSampleRate()),
-                      static_cast<uint32_t>(recording.getNumChannels())};
+                      static_cast<uint16_t>(recording.getNumChannels())};
 
     writer.Write(shortData.data(), shortData.size());
 }

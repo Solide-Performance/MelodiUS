@@ -33,6 +33,8 @@
 #include <QtWidgets/QScrollArea>
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
+#include <QFileDialog>
+
 
 #if QT_VERSION >= 0x060000
 #include <QtGui/QAction>

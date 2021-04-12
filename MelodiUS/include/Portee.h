@@ -45,7 +45,7 @@ public:
             lines[i].show();
         }
         Cle.setGeometry(other.Cle.geometry());
-        Cle.setPixmap(other.Cle.pixmap());
+        Cle.setPixmap(*other.Cle.pixmap());
         Cle.show();
         Cle.lower();
     }

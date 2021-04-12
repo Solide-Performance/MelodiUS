@@ -8,6 +8,8 @@
 #include "playback.h"
 #include "recording.h"
 #include "widgets/widget_note.h"
+#include "readwrite_wav.h"
+#include "detection_rythme.h"
 
 // using namespace Ui_MainWindow;
 
@@ -17,16 +19,14 @@ MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(this)
 {
     ui.setupUi(this);
 
-    QObject::connect(
-      &ui.pushButtonA, &QPushButton::clicked, this, &MainWindow::on_pushButtonA_clicked);
-
+    QObject::connect(&ui.pushButtonA, &QPushButton::clicked, this, &MainWindow::on_pushButtonA_clicked);
     QObject::connect(&ui.buttonRecord, &QPushButton::clicked, this, &MainWindow::startRecord);
     QObject::connect(&ui.buttonStopRecord, &QPushButton::clicked, this, &MainWindow::stopRecord);
     QObject::connect(&ui.buttonPlay, &QPushButton::clicked, this, &MainWindow::play);
     QObject::connect(&ui.buttonProcess, &QPushButton::clicked, this, &MainWindow::processing);
     QObject::connect(&ui.buttonSaveLoad, &QPushButton::clicked, this, &MainWindow::saveOrLoad);
-    QObject::connect(&ui.buttonDark, &QPushButton::clicked, this, &MainWindow::darkMode);
-    QObject::connect(&ui.buttonLight, &QPushButton::clicked, this, &MainWindow::lightMode);
+    //  QObject::connect(&ui.buttonDark, &QPushButton::clicked, this, &MainWindow::darkMode);
+    // QObject::connect(&ui.buttonLight, &QPushButton::clicked, this, &MainWindow::lightMode);
     QObject::connect(&ui.bargraphUpdater, &QTimer::timeout, this, &MainWindow::updateBargraph);
 
     ui.bargraphUpdater.start(100);
@@ -43,7 +43,8 @@ void        MainWindow::startRecord()
     Recording_SetStopPolicy(std::function<bool()>{});
     // Activer les bouton à la fin de la minute??
     what_if_another_thread_fixes_it = std::thread{[]() {
-        rec = Record(NUM_SECONDS, SAMPLE_RATE, FRAMES_PER_BUFFER, 1);
+        //   rec = Record(NUM_SECONDS, SAMPLE_RATE, FRAMES_PER_BUFFER, 1);
+        rec = Record(10);
     }};
 }
 void MainWindow::stopRecord()
@@ -67,7 +68,7 @@ void MainWindow::play()
     ui.buttonProcess.setEnabled(false);
     ui.buttonSaveLoad.setEnabled(false);
 
-    // Playback(rec);                                Faudrait avoir un son par défaut ou avoir une
+    Playback(rec);    // Faudrait avoir un son par défaut ou avoir une
     // autre boite contextuel qui donne acces au fichier
 
 
@@ -83,7 +84,7 @@ void MainWindow::processing()
     ui.buttonPlay.setEnabled(false);
     ui.buttonSaveLoad.setEnabled(false);
 
-
+     analyse_rythme(rec);
 
     ui.buttonRecord.setEnabled(true);
     ui.buttonStopRecord.setEnabled(true);
@@ -121,33 +122,44 @@ void MainWindow::saveOrLoad()
 }
 void MainWindow::saving()
 {
+    ui.SaveName = QFileDialog::getSaveFileName(
+      this, tr("Save Address Book"), "", tr("Address Book (*.wav);;All Files (*)"));
+    ui.saveName = ui.SaveName.toStdString();
+    SaveToWav(ui.saveName, rec);
+    //ui.msgBoxSave.exec();
 }
+
 void MainWindow::loading()
 {
+    ui.FileName = QFileDialog::getOpenFileName(
+      this, tr("Open File"), "/MelodiUS/more_sounds", tr("Sound Files (*.wav)"));
+    ui.fileName = ui.FileName.toStdString();
+    rec = LoadFromWav(ui.fileName);
+    // ui.msgBoxLoad.exec();
 }
-void MainWindow::darkMode()
-{
-    ui.buttonDark.hide();
-    ui.buttonLight.show();
-    ui.groupBoxMenu.setStyleSheet("background-color:#2c2f33");
-    ui.groupBoxPartition.setStyleSheet("background-color:#2c2f33");
-}
-void MainWindow::lightMode()
-{   
-    ui.buttonLight.hide();
-    ui.buttonDark.show();
-    ui.groupBoxMenu.setStyleSheet("background-color:#ffffff");
-    ui.groupBoxPartition.setStyleSheet("background-color:#ffffff");
-}
+// void MainWindow::darkMode()
+//{
+//    ui.buttonDark.hide();
+//    ui.buttonLight.show();
+//    ui.groupBoxMenu.setStyleSheet("background-color:#2c2f33");
+//    ui.groupBoxPartition.setStyleSheet("background-color:#2c2f33");
+//}
+// void MainWindow::lightMode()
+//{
+//    ui.buttonLight.hide();
+//    ui.buttonDark.show();
+//    ui.groupBoxMenu.setStyleSheet("background-color:#ffffff");
+//    ui.groupBoxPartition.setStyleSheet("background-color:#ffffff");
+//}
 
 void MainWindow::on_pushButtonA_clicked()
 {
-    int nbs=ui.P.ajoutLigne();
-   
+    int nbs = ui.P.ajoutLigne();
+
     if(nbs > 3)
     {
-        ui.scrollArea.resize(ui.scrollArea.width(),1200 + ((nbs - 3) * 500));
-        ui.scrollArea.setWidgetResizable(false);
+        // ui.scrollArea.resize(ui.scrollArea.width(),1200 + ((nbs - 3) * 500));
+        // ui.scrollArea.setWidgetResizable(false);
     }
     /*
     NoteWidget A{&ui.groupBoxPartition, Note{NoteType::Noire, NoteValue::A4}, 300};
