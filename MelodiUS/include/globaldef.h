@@ -16,7 +16,6 @@
 
 #pragma region Qt Includes
 #include <QtCore/QTimer>
-#include <QtCore/QVariant>
 #include <QtGlobal>
 #include <QtGui/QBitmap>
 #include <QtGui/QPainter>

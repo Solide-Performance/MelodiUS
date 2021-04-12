@@ -1,24 +1,7 @@
 #pragma once
 #include <array>
 
-#include <QtGlobal>
-#if QT_VERSION >= 0x060000
-#include <QtGui/QAction>
-#else
-#include <QtWidgets/QAction>
-#endif
-#include <QtCore/QVariant>
-#include <QtGui/QBitmap>
-#include <QtWidgets/QApplication>
-#include <QtWidgets/QComboBox>
-#include <QtWidgets/QFrame>
-#include <QtWidgets/QGroupBox>
-#include <QtWidgets/QLabel>
-#include <QtWidgets/QMainWindow>
-#include <QtWidgets/QPushButton>
-#include <QtWidgets/QSpinBox>
-#include <QtWidgets/QStatusBar>
-#include <QtWidgets/QWidget>
+#include "globaldef.h"
 
 class Portee
 {
@@ -86,6 +69,7 @@ public:
         Cle.setPixmap(QPixmap(QString::fromUtf8("images/cle40x80T.png")));
         Cle.lower();
     };
+    
 
     std::array<QFrame, 10> lines;
     QLabel                 Cle;

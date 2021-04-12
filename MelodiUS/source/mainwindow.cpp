@@ -11,7 +11,6 @@
 #include "readwrite_wav.h"
 #include "detection_rythme.h"
 
-// using namespace Ui_MainWindow;
 
 static Recording rec{};
 
@@ -41,7 +40,7 @@ void        MainWindow::startRecord()
     ui.buttonStopRecord.show();
 
     Recording_SetStopPolicy(std::function<bool()>{});
-    // Activer les bouton à la fin de la minute??
+    // Activer les bouton a la fin de la minute??
     what_if_another_thread_fixes_it = std::thread{[]() {
         //   rec = Record(NUM_SECONDS, SAMPLE_RATE, FRAMES_PER_BUFFER, 1);
         rec = Record(10);
@@ -68,7 +67,7 @@ void MainWindow::play()
     ui.buttonProcess.setEnabled(false);
     ui.buttonSaveLoad.setEnabled(false);
 
-    Playback(rec);    // Faudrait avoir un son par défaut ou avoir une
+    Playback(rec);    // Faudrait avoir un son par defaut ou avoir une
     // autre boite contextuel qui donne acces au fichier
 
 
@@ -154,17 +153,17 @@ void MainWindow::loading()
 
 void MainWindow::on_pushButtonA_clicked()
 {
-    int nbs = ui.P.ajoutLigne();
-
-    if(nbs > 3)
+    int        nbs = ui.P.ajoutLigne();
+    if(nbs >= 6)
     {
-        // ui.scrollArea.resize(ui.scrollArea.width(),1200 + ((nbs - 3) * 500));
-        // ui.scrollArea.setWidgetResizable(false);
+        ui.groupBoxPartition.resize(ui.groupBoxPartition.width(), 885 + ((nbs - 6) * 150));
     }
-    /*
-    NoteWidget A{&ui.groupBoxPartition, Note{NoteType::Noire, NoteValue::A4}, 300};
+    NoteWidget A{&ui.groupBoxPartition, Note{NoteType::Noire, NoteValue::A4}, 100};
     A.show();
-    */
+    NoteWidget B{&ui.groupBoxPartition, Note{NoteType::Blanche, NoteValue::A5}, 150};
+    B.show();
+    NoteWidget C{&ui.groupBoxPartition, Note{NoteType::Croche, NoteValue::C4}, 200};
+    C.show();
 }
 
 void MainWindow::updateBargraph()

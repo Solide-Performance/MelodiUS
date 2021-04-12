@@ -32,7 +32,14 @@ public:
         m_noteHead->setMask(headPixmap.mask());
         m_noteHead->setGeometry(QRect{m_x, m_y, headPixmap.width(), headPixmap.height()});
     }
-
+    NoteType getNoteType()
+    {
+        return m_note.getNoteType();
+    }
+    NoteValue getNoteValue()
+    {
+        return m_note.getNoteValue();
+    }
     void show()
     {
         if(m_noteHead)
