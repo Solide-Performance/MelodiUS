@@ -92,7 +92,9 @@ void SaveToWav(const std::string& filename, const Recording& recording)
 {
     std::vector<int16_t> shortData = Samples_FloatToShort(recording.getSamples());
 
-    WAV_Writer writer{filename, static_cast<uint32_t>(recording.getSampleRate()), 1};
+    WAV_Writer writer{filename,
+                      static_cast<uint32_t>(recording.getSampleRate()),
+                      static_cast<uint32_t>(recording.getNumChannels())};
 
     writer.Write(shortData.data(), shortData.size());
 }
@@ -123,7 +125,7 @@ std::vector<int16_t> Samples_FloatToShort(const std::vector<float>& inVec)
     // https://stackoverflow.com/a/56213245/10827197
     for(size_t i = 0; i < inVec.size(); i++)
     {
-        float floatData = inVec[i] * 32767;
+        float floatData = inVec[i] * 32767.f;
         shortData[i]    = (int16_t)floatData;
     }
 
@@ -136,7 +138,7 @@ std::vector<float> Samples_ShortToFloat(const std::vector<int16_t>& inVec)
 
     for(size_t i = 0; i < inVec.size(); i++)
     {
-        float shortData = (float)inVec[i] / 32767;
+        float shortData = (float)inVec[i] / 32767.f;
         floatData[i]    = shortData;
     }
 
