@@ -130,6 +130,11 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\Temps.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="include\detection_rythme.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>

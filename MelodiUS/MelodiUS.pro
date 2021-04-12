@@ -18,6 +18,7 @@ HEADERS += ./include/tuning.h
 HEADERS += ./include/note.h
 HEADERS += ./include/Partition.h
 HEADERS += ./include/Portee.h
+HEADERS += ./include/Temps.h
 
 # Sources
 SOURCES += ./source/main.cpp
@@ -30,6 +31,7 @@ SOURCES += ./source/detection_rythme.cpp
 SOURCES += ./source/fft.cpp
 SOURCES += ./source/Portee.cpp
 SOURCES += ./source/Partition.cpp
+SOOURCE += ./source/Temps.cpp
 
 
 # Platform-specific project settings

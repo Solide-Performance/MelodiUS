@@ -19,6 +19,7 @@
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QWidget>
+#include <QtWidgets/QScrollBar>
 
 class Portee
 {
@@ -86,6 +87,7 @@ public:
         Cle.setPixmap(QPixmap(QString::fromUtf8("images/cle40x80T.png")));
         Cle.lower();
     };
+    
 
     std::array<QFrame, 10> lines;
     QLabel                 Cle;

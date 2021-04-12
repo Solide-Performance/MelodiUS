@@ -7,6 +7,7 @@
 #include <QtWidgets/QAction>
 #endif
 #include "Portee.h"
+#include "Temps.h"
 #include <QtCore/QVariant>
 #include <QtGui/QBitmap>
 #include <QtWidgets/QApplication>
@@ -52,4 +53,5 @@ private:
     QSpinBox            spinBox;
     QSpinBox            spinBox_2;
     std::vector<Portee> feuille;
+    std::vector<Temps>  composition;
 };

@@ -81,7 +81,14 @@ public:
     constexpr Note(NoteType nt, NoteValue nv) : noteType{nt}, noteValue{nv}
     {
     }
-
+    NoteType getNoteType()
+    {
+        return noteType;
+    }
+    NoteValue getNoteValue()
+    {
+        return noteValue;
+    }
     bool isSharp()
     {
         static std::array<bool, static_cast<int64_t>(NoteValue::UNKNOWN) + 1> lookupTable{
