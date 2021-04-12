@@ -1,11 +1,11 @@
 /*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
 #include "detection_rythme.h"
-#include "globaldef.h"
-
 #include "fft.h"
+#include "globaldef.h"
 #include "note.h"
 #include "tuning.h"
+
 #include <algorithm>
 #include <cmath>
 #include <fstream>
@@ -23,6 +23,20 @@
 /*****************************************************************************/
 /* Constants --------------------------------------------------------------- */
 constexpr double epsilon = 0.005;
+
+
+/*****************************************************************************/
+/* Function declarations --------------------------------------------------- */
+void correct_fuckaroos(std::vector<size_t>&    debuts,
+                       std::vector<size_t>&    fins,
+                       std::vector<NoteValue>& notes,
+                       std::vector<Recording>& recs,
+                       size_t                  dt);
+
+std::vector<Note> analyse_note(const std::vector<size_t>&    debuts,
+                               const std::vector<size_t>&    fins,
+                               size_t                        recordingLength,
+                               const std::vector<NoteValue>& valeur_note);
 
 
 /*****************************************************************************/
@@ -120,7 +134,7 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
     }
 
 
-    std::ofstream debugFile{"debug.txt"};
+    /*std::ofstream debugFile{"debug.txt"};
     for(int i = 0; i < volume.size(); i++)
     {
         debugFile << i << '\t';
@@ -145,13 +159,14 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
         }
         debugFile << std::endl;
     }
-    debugFile.close();
-    
+    debugFile.close();*/
+
 
 
     std::cout << std::endl;
-    std::vector<Recording> notes(debut_note.size());
     std::vector<NoteValue> valeur_note(debut_note.size());
+    std::vector<Recording> notes(debut_note.size());
+
     for(size_t i = 0; i < notes.size(); i++)
     {
         const float* beginIt = &tableau[debut_note[i]];
@@ -164,22 +179,86 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
 
         auto [str, val] = FindNoteFromFreq(freq);
         valeur_note[i]  = val;
+    }
+    std::cout << std::endl << std::endl;
+
+
+    correct_fuckaroos(debut_note, fin_note, valeur_note, notes, dt);
+
+    for(size_t i = 0; i < notes.size(); i++)
+    {
+        double freq = FindFrequency(notes[i]);
+
+        auto [str, val] = FindNoteFromFreq(freq);
         std::cout << "Note " << i + 1 << " : " << freq << "Hz (" << str
                   << ")\tSamples: " << debut_note[i] << " to " << fin_note[i] << "("
                   << fin_note[i] - debut_note[i] << ")" << std::endl;
     }
-    std::cout << std::endl << std::endl;
 
     analyse_note(debut_note, fin_note, volume_plat.size(), valeur_note);
 
     return notes;
 }
 
+void correct_fuckaroos(std::vector<size_t>&    debuts,
+                       std::vector<size_t>&    fins,
+                       std::vector<NoteValue>& notes,
+                       std::vector<Recording>& recs,
+                       size_t                  dt)
+{
+    std::vector<size_t> durees;
+    for(size_t i = 0; i < debuts.size(); i++)
+    {
+        size_t duree = fins[i] - debuts[i];
 
-void analyse_note(std::vector<size_t>    debuts,
-                  std::vector<size_t>    fins,
-                  size_t                 recordingLength,
-                  std::vector<NoteValue> valeur_note)
+        if(duree <= 2 * dt)
+        {
+            if(i != 0 && i != notes.size() - 1)
+            {
+                if(debuts[i] == fins[i - 1] && fins[i] == debuts[i + 1])
+                {
+                    if(fins[i - 1] - debuts[i - 1] < fins[i + 1] - debuts[i + 1])
+                    {
+                        fins.erase(fins.begin() + i - 1);
+                        debuts.erase(debuts.begin() + i);
+                        notes.erase(notes.begin() + i);
+                        recs.erase(recs.begin() + i);
+                        continue;
+                    }
+                    else
+                    {
+                        fins.erase(fins.begin() + i);
+                        debuts.erase(debuts.begin() + i + 1);
+                        notes.erase(notes.begin() + i);
+                        recs.erase(recs.begin() + i);
+                        continue;
+                    }
+                }
+                else if(debuts[i] == fins[i - 1])
+                {
+                    fins.erase(fins.begin() + i - 1);
+                    debuts.erase(debuts.begin() + i);
+                    notes.erase(notes.begin() + i);
+                    recs.erase(recs.begin() + i);
+                    continue;
+                }
+                else if(fins[i] == debuts[i + 1])
+                {
+                    fins.erase(fins.begin() + i);
+                    debuts.erase(debuts.begin() + i + 1);
+                    notes.erase(notes.begin() + i);
+                    recs.erase(recs.begin() + i);
+                    continue;
+                }
+            }
+        }
+    }
+}
+
+std::vector<Note> analyse_note(const std::vector<size_t>&    debuts,
+                               const std::vector<size_t>&    fins,
+                               size_t                        recordingLength,
+                               const std::vector<NoteValue>& valeur_note)
 {
     std::vector<int64_t> liste_duree;
     std::vector<int64_t> liste_ratios;
@@ -455,6 +534,8 @@ void analyse_note(std::vector<size_t>    debuts,
         std::cout << (int)liste_symbole[i].noteType << '\t' << (int)liste_symbole[i].noteValue << '\n';
     }
     std::cout << std::endl;
+
+    return liste_symbole;
 }
 
 
