@@ -29,6 +29,7 @@ SOURCES += ./source/readwrite_wav.cpp
 SOURCES += ./source/generator.cpp
 SOURCES += ./source/detection_rythme.cpp
 SOURCES += ./source/fft.cpp
+SOURCES += ./source/tuning.cpp
 SOURCES += ./source/Portee.cpp
 SOURCES += ./source/Partition.cpp
 SOOURCE += ./source/Temps.cpp

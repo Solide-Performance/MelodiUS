@@ -44,8 +44,9 @@ bool setupFPGA();
 /* Entry point ------------------------------------------------------------- */
 int main(int argc, char* argv[])
 {
-    /* Invoke GUI */
+    InitNoteLookup();
 
+    /* Invoke GUI */
     std::thread gui{[](int argc, char* argv[]) {
                         QCoreApplication::addLibraryPath(".");
                         QApplication a(argc, argv);

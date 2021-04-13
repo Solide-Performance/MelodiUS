@@ -199,14 +199,21 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
 
 
     std::cout << std::endl;
-    for(size_t i = 0; i < np.notes.size(); i++)
+
+    /*for(size_t i = 0; i < np.notes.size(); i++)
     {
         std::cout << "Note " << i + 1 << " : "
                   << "(" << np.noteNames[i] << ")\tSamples: " << np.debut_note[i] << " to "
                   << np.fin_note[i] << "(" << np.fin_note[i] - np.debut_note[i] << ")" << std::endl;
-    }
+    }*/
+    std::vector<Note> vn = analyse_note(np, volume_plat.size());
 
-    // analyse_note(np, volume_plat.size());
+    for(Note note : vn)
+    {
+        std::cout << std::get<1>(noteLookup[static_cast<int64_t>(note.getNoteValue())]) << "\t("
+                  << note.FindSymbolName() << ")\n";
+    }
+    std::cout << std::endl;
 
     return {{}};
 }
@@ -253,7 +260,7 @@ NotesPacket analyse_rythme_impl(std::vector<float> volume_plat,
         for(; i < max; i += dt)
         {
             float currentValue = volume_plat[i];
-            if(currentValue < 0.3f * valeurAttaque)
+            if(currentValue < 0.05f * valeurAttaque) 
             {
                 break;
             }
@@ -601,25 +608,28 @@ std::vector<Note> analyse_note(const NotesPacket& np, size_t recordingLength)
     {
         std::cout << "you just broke the fourth wall" << std::endl;
     }
-    /* clang-format off */
-    std::cout << max_ratio << std::endl;
+
+    // std::cout << max_ratio << std::endl;
     for(int64_t i = 0; i < liste_duree.size(); i++)
     {
         int64_t duree = liste_duree[i];
         int64_t ratio = liste_ratios[i];
-        std::cout << duree << '\t' << ratio << '\n';
+        // std::cout << duree << '\t' << ratio << '\n';
     }
     for(int64_t i = 0; i < liste_symbole.size(); i++)
     {
-        std::cout << (int)liste_symbole[i].noteType << '\t' << (int)liste_symbole[i].noteValue << '\n';
+        // std::cout << (int)liste_symbole[i].noteType << '\t' << (int)liste_symbole[i].noteValue <<
+        // '\n';
     }
-    std::cout << std::endl;
+    // std::cout << std::endl;
 
     return liste_symbole;
 }
 
 
-void filePrinter(const std::vector<float>& volume, const std::vector<float>& volume_plat, const NotesPacket& np)
+void filePrinter(const std::vector<float>& volume,
+                 const std::vector<float>& volume_plat,
+                 const NotesPacket&        np)
 {
     std::ofstream debugFile{"debug.txt"};
     for(int i = 0; i < volume.size(); i++)

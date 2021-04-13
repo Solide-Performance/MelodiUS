@@ -89,7 +89,7 @@ public:
     {
         return noteValue;
     }
-    bool isSharp()
+    [[nodiscard]] bool isSharp()
     {
         static std::array<bool, static_cast<int64_t>(NoteValue::UNKNOWN) + 1> lookupTable{
           false, false, true, false, true, false, true, false, false, true, false, true,
@@ -99,5 +99,28 @@ public:
 
         return lookupTable[static_cast<int64_t>(noteValue)];
     }
-};
 
+    [[nodiscard]] std::string FindSymbolName()
+    {
+#define LOOKUP_NOTE_TYPE(x)                                                                        \
+    {                                                                                              \
+        x, LABEL_TO_STRING(x)                                                                      \
+    }
+
+
+        static std::unordered_map<NoteType, std::string> lookupTable{LOOKUP_NOTE_TYPE(NoteType::Ronde),
+          LOOKUP_NOTE_TYPE(NoteType::Blanche),
+          LOOKUP_NOTE_TYPE(NoteType::Noire),
+          LOOKUP_NOTE_TYPE(NoteType::Croche),
+          LOOKUP_NOTE_TYPE(NoteType::DoubleCroche),
+          LOOKUP_NOTE_TYPE(NoteType::Pause),
+          LOOKUP_NOTE_TYPE(NoteType::DemiPause),
+          LOOKUP_NOTE_TYPE(NoteType::Silence),
+          LOOKUP_NOTE_TYPE(NoteType::DemiSilence),
+          LOOKUP_NOTE_TYPE(NoteType::QuartSilence),
+          LOOKUP_NOTE_TYPE(NoteType::UNKNOWN)
+        };
+
+        return lookupTable[noteType];
+    }
+};
