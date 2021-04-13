@@ -114,7 +114,7 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
 #if !READ_TWICE
     NotesPacket np = np1;
 #else
-    NotesPacket np2 = analyse_rythme_impl(volume_plat, rec, dt, sample_cutoff, marge_note * 0.75);
+    NotesPacket np2 = analyse_rythme_impl(volume_plat, rec, dt, sample_cutoff, marge_note * 0.5);
 
     NotesPacket np;
 
@@ -135,6 +135,10 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
                                           return (pos - dt * 2 <= fin) && (pos + dt * 2 >= fin);
                                      });
 
+        if (debutMatch == np2.debut_note.end())
+        {
+            debutMatch = np2.debut_note.begin() + i;
+        }
         size_t distanceDebut = debutMatch - np2.debut_note.begin();
         if (finMatch == np2.fin_note.end())
         {
@@ -171,21 +175,20 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
             {
                 np.notes.insert(np.notes.end(),
                                 np2.notes.begin() + distanceDebut,
-                                np2.notes.begin() + distanceFin);
+                                np2.notes.begin() + distanceFin + 1);
                 np.noteNames.insert(np.noteNames.end(),
                                     np2.noteNames.begin() + distanceDebut,
-                                    np2.noteNames.begin() + distanceFin);
+                                    np2.noteNames.begin() + distanceFin + 1);
                 np.debut_note.insert(np.debut_note.end(),
                                      np2.debut_note.begin() + distanceDebut,
-                                     np2.debut_note.begin() + distanceFin);
+                                     np2.debut_note.begin() + distanceFin + 1);
                 np.fin_note.insert(np.fin_note.end(),
                                    np2.fin_note.begin() + distanceDebut,
-                                   np2.fin_note.begin() + distanceFin);
+                                   np2.fin_note.begin() + distanceFin + 1);
             }
         }
         else
         {
-
             np.notes.push_back(np1.notes[i]);
             np.noteNames.push_back(np1.noteNames[i]);
             np.debut_note.push_back(np1.debut_note[i]);
@@ -301,6 +304,7 @@ void correct_fuckaroos(NotesPacket& np, size_t dt)
                         np.fin_note.erase(np.fin_note.begin() + i - 1);
                         np.debut_note.erase(np.debut_note.begin() + i);
                         np.notes.erase(np.notes.begin() + i);
+                        np.noteNames.erase(np.noteNames.begin() + i);
                         continue;
                     }
                     else
@@ -308,6 +312,7 @@ void correct_fuckaroos(NotesPacket& np, size_t dt)
                         np.fin_note.erase(np.fin_note.begin() + i);
                         np.debut_note.erase(np.debut_note.begin() + i + 1);
                         np.notes.erase(np.notes.begin() + i);
+                        np.noteNames.erase(np.noteNames.begin() + i);
                         continue;
                     }
                 }
@@ -316,6 +321,7 @@ void correct_fuckaroos(NotesPacket& np, size_t dt)
                     np.fin_note.erase(np.fin_note.begin() + i - 1);
                     np.debut_note.erase(np.debut_note.begin() + i);
                     np.notes.erase(np.notes.begin() + i);
+                    np.noteNames.erase(np.noteNames.begin() + i);
                     continue;
                 }
                 else if(np.fin_note[i] == np.debut_note[i + 1])
@@ -323,6 +329,7 @@ void correct_fuckaroos(NotesPacket& np, size_t dt)
                     np.fin_note.erase(np.fin_note.begin() + i);
                     np.debut_note.erase(np.debut_note.begin() + i + 1);
                     np.notes.erase(np.notes.begin() + i);
+                    np.noteNames.erase(np.noteNames.begin() + i);
                     continue;
                 }
             }
