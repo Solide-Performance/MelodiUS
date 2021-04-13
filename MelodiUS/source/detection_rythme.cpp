@@ -26,49 +26,59 @@ constexpr double epsilon = 0.005;
 
 
 /*****************************************************************************/
-/* Function declarations --------------------------------------------------- */
-void correct_fuckaroos(std::vector<size_t>&    debuts,
-                       std::vector<size_t>&    fins,
-                       std::vector<NoteValue>& notes,
-                       std::vector<Recording>& recs,
-                       size_t                  dt);
+/* Types ------------------------------------------------------------------- */
+struct NotesPacket
+{
+    std::vector<size_t>      debut_note;
+    std::vector<size_t>      fin_note;
+    std::vector<NoteValue>   notes;
+    std::vector<std::string> noteNames;
+};
 
-std::vector<Note> analyse_note(const std::vector<size_t>&    debuts,
-                               const std::vector<size_t>&    fins,
-                               size_t                        recordingLength,
-                               const std::vector<NoteValue>& valeur_note);
+
+/*****************************************************************************/
+/* Function declarations --------------------------------------------------- */
+void filePrinter(const std::vector<float>& volume,
+                 const std::vector<float>& volume_plat,
+                 const NotesPacket&        np);
+
+void correct_fuckaroos(NotesPacket& np, size_t dt);
+
+std::vector<Note> analyse_note(const NotesPacket& np, size_t recordingLength);
+
+NotesPacket analyse_rythme_impl(std::vector<float> volume_plat,
+                                const Recording&   rec,
+                                size_t             dt,
+                                size_t             sampleCutoff,
+                                float              marge_note);
 
 
 /*****************************************************************************/
 /* Function definitions ---------------------------------------------------- */
 std::vector<Recording> analyse_rythme(const Recording& rec)
 {
-    const size_t       dt            = rec.getSampleRate() / 9;
-    size_t             sample_cutoff = rec.getSampleRate() / 5;
-    std::vector<float> tableau       = rec.getSamples();
-    size_t             taille        = tableau.size();
+    const size_t dt            = rec.getSampleRate() / 9;
+    size_t       sample_cutoff = rec.getSampleRate() / 5;
+    size_t       taille        = rec.getNumSamples();
 
-    std::vector<float>  derive(taille);
-    std::vector<float>  volume(taille);
-    std::vector<float>  volume_plat(taille);
-    std::vector<float>  derive_double(taille);
-    std::vector<size_t> debut_note{};
-    std::vector<size_t> fin_note{};
-    float               maximum     = 0.f;
-    const float         marge_bruit = 0.0005f;
-    const float         marge_note  = 0.003f;
+    std::vector<float> derive(taille);
+    std::vector<float> volume(taille);
+    std::vector<float> volume_plat(taille);
+    float              maximum     = 0.f;
+    const float        marge_bruit = 0.0005f;
+    const float        marge_note  = 0.003f;
 
     for(size_t i = 0; i < taille - 1; i++)
     {
-        derive[i] = tableau[i + 1] - tableau[i];
+        derive[i] = rec[i + 1] - rec[i];
     }
 
     float volmax = *std::max_element(volume.cbegin(), volume.cend());
     for(size_t i = 0; i < taille - 1; i++)
     {
-        if(COMPARE_FLOATS(derive[i], 0.0f, epsilon) && tableau[i] > 0 /*marge_volume*/)
+        if(COMPARE_FLOATS(derive[i], 0.0f, epsilon) && rec[i] > 0 /*marge_volume*/)
         {    // comparaison avec marge d'erreur, utilise la fonction de pascal
-            maximum = tableau[i];
+            maximum = rec[i];
         }
         volume[i] = maximum;
     }
@@ -94,34 +104,138 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
         std::fill(&volume_plat[i], &volume_plat[max], volume_moyen);
     }
 
-    for(size_t i = 0; i < taille - 1; i++)
+    NotesPacket np1 = analyse_rythme_impl(volume_plat, rec, dt, sample_cutoff, marge_note);
+    NotesPacket np2 = analyse_rythme_impl(volume_plat, rec, dt, sample_cutoff, marge_note * 0.75);
+
+    NotesPacket np;
+
+    for(size_t i = 0; i < np1.notes.size(); i++)
+    {
+        size_t debut = np1.debut_note[i];
+        size_t fin   = np1.fin_note[i];
+
+        /* clang-format off */
+        auto debutMatch = std::find_if(np2.debut_note.begin(), np2.debut_note.end(),
+                                       [dt, debut](size_t pos)
+                                       {
+                                            return (pos - dt * 2 <= debut) && (pos + dt * 2 >= debut);
+                                       });
+        auto finMatch = std::find_if(np2.fin_note.begin(), np2.fin_note.end(),
+                                     [dt, fin](size_t pos)
+                                     {
+                                          return (pos - dt * 2 <= fin) && (pos + dt * 2 >= fin);
+                                     });
+
+        size_t distanceDebut = debutMatch - np2.debut_note.begin();
+        if (finMatch == np2.fin_note.end())
+        {
+            finMatch = np2.fin_note.begin() + distanceDebut;
+        }
+        size_t distanceFin = finMatch - np2.fin_note.begin();
+        /* clang-format on */
+
+        size_t diff = distanceFin - distanceDebut;
+        if(diff > 0)
+        {
+            bool isNoteSame = true;
+            for(size_t j = distanceDebut; j <= distanceFin; j++)
+            {
+                if(np1.notes[i] == np2.notes[j])
+                {
+                    continue;
+                }
+                else
+                {
+                    isNoteSame = false;
+                    break;
+                }
+            }
+
+            if(isNoteSame == true)
+            {
+                np.notes.push_back(np1.notes[i]);
+                np.noteNames.push_back(np1.noteNames[i]);
+                np.debut_note.push_back(np1.debut_note[i]);
+                np.fin_note.push_back(np1.fin_note[i]);
+            }
+            else
+            {
+                np.notes.insert(np.notes.end(),
+                                np2.notes.begin() + distanceDebut,
+                                np2.notes.begin() + distanceFin);
+                np.noteNames.insert(np.noteNames.end(),
+                                    np2.noteNames.begin() + distanceDebut,
+                                    np2.noteNames.begin() + distanceFin);
+                np.debut_note.insert(np.debut_note.end(),
+                                     np2.debut_note.begin() + distanceDebut,
+                                     np2.debut_note.begin() + distanceFin);
+                np.fin_note.insert(np.fin_note.end(),
+                                   np2.fin_note.begin() + distanceDebut,
+                                   np2.fin_note.begin() + distanceFin);
+            }
+        }
+        else
+        {
+
+            np.notes.push_back(np1.notes[i]);
+            np.noteNames.push_back(np1.noteNames[i]);
+            np.debut_note.push_back(np1.debut_note[i]);
+            np.fin_note.push_back(np1.fin_note[i]);
+        }
+    }
+
+    std::cout << std::endl;
+    for(size_t i = 0; i < np.notes.size(); i++)
+    {
+        std::cout << "Note " << i + 1 << " : "
+                  << "(" << np.noteNames[i] << ")\tSamples: " << np.debut_note[i] << " to "
+                  << np.fin_note[i] << "(" << np.fin_note[i] - np.debut_note[i] << ")" << std::endl;
+    }
+
+    analyse_note(np, volume_plat.size());
+
+    return {{}};
+}
+
+NotesPacket analyse_rythme_impl(std::vector<float> volume_plat,
+                                const Recording&   rec,
+                                size_t             dt,
+                                size_t             sampleCutoff,
+                                float              marge_note)
+{
+    std::vector<float> derive_double(volume_plat.size());
+    NotesPacket        np;
+
+
+    for(size_t i = 0; i < volume_plat.size() - 1; i++)
     {
         derive_double[i] = volume_plat[i + 1] - volume_plat[i];
         if(derive_double[i] > marge_note)
         {
-            debut_note.push_back(i);
+            np.debut_note.push_back(i);
         }
     }
-    if(debut_note.size() == 0)
+    if(np.debut_note.size() == 0)
     {
-        return {{}};
+        return {};
     }
-    for(size_t i = 0; i < debut_note.size() - 1; i++)
+    for(size_t i = 0; i < np.debut_note.size() - 1; i++)
     {
-        size_t sampleLength = debut_note[i + 1] - debut_note[i];
-        if(sampleLength < sample_cutoff)
+        size_t sampleLength = np.debut_note[i + 1] - np.debut_note[i];
+        if(sampleLength < sampleCutoff)
         {
             // Removes note
-            debut_note.erase(debut_note.begin() + i);
+            np.debut_note.erase(np.debut_note.begin() + i);
         }
     }
 
-    for(size_t note = 0; note < debut_note.size(); note++)
+    for(size_t note = 0; note < np.debut_note.size(); note++)
     {
-        float valeurAttaque = volume_plat[debut_note[note]];
+        float valeurAttaque = volume_plat[np.debut_note[note]];
 
-        size_t max = note == debut_note.size() - 1 ? volume.size() - 1 : debut_note[note + 1];
-        size_t i   = debut_note[note];
+        size_t max =
+          note == np.debut_note.size() - 1 ? volume_plat.size() - 1 : np.debut_note[note + 1];
+        size_t i = np.debut_note[note];
         for(; i < max; i += dt)
         {
             float currentValue = volume_plat[i];
@@ -130,124 +244,74 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
                 break;
             }
         }
-        fin_note.push_back(std::min(i, volume_plat.size() - 1));
+        np.fin_note.push_back(std::min(i, volume_plat.size() - 1));
     }
 
 
-    /*std::ofstream debugFile{"debug.txt"};
-    for(int i = 0; i < volume.size(); i++)
+
+    np.notes.reserve(np.debut_note.size());
+
+    for(size_t i = 0; i < np.debut_note.size(); i++)
     {
-        debugFile << i << '\t';
-        debugFile << volume[i] << '\t';
-        debugFile << volume_plat[i] << '\t';
+        const float* beginIt = &rec[np.debut_note[i]];
+        const float* endIt   = &rec[np.fin_note[i]];
 
-        if(std::find(debut_note.begin(), debut_note.end(), i) != debut_note.end())
-        {
-            debugFile << 1 << '\t';
-        }
-        else
-        {
-            debugFile << 0 << '\t';
-        }
-        if(std::find(fin_note.begin(), fin_note.end(), i) != fin_note.end())
-        {
-            debugFile << 1 << '\t';
-        }
-        else
-        {
-            debugFile << 0 << '\t';
-        }
-        debugFile << std::endl;
-    }
-    debugFile.close();*/
-
-
-
-    std::cout << std::endl;
-    std::vector<NoteValue> valeur_note(debut_note.size());
-    std::vector<Recording> notes(debut_note.size());
-
-    for(size_t i = 0; i < notes.size(); i++)
-    {
-        const float* beginIt = &tableau[debut_note[i]];
-        const float* endIt   = &tableau[fin_note[i]];
-
-        notes[i] = Recording{
+        Recording tempRec{
           beginIt, endIt, rec.getSampleRate(), rec.getFramesPerBuffer(), rec.getNumChannels()};
 
-        double freq = FindFrequency(notes[i]);
+        double freq = FindFrequency(tempRec);
 
         auto [str, val] = FindNoteFromFreq(freq);
-        valeur_note[i]  = val;
-    }
-    std::cout << std::endl << std::endl;
-
-
-    correct_fuckaroos(debut_note, fin_note, valeur_note, notes, dt);
-
-    for(size_t i = 0; i < notes.size(); i++)
-    {
-        double freq = FindFrequency(notes[i]);
-
-        auto [str, val] = FindNoteFromFreq(freq);
-        std::cout << "Note " << i + 1 << " : " << freq << "Hz (" << str
-                  << ")\tSamples: " << debut_note[i] << " to " << fin_note[i] << "("
-                  << fin_note[i] - debut_note[i] << ")" << std::endl;
+        np.notes.push_back(val);
+        np.noteNames.push_back(str);
     }
 
-    analyse_note(debut_note, fin_note, volume_plat.size(), valeur_note);
+    correct_fuckaroos(np, dt);
 
-    return notes;
+    return np;
 }
 
-void correct_fuckaroos(std::vector<size_t>&    debuts,
-                       std::vector<size_t>&    fins,
-                       std::vector<NoteValue>& notes,
-                       std::vector<Recording>& recs,
-                       size_t                  dt)
+void correct_fuckaroos(NotesPacket& np, size_t dt)
 {
     std::vector<size_t> durees;
-    for(size_t i = 0; i < debuts.size(); i++)
+    for(size_t i = 0; i < np.debut_note.size(); i++)
     {
-        size_t duree = fins[i] - debuts[i];
+        size_t duree = np.fin_note[i] - np.debut_note[i];
 
         if(duree <= 2 * dt)
         {
-            if(i != 0 && i != notes.size() - 1)
+            if(i != 0 && i != np.notes.size() - 1)
             {
-                if(debuts[i] == fins[i - 1] && fins[i] == debuts[i + 1])
+                if(np.debut_note[i] == np.fin_note[i - 1] && np.fin_note[i] == np.debut_note[i + 1])
                 {
-                    if(fins[i - 1] - debuts[i - 1] < fins[i + 1] - debuts[i + 1])
+                    if(np.fin_note[i - 1] - np.debut_note[i - 1]
+                       < np.fin_note[i + 1] - np.debut_note[i + 1])
                     {
-                        fins.erase(fins.begin() + i - 1);
-                        debuts.erase(debuts.begin() + i);
-                        notes.erase(notes.begin() + i);
-                        recs.erase(recs.begin() + i);
+                        np.fin_note.erase(np.fin_note.begin() + i - 1);
+                        np.debut_note.erase(np.debut_note.begin() + i);
+                        np.notes.erase(np.notes.begin() + i);
                         continue;
                     }
                     else
                     {
-                        fins.erase(fins.begin() + i);
-                        debuts.erase(debuts.begin() + i + 1);
-                        notes.erase(notes.begin() + i);
-                        recs.erase(recs.begin() + i);
+                        np.fin_note.erase(np.fin_note.begin() + i);
+                        np.debut_note.erase(np.debut_note.begin() + i + 1);
+                        np.notes.erase(np.notes.begin() + i);
                         continue;
                     }
                 }
-                else if(debuts[i] == fins[i - 1])
+                else if(np.debut_note[i] == np.fin_note[i - 1])
                 {
-                    fins.erase(fins.begin() + i - 1);
-                    debuts.erase(debuts.begin() + i);
-                    notes.erase(notes.begin() + i);
-                    recs.erase(recs.begin() + i);
+                    np.fin_note.erase(np.fin_note.begin() + i - 1);
+                    np.debut_note.erase(np.debut_note.begin() + i);
+                    np.notes.erase(np.notes.begin() + i);
                     continue;
                 }
-                else if(fins[i] == debuts[i + 1])
+                else if(np.fin_note[i] == np.debut_note[i + 1])
                 {
-                    fins.erase(fins.begin() + i);
-                    debuts.erase(debuts.begin() + i + 1);
-                    notes.erase(notes.begin() + i);
-                    recs.erase(recs.begin() + i);
+                    np.fin_note.erase(np.fin_note.begin() + i);
+                    np.debut_note.erase(np.debut_note.begin() + i + 1);
+                    np.notes.erase(np.notes.begin() + i);
                     continue;
                 }
             }
@@ -255,22 +319,20 @@ void correct_fuckaroos(std::vector<size_t>&    debuts,
     }
 }
 
-std::vector<Note> analyse_note(const std::vector<size_t>&    debuts,
-                               const std::vector<size_t>&    fins,
-                               size_t                        recordingLength,
-                               const std::vector<NoteValue>& valeur_note)
+std::vector<Note> analyse_note(const NotesPacket& np, size_t recordingLength)
 {
     std::vector<int64_t> liste_duree;
     std::vector<int64_t> liste_ratios;
 
     /* Garder la duree des notes et des silences.
      * Chaque note est associee a un silence (meme s'il fait 0 de longueur). */
-    for(int64_t i = 0; i < debuts.size(); i++)
+    for(int64_t i = 0; i < np.debut_note.size(); i++)
     {
-        int64_t noteLength = fins[i] - debuts[i];
+        int64_t noteLength = np.fin_note[i] - np.debut_note[i];
 
-        int64_t maxSilenceLength = i + 1 >= debuts.size() ? recordingLength : debuts[i + 1];
-        int64_t silenceLength    = maxSilenceLength - fins[i];
+        int64_t maxSilenceLength =
+          i + 1 >= np.debut_note.size() ? recordingLength : np.debut_note[i + 1];
+        int64_t silenceLength = maxSilenceLength - np.fin_note[i];
 
         liste_duree.push_back(noteLength);
         liste_duree.push_back(silenceLength);
@@ -331,7 +393,7 @@ std::vector<Note> analyse_note(const std::vector<size_t>&    debuts,
 
                 if(liste_ratios[i] == 0)
                 {
-                    liste_symbole.push_back(Note(NoteType::Noire, valeur_note[j++]));
+                    liste_symbole.push_back(Note(NoteType::Noire, np.notes[j++]));
                 }
             }
             else
@@ -354,11 +416,11 @@ std::vector<Note> analyse_note(const std::vector<size_t>&    debuts,
 
                 if(liste_ratios[i] == 0)
                 {
-                    liste_symbole.push_back(Note(NoteType::Noire, valeur_note[j++]));
+                    liste_symbole.push_back(Note(NoteType::Noire, np.notes[j++]));
                 }
                 else if(liste_ratios[i] == 1)
                 {
-                    liste_symbole.push_back(Note(NoteType::Croche, valeur_note[j++]));
+                    liste_symbole.push_back(Note(NoteType::Croche, np.notes[j++]));
                 }
             }
             else
@@ -385,15 +447,15 @@ std::vector<Note> analyse_note(const std::vector<size_t>&    debuts,
 
                 if(liste_ratios[i] == 0)
                 {
-                    liste_symbole.push_back(Note(NoteType::Blanche, valeur_note[j++]));
+                    liste_symbole.push_back(Note(NoteType::Blanche, np.notes[j++]));
                 }
                 else if(liste_ratios[i] == 1)
                 {
-                    liste_symbole.push_back(Note(NoteType::Noire, valeur_note[j++]));
+                    liste_symbole.push_back(Note(NoteType::Noire, np.notes[j++]));
                 }
                 else if(liste_ratios[i] == 2)
                 {
-                    liste_symbole.push_back(Note(NoteType::Croche, valeur_note[j++]));
+                    liste_symbole.push_back(Note(NoteType::Croche, np.notes[j++]));
                 }
             }
             else
@@ -424,19 +486,19 @@ std::vector<Note> analyse_note(const std::vector<size_t>&    debuts,
 
                 if(liste_ratios[i] == 0)
                 {
-                    liste_symbole.push_back(Note(NoteType::Ronde, valeur_note[j++]));
+                    liste_symbole.push_back(Note(NoteType::Ronde, np.notes[j++]));
                 }
                 else if(liste_ratios[i] == 1)
                 {
-                    liste_symbole.push_back(Note(NoteType::Blanche, valeur_note[j++]));
+                    liste_symbole.push_back(Note(NoteType::Blanche, np.notes[j++]));
                 }
                 else if(liste_ratios[i] == 2)
                 {
-                    liste_symbole.push_back(Note(NoteType::Noire, valeur_note[j++]));
+                    liste_symbole.push_back(Note(NoteType::Noire, np.notes[j++]));
                 }
                 else if(liste_ratios[i] == 3)
                 {
-                    liste_symbole.push_back(Note(NoteType::Croche, valeur_note[j++]));
+                    liste_symbole.push_back(Note(NoteType::Croche, np.notes[j++]));
                 }
             }
             else
@@ -471,23 +533,23 @@ std::vector<Note> analyse_note(const std::vector<size_t>&    debuts,
 
                 if(liste_ratios[i] == 0)
                 {
-                    liste_symbole.push_back(Note(NoteType::Ronde, valeur_note[j++]));
+                    liste_symbole.push_back(Note(NoteType::Ronde, np.notes[j++]));
                 }
                 else if(liste_ratios[i] == 1)
                 {
-                    liste_symbole.push_back(Note(NoteType::Blanche, valeur_note[j++]));
+                    liste_symbole.push_back(Note(NoteType::Blanche, np.notes[j++]));
                 }
                 else if(liste_ratios[i] == 2)
                 {
-                    liste_symbole.push_back(Note(NoteType::Noire, valeur_note[j++]));
+                    liste_symbole.push_back(Note(NoteType::Noire, np.notes[j++]));
                 }
                 else if(liste_ratios[i] == 3)
                 {
-                    liste_symbole.push_back(Note(NoteType::Croche, valeur_note[j++]));
+                    liste_symbole.push_back(Note(NoteType::Croche, np.notes[j++]));
                 }
                 else if(liste_ratios[i] == 4)
                 {
-                    liste_symbole.push_back(Note(NoteType::DoubleCroche, valeur_note[j++]));
+                    liste_symbole.push_back(Note(NoteType::DoubleCroche, np.notes[j++]));
                 }
             }
             else
@@ -536,6 +598,37 @@ std::vector<Note> analyse_note(const std::vector<size_t>&    debuts,
     std::cout << std::endl;
 
     return liste_symbole;
+}
+
+
+void filePrinter(const std::vector<float>& volume, const std::vector<float>& volume_plat, const NotesPacket& np)
+{
+    std::ofstream debugFile{"debug.txt"};
+    for(int i = 0; i < volume.size(); i++)
+    {
+        debugFile << i << '\t';
+        debugFile << volume[i] << '\t';
+        debugFile << volume_plat[i] << '\t';
+
+        if(std::find(np.debut_note.begin(), np.debut_note.end(), i) != np.debut_note.end())
+        {
+            debugFile << 1 << '\t';
+        }
+        else
+        {
+            debugFile << 0 << '\t';
+        }
+        if(std::find(np.fin_note.begin(), np.fin_note.end(), i) != np.fin_note.end())
+        {
+            debugFile << 1 << '\t';
+        }
+        else
+        {
+            debugFile << 0 << '\t';
+        }
+        debugFile << std::endl;
+    }
+    debugFile.close();
 }
 
 
