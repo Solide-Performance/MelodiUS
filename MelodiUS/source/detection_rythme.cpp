@@ -114,7 +114,7 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
 #if !READ_TWICE
     NotesPacket np = np1;
 #else
-    NotesPacket np2 = analyse_rythme_impl(volume_plat, rec, dt, sample_cutoff, marge_note * 0.5);
+    NotesPacket np2 = analyse_rythme_impl(volume_plat, rec, dt, sample_cutoff, marge_note * 0.6);
 
     NotesPacket np;
 
@@ -206,7 +206,7 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
                   << np.fin_note[i] << "(" << np.fin_note[i] - np.debut_note[i] << ")" << std::endl;
     }
 
-    //analyse_note(np, volume_plat.size());
+    // analyse_note(np, volume_plat.size());
 
     return {{}};
 }
