@@ -21,6 +21,11 @@
 
 
 /*****************************************************************************/
+/* Defines ----------------------------------------------------------------- */
+#define READ_TWICE true
+
+
+/*****************************************************************************/
 /* Constants --------------------------------------------------------------- */
 constexpr double epsilon = 0.005;
 
@@ -105,6 +110,10 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
     }
 
     NotesPacket np1 = analyse_rythme_impl(volume_plat, rec, dt, sample_cutoff, marge_note);
+
+#if !READ_TWICE
+    NotesPacket np = np1;
+#else
     NotesPacket np2 = analyse_rythme_impl(volume_plat, rec, dt, sample_cutoff, marge_note * 0.75);
 
     NotesPacket np;
@@ -183,6 +192,8 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
             np.fin_note.push_back(np1.fin_note[i]);
         }
     }
+#endif
+
 
     std::cout << std::endl;
     for(size_t i = 0; i < np.notes.size(); i++)
@@ -192,7 +203,7 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
                   << np.fin_note[i] << "(" << np.fin_note[i] - np.debut_note[i] << ")" << std::endl;
     }
 
-    analyse_note(np, volume_plat.size());
+    //analyse_note(np, volume_plat.size());
 
     return {{}};
 }

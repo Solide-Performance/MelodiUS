@@ -241,7 +241,6 @@ void menuHandler()
 
             case 8:
             {
-
                 std::cout << " - Load a folder and subdirs - \nFilename:" << std::endl;
                 std::string path;
                 std::cin >> path;
@@ -297,6 +296,8 @@ void menuHandler()
                         }
                     }
                 }
+
+                break;
             }
 
             /* Exit */
