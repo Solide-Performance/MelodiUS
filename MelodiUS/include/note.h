@@ -74,6 +74,7 @@ class Note
 public:
     const NoteType  noteType;
     const NoteValue noteValue;
+    bool            liee;
 
     constexpr Note() : noteType{NoteType::UNKNOWN}, noteValue{NoteValue::UNKNOWN}
     {
@@ -88,6 +89,61 @@ public:
     NoteValue getNoteValue()
     {
         return noteValue;
+    }
+    double getNoteSum()
+    {
+        if((int)noteValue == 0)
+        {
+            return 4;
+        }
+        else if((int)noteValue == 1)
+        {
+            return 2;
+        }
+        else if((int)noteValue == 2)
+        {
+            return 1;
+        }
+        else if((int)noteValue == 3)
+        {
+            return 0.5;
+        }
+        else if((int)noteValue == 4)
+        {
+            return 0.25;
+        }
+        else if((int)noteValue == 5)
+        {
+            return 4;
+        }
+        else if((int)noteValue == 6)
+        {
+            return 2;
+        }
+        else if((int)noteValue == 7)
+        {
+            return 1;
+        }
+        else if((int)noteValue == 8)
+        {
+            return 0.5;
+        }
+        else if((int)noteValue == 9)
+        {
+            return 0.25;
+        }
+        else if((int)noteValue == 10)
+        {
+            return 0;
+        }
+    }
+    bool isLiee()
+    {
+        return liee;
+    }
+    void setLiee(bool val)
+    {
+        liee = val;
     }
     bool isSharp()
     {

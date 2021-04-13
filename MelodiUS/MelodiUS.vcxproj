@@ -11,7 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{7040190F-FC00-3CDE-9786-2C5366634979}</ProjectGuid>
+    <ProjectGuid>{DA77E4CC-FD7A-36F7-9CE1-774C2139DECF}</ProjectGuid>
     <RootNamespace>MelodiUS</RootNamespace>
     <Keyword>Qt4VSv1.0</Keyword>
   </PropertyGroup>
@@ -147,6 +147,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="fasttrigo\fasttrigo.cpp" />
+    <ClCompile Include="Temps.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\Partition.cpp" />

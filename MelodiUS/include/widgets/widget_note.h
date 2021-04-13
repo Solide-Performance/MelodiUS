@@ -22,8 +22,8 @@ private:
 
 public:
     NoteWidget() = delete;
-    NoteWidget(QWidget* parent, Note note, int x)
-    : m_note{note}, m_x{x}, m_y{LookupNoteHeight(note.noteValue)}
+    NoteWidget(QWidget* parent, Note note, int x,int ligne)
+    : m_note{note}, m_x{x}, m_y{LookupNoteHeight(note.noteValue)+(150*ligne)}
     {
         /* Setup note head*/
         m_noteHead         = new QLabel(parent);

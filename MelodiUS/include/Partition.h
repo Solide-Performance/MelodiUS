@@ -7,7 +7,7 @@
 #include <QtWidgets/QAction>
 #endif
 #include "Portee.h"
-#include "Temps.h"
+#include "widgets/widget_note.h"
 #include <QtCore/QVariant>
 #include <QtGui/QBitmap>
 #include <QtWidgets/QApplication>
@@ -20,6 +20,7 @@
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QWidget>
+#include <QtWidgets/qerrormessage.h>
 
 class Partition
 {
@@ -32,26 +33,34 @@ public:
     {
         nbsLigne = 0;
         ajoutLigne();
-        spinBox.setGeometry(QRect(60, 150, 42, 22));
+        spinBox.setGeometry(QRect(50, 150, 30, 22));
         spinBox.setValue(4);
         spinBox.setRange(1, 8);
         spinBox.raise();
 
-        spinBox_2.setGeometry(QRect(60, 190, 42, 22));
+        spinBox_2.setGeometry(QRect(50, 190, 30, 22));
         spinBox_2.setValue(4);
         spinBox_2.setRange(2, 8);
         spinBox_2.setSingleStep(2);
         spinBox_2.raise();
-
-        
     };
     ~Partition();
-    int                ajoutLigne();
+    
+    int  ajoutLigne();
+    void ecrireMusique(std::vector<Note> Note);
+    bool mesureEstPleine();
+
 private:
-    QGroupBox*          PartitionGroupBox;
+    
+    int                     nom;
+    int                     denom;
+    int                     valeur;
     int                 nbsLigne;
+    
+    QGroupBox*          PartitionGroupBox;
     QSpinBox            spinBox;
     QSpinBox            spinBox_2;
+    
     std::vector<Portee> feuille;
-    std::vector<Temps>  composition;
+    std::vector<NoteWidget>  composition;
 };

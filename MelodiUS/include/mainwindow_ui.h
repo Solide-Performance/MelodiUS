@@ -76,7 +76,8 @@ public:
     QLabel label_I;
     QLabel label_hey;
     QLabel label_est;
-
+    
+    QFrame lineDeTest;
 
     Partition P;
 
@@ -141,7 +142,8 @@ public:
       labelbar2(&groupBoxMenu),
       labelbar3(&groupBoxMenu),
       labelbar4(&groupBoxMenu),
-      bargraphUpdater(&groupBoxMenu)
+      bargraphUpdater(&groupBoxMenu),
+      lineDeTest(&groupBoxMenu)
     {
     }
 
@@ -245,6 +247,15 @@ public:
         bargraph4.setTextVisible(true);
         labelbar4.setGeometry(QRect(200, 680, 10, 30));
         labelbar4.setText("4");
+
+        
+        /*==============Test==============*/
+        lineDeTest.setGeometry(QRect());
+        lineDeTest.setFrameShape(QFrame::VLine);
+        lineDeTest.setFrameShadow(QFrame::Plain);
+        
+        /*==============Fin des test==============*/
+
 
         mainWindow->setCentralWidget(&centralwidget);
         groupBoxMenu.raise();
