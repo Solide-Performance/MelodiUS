@@ -44,15 +44,18 @@ bool setupFPGA();
 /* Entry point ------------------------------------------------------------- */
 int main(int argc, char* argv[])
 {
-    /* Invoke GUI */
+    InitNoteLookup();
 
+    /* Invoke GUI */
     std::thread gui{[](int argc, char* argv[]) {
-        QCoreApplication::addLibraryPath(".");
-        QApplication a(argc, argv);
-        MainWindow   w;
-        w.show();
-        return a.exec();
-    }, argc, argv};
+                        QCoreApplication::addLibraryPath(".");
+                        QApplication a(argc, argv);
+                        MainWindow   w;
+                        w.show();
+                        return a.exec();
+                    },
+                    argc,
+                    argv};
 
     /* portaudio init */
     std::thread portAudioInitThread(setupPortaudio);
@@ -239,31 +242,63 @@ void menuHandler()
 
             case 8:
             {
-
                 std::cout << " - Load a folder and subdirs - \nFilename:" << std::endl;
                 std::string path;
                 std::cin >> path;
-                for(const std::filesystem::directory_entry& entry :
-                    std::filesystem::recursive_directory_iterator(path))
+
+                std::cout << "Recursive search?" << std::endl;
+                bool recurse;
+                std::cin >> recurse;
+                if(recurse)
                 {
-                    std::cout << entry.path() << ": ";
-                    try
+                    for(const std::filesystem::directory_entry& entry :
+                        std::filesystem::recursive_directory_iterator(path))
                     {
-                        rec = LoadFromWav(entry.path().generic_string());
-                        if(rec.isValid())
+                        std::cout << entry.path() << ": ";
+                        try
                         {
-                            analyse_rythme(rec);
+                            rec = LoadFromWav(entry.path().generic_string());
+                            if(rec.isValid())
+                            {
+                                analyse_rythme(rec);
+                            }
+                            else
+                            {
+                                std::cout << "Must read valid audio" << std::endl;
+                            }
                         }
-                        else
+                        catch(const std::exception& ex)
                         {
-                            std::cout << "Must read valid audio" << std::endl;
+                            std::cout << "Could not read .wav file" << ex.what() << std::endl;
                         }
-                    }
-                    catch(const std::exception& ex)
-                    {
-                        std::cout << "Could not read .wav file" << ex.what() << std::endl;
                     }
                 }
+                else
+                {
+                    for(const std::filesystem::directory_entry& entry :
+                        std::filesystem::directory_iterator(path))
+                    {
+                        std::cout << entry.path() << ": ";
+                        try
+                        {
+                            rec = LoadFromWav(entry.path().generic_string());
+                            if(rec.isValid())
+                            {
+                                analyse_rythme(rec);
+                            }
+                            else
+                            {
+                                std::cout << "Must read valid audio" << std::endl;
+                            }
+                        }
+                        catch(const std::exception& ex)
+                        {
+                            std::cout << "Could not read .wav file" << ex.what() << std::endl;
+                        }
+                    }
+                }
+
+                break;
             }
 
             /* Exit */

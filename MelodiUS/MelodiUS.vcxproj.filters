@@ -93,6 +93,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\tuning.cpp">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <Filter Include="Header Files\CommunicationFPGA" />
   </ItemGroup>
   <ItemGroup>

@@ -11,55 +11,9 @@
 #include "Portee.h"
 #include "fpga_phoneme.h"
 #include "globaldef.h"
+#include "widgets/roundbutton.h"
 #include <array>
 
-
-
-class RoundButton : public QPushButton
-{
-    Q_DISABLE_COPY(RoundButton)
-private:
-    QPixmap image;
-
-public:
-    using QPushButton::QPushButton;
-    void SetImage(QPixmap newImage)
-    {
-        image = newImage;
-    }
-
-public slots:
-    void paintEvent(QPaintEvent*)
-    {
-        QColor background = isDown() ? QColor("grey") : QColor("lightgrey");
-        int    diameter   = qMin(height(), width()) - 4;
-
-        QPainter painter(this);
-        painter.setRenderHint(QPainter::Antialiasing, false);
-        painter.translate(width() / 2, height() / 2);
-
-        painter.setPen(QPen(QColor("grey"), 1));
-        painter.setBrush(QBrush(background));
-        painter.drawEllipse(QRect(-diameter / 2, -diameter / 2, diameter, diameter));
-
-        if(!image.isNull())
-        {
-            int xOff = (-diameter / 2) + (image.width() * 3 / 2) - 1;
-            int yOff = (-diameter / 2) + (image.height() * 3 / 2) - 1;
-            painter.drawPixmap(QRect(xOff, yOff, image.width(), image.height()), image);
-        }
-    }
-
-    void resizeEvent(QResizeEvent* event) override
-    {
-        QPushButton::resizeEvent(event);
-
-        int diameter = qMin(height(), width()) + 4;
-        int xOff     = (width() - diameter) / 2;
-        int yOff     = (height() - diameter) / 2;
-        setMask(QRegion(xOff, yOff, diameter, diameter, QRegion::Ellipse));
-    }
-};
 
 
 class Ui_MainWindow
@@ -101,8 +55,8 @@ public:
     RoundButton buttonPlay;
     RoundButton buttonProcess;
     RoundButton buttonSaveLoad;
-    QPushButton buttonDark;
-    QPushButton buttonLight;
+   // QPushButton buttonDark;
+    //QPushButton buttonLight;
 
    
 
@@ -175,7 +129,7 @@ public:
 
 
         label.setGeometry(QRect(10, 850, 250, 10));
-        label.setText("MelodiUS V1.5   UwU Solide Performance");
+        label.setText("MelodiUS V1.6   UwU Solide Performance");
         label_A.setGeometry(QRect(50, 50, 51, 101));
         label_A.setText("A");
         label_I.setGeometry(QRect(50, 200, 51, 101));
@@ -204,17 +158,13 @@ public:
         buttonStopRecord.hide();
 
         buttonPlay.setGeometry(QRect(100, 200, 100, 100));
-        buttonPlay.setText("Lecture");
-        buttonPlay.setStyleSheet("Border : none");
-        buttonPlay.setStyleSheet("background-color:gray");
+        buttonPlay.SetImage({"images/play.png"});
 
-
-
-        buttonProcess.setText("Traitement");
         buttonProcess.setGeometry(QRect(100, 350, 100, 100));
+        buttonProcess.SetImage({"images/process.png"});
 
         buttonSaveLoad.setGeometry(QRect(100, 500, 100, 100));
-        buttonSaveLoad.setText("Sauvegarde / Charge");
+        buttonSaveLoad.SetImage({"images/save.png"});
 
        /* buttonDark.setGeometry(QRect(0, 0, 50, 20));
         buttonDark.setText("Nuit");

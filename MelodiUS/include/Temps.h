@@ -9,12 +9,13 @@ public:
     Temps(NoteWidget* note)
     {
     }
-    Temps()  = default;
-    ~Temps() = default;
+//did you mean num as in numerator? 
+
 
 private:
-    int nom;               //did you mean num as in numerator? 
-    int denominateur;
+    int nom;   //did you mean num as in numerator? 
+
+    int denominateur; 
 
     std::vector<NoteWidget> Temp;
 };

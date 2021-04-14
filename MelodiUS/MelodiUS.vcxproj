@@ -181,6 +181,9 @@
     <ClCompile Include="source\recorder.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\tuning.cpp" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="CommunicationFPGA\CommunicationFPGA.h" />
   </ItemGroup>
   <ItemGroup>
