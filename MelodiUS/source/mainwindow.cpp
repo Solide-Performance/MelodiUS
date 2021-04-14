@@ -64,6 +64,7 @@ void MainWindow::play()
 {
     ui.buttonRecord.setEnabled(false);
     ui.buttonStopRecord.setEnabled(false);
+    ui.buttonPlay.setEnabled(false);
     ui.buttonProcess.setEnabled(false);
     ui.buttonSaveLoad.setEnabled(false);
 
@@ -74,6 +75,7 @@ void MainWindow::play()
     ui.buttonRecord.setEnabled(true);
     ui.buttonStopRecord.setEnabled(true);
     ui.buttonProcess.setEnabled(true);
+    ui.buttonPlay.setEnabled(true);     //Peut etre qui le réactive trop vite ? but idk didnt test it tib
     ui.buttonSaveLoad.setEnabled(true);
 }
 void MainWindow::processing()
@@ -81,6 +83,7 @@ void MainWindow::processing()
     ui.buttonRecord.setEnabled(false);
     ui.buttonStopRecord.setEnabled(false);
     ui.buttonPlay.setEnabled(false);
+    ui.buttonProcess.setEnabled(false);
     ui.buttonSaveLoad.setEnabled(false);
 
      analyse_rythme(rec);
@@ -88,6 +91,7 @@ void MainWindow::processing()
     ui.buttonRecord.setEnabled(true);
     ui.buttonStopRecord.setEnabled(true);
     ui.buttonPlay.setEnabled(true);
+    ui.buttonProcess.setEnabled(true);
     ui.buttonSaveLoad.setEnabled(true);
 }
 void MainWindow::saveOrLoad()
@@ -96,6 +100,7 @@ void MainWindow::saveOrLoad()
     ui.buttonStopRecord.setEnabled(false);
     ui.buttonPlay.setEnabled(false);
     ui.buttonProcess.setEnabled(false);
+    ui.buttonSaveLoad.setEnabled(false);
 
     int select = ui.SLD.exec();
     switch(select)
@@ -107,7 +112,7 @@ void MainWindow::saveOrLoad()
             loading();
             break;
         case QMessageBox::Cancel:
-            // Cancel was clicked IDK what is going on here, but the best guest is nothing
+            // Cancel was clicked. IDK what is going on here, but the best guest is nothing
             break;
         default:
             // should never be reached
@@ -118,6 +123,7 @@ void MainWindow::saveOrLoad()
     ui.buttonStopRecord.setEnabled(true);
     ui.buttonPlay.setEnabled(true);
     ui.buttonProcess.setEnabled(true);
+    ui.buttonSaveLoad.setEnabled(true);
 }
 void MainWindow::saving()
 {

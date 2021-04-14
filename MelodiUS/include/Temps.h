@@ -6,24 +6,15 @@
 class Temps
 {
 public:
-    Temps(NoteWidget* note);
-    Temps();
-    ~Temps();
+    Temps(NoteWidget* note)
+    {
+    }
+    Temps()  = default;
+    ~Temps() = default;
 
 private:
-    int                     nom;
-    int                     denominateur;
+    int nom;               //did you mean num as in numerator? 
+    int denominateur;
 
     std::vector<NoteWidget> Temp;
-} 
-Temps::Temps()
-{
-
-}
-Temps::Temps(NoteWidget* note)
-{
-}
-
-Temps::~Temps()
-{
-}
+};

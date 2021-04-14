@@ -73,6 +73,7 @@ public:
     QGroupBox   groupBoxMenu;
     QMessageBox msgBoxSave;
     QMessageBox msgBoxLoad;
+    QMessageBox SLD;
 
     QString           FileName;
     std::string fileName;
@@ -103,7 +104,7 @@ public:
     QPushButton buttonDark;
     QPushButton buttonLight;
 
-    QMessageBox SLD;
+   
 
     QProgressBar bargraph1;
     QProgressBar bargraph2;
@@ -126,7 +127,7 @@ public:
       groupBoxMenu(&centralwidget),
       msgBoxSave(&groupBoxMenu),
       msgBoxLoad(&groupBoxMenu),
-
+      SLD(&groupBoxMenu),
 
       label(&groupBoxMenu),
       label_A(&groupBoxMenu),
@@ -138,10 +139,7 @@ public:
       labelbar3(&groupBoxMenu),
       labelbar4(&groupBoxMenu),
 
-
-
       P(&centralwidget, &groupBoxPartition),
-
 
       pushButtonA(&groupBoxPartition),
 
@@ -153,17 +151,12 @@ public:
       //buttonDark(&groupBoxMenu),
       //buttonLight(&groupBoxMenu),
 
-      SLD(&groupBoxMenu),
-
       bargraph1(&groupBoxMenu),
       bargraph2(&groupBoxMenu),
       bargraph3(&groupBoxMenu),
       bargraph4(&groupBoxMenu),
 
-
-      bargraphUpdater(&groupBoxMenu) 
-
-    
+      bargraphUpdater(&groupBoxMenu)     
     {
     }
 

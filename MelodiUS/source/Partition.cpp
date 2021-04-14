@@ -1,8 +1,5 @@
 #include "Partition.h"
 
-Partition::~Partition()
-{
-}
 
 int Partition::ajoutLigne()
 {
