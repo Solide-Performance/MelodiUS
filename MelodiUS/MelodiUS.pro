@@ -39,7 +39,7 @@ SOOURCE += ./source/Temps.cpp
 win32 {
     # QT Project Settings
     TEMPLATE  = vcapp
-    CONFIG    += /external:W0
+    CONFIG    += /external:W0 /openmp
     QT        += core gui widgets
     QMAKE_CXXFLAGS_WARN_ON ~= s/-W3/-W4
 
