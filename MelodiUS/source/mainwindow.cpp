@@ -43,7 +43,7 @@ void        MainWindow::startRecord()
     // Activer les bouton a la fin de la minute??
     what_if_another_thread_fixes_it = std::thread{[]() {
         //   rec = Record(NUM_SECONDS, SAMPLE_RATE, FRAMES_PER_BUFFER, 1);
-        rec = Record(10);
+        rec = Record(15);
     }};
 }
 void MainWindow::stopRecord()
