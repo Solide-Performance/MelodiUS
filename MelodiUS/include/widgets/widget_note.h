@@ -19,6 +19,7 @@ private:
     int m_x;
     int m_y;
 
+    bool liee;
 
 public:
     NoteWidget() = delete;
@@ -78,6 +79,10 @@ public:
         {
             m_noteTailEnd->hide();
         }
+    }
+    void lieeNote(bool val)
+    {
+        liee = val;
     }
 
 private:

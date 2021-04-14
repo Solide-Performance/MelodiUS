@@ -49,6 +49,7 @@ public:
     int  ajoutLigne();
     void ecrireMusique(std::vector<Note> Note);
     bool mesureEstPleine();
+    NoteType GetNoteValueValue(double d, NoteValue t);
 
 private:
     
