@@ -26,7 +26,7 @@
 
 /*****************************************************************************/
 /* Constants --------------------------------------------------------------- */
-constexpr size_t SECONDS_MAX = 60;
+constexpr size_t SECONDS_MAX = 120;
 constexpr size_t SECONDS_MIN = 0;
 constexpr size_t FREQ_MAX    = 20000;
 constexpr size_t FREQ_MIN    = 50;
@@ -42,20 +42,21 @@ bool setupFPGA();
 
 /*****************************************************************************/
 /* Entry point ------------------------------------------------------------- */
+int invokeGUI(int argc, char* argv[])
+{
+    QCoreApplication::addLibraryPath(".");
+    QApplication a(argc, argv);
+    MainWindow   w;
+    w.show();
+    return a.exec();
+}
+
 int main(int argc, char* argv[])
 {
     InitNoteLookup();
 
     /* Invoke GUI */
-    std::thread gui{[](int argc, char* argv[]) {
-                        QCoreApplication::addLibraryPath(".");
-                        QApplication a(argc, argv);
-                        MainWindow   w;
-                        w.show();
-                        return a.exec();
-                    },
-                    argc,
-                    argv};
+    std::thread gui{&invokeGUI, argc, argv};
 
     /* portaudio init */
     std::thread portAudioInitThread(setupPortaudio);

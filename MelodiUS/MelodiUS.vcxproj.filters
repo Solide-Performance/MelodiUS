@@ -33,9 +33,6 @@
     <ClCompile Include="fasttrigo\fasttrigo.cpp">
       <Filter>Source Files\fasttrigo</Filter>
     </ClCompile>
-    <ClCompile Include="tuning.cpp">
-      <Filter>Source Files\source</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files\source" />
@@ -92,6 +89,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\recorder.cpp">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\tuning.cpp">
       <Filter>Source Files\source</Filter>
     </ClCompile>
   </ItemGroup>

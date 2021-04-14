@@ -14,6 +14,8 @@
 #include <thread>
 #include <vector>
 
+#include "benchmark.h"
+
 #ifndef LINUX_
 #include <immintrin.h>
 #include <xmmintrin.h>
@@ -81,8 +83,8 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
     float volmax = *std::max_element(volume.cbegin(), volume.cend());
     for(size_t i = 0; i < taille - 1; i++)
     {
-        if(COMPARE_FLOATS(derive[i], 0.0f, epsilon) && rec[i] > 0 /*marge_volume*/)
-        {    // comparaison avec marge d'erreur, utilise la fonction de pascal
+        if(COMPARE_FLOATS(derive[i], 0.0f, epsilon) && rec[i] > 0)
+        {
             maximum = rec[i];
         }
         volume[i] = maximum;
@@ -260,7 +262,7 @@ NotesPacket analyse_rythme_impl(std::vector<float> volume_plat,
         for(; i < max; i += dt)
         {
             float currentValue = volume_plat[i];
-            if(currentValue < 0.05f * valeurAttaque) 
+            if(currentValue < 0.05f * valeurAttaque)
             {
                 break;
             }
@@ -271,6 +273,7 @@ NotesPacket analyse_rythme_impl(std::vector<float> volume_plat,
 
 
     np.notes.reserve(np.debut_note.size());
+
 
     for(size_t i = 0; i < np.debut_note.size(); i++)
     {
@@ -286,6 +289,7 @@ NotesPacket analyse_rythme_impl(std::vector<float> volume_plat,
         np.notes.push_back(val);
         np.noteNames.push_back(str);
     }
+
 
     correct_fuckaroos(np, dt);
 
