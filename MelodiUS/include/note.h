@@ -78,9 +78,14 @@ public:
 
     constexpr Note() : noteType{NoteType::UNKNOWN}, noteValue{NoteValue::UNKNOWN}
     {
+        liee = false;
+    }
+    constexpr Note(NoteType nt, NoteValue nv,bool lieee) : noteType{nt}, noteValue{nv}, liee{lieee}
+    {
     }
     constexpr Note(NoteType nt, NoteValue nv) : noteType{nt}, noteValue{nv}
     {
+        liee = false;
     }
     NoteType getNoteType()
     {
@@ -92,49 +97,45 @@ public:
     }
     double getNoteSum()
     {
-        if((int)noteValue == 0)
+        if(noteType == NoteType::Ronde)
         {
             return 4;
         }
-        else if((int)noteValue == 1)
+        else if(noteType == NoteType::Blanche)
         {
             return 2;
         }
-        else if((int)noteValue == 2)
+        else if(noteType == NoteType::Noire)
         {
             return 1;
         }
-        else if((int)noteValue == 3)
+        else if(noteType == NoteType::Croche)
         {
             return 0.5;
         }
-        else if((int)noteValue == 4)
+        else if(noteType == NoteType::DoubleCroche)
         {
             return 0.25;
         }
-        else if((int)noteValue == 5)
+        else if(noteType == NoteType::Pause)
         {
             return 4;
         }
-        else if((int)noteValue == 6)
+        else if(noteType == NoteType::DemiPause)
         {
             return 2;
         }
-        else if((int)noteValue == 7)
+        else if(noteType == NoteType::Silence)
         {
             return 1;
         }
-        else if((int)noteValue == 8)
+        else if(noteType == NoteType::DemiSilence)
         {
             return 0.5;
         }
-        else if((int)noteValue == 9)
+        else if(noteType == NoteType::QuartSilence)
         {
             return 0.25;
-        }
-        else if((int)noteValue == 10)
-        {
-            return 0;
         }
     }
     bool isLiee()
