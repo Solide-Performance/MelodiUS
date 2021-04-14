@@ -83,7 +83,7 @@ public:
     constexpr Note(NoteType nt, NoteValue nv,bool lieee) : noteType{nt}, noteValue{nv}, liee{lieee}
     {
     }
-    constexpr Note(NoteType nt, NoteValue nv) : noteType{nt}, noteValue{nv}
+    constexpr Note(NoteType nt, NoteValue nv,bool lieee) : noteType{nt}, noteValue{nv}, liee{lieee}
     {
         liee = false;
     }
