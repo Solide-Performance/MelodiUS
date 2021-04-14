@@ -189,6 +189,9 @@
     <ClInclude Include="fasttrigo\fasttrigo.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\widgets\roundbutton.h" />
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="include\widgets\widget_note.h" />
   </ItemGroup>
   <ItemGroup>

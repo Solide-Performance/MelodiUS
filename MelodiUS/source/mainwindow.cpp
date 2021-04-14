@@ -4,50 +4,61 @@
 #include <iostream>
 #include <thread>
 
+#include "detection_rythme.h"
 #include "generator.h"
 #include "playback.h"
+#include "readwrite_wav.h"
 #include "recording.h"
 #include "widgets/widget_note.h"
-#include "readwrite_wav.h"
-#include "detection_rythme.h"
-
-
-static Recording rec{};
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(this)
 {
     ui.setupUi(this);
 
-    QObject::connect(&ui.pushButtonA, &QPushButton::clicked, this, &MainWindow::on_pushButtonA_clicked);
-    QObject::connect(&ui.buttonRecord, &QPushButton::clicked, this, &MainWindow::startRecord);
-    QObject::connect(&ui.buttonStopRecord, &QPushButton::clicked, this, &MainWindow::stopRecord);
-    QObject::connect(&ui.buttonPlay, &QPushButton::clicked, this, &MainWindow::play);
-    QObject::connect(&ui.buttonProcess, &QPushButton::clicked, this, &MainWindow::processing);
-    QObject::connect(&ui.buttonSaveLoad, &QPushButton::clicked, this, &MainWindow::saveOrLoad);
-    //  QObject::connect(&ui.buttonDark, &QPushButton::clicked, this, &MainWindow::darkMode);
-    // QObject::connect(&ui.buttonLight, &QPushButton::clicked, this, &MainWindow::lightMode);
+    QObject::connect(
+      &ui.pushButtonA, &QPushButton::clicked, this, &MainWindow::on_pushButtonA_clicked);
     QObject::connect(&ui.bargraphUpdater, &QTimer::timeout, this, &MainWindow::updateBargraph);
+    QObject::connect(&ui.buttonStopRecord, &QPushButton::clicked, this, &MainWindow::stopRecord);
+    ConnectControlSignals();
 
     ui.bargraphUpdater.start(100);
+    ui.buttonPlay.setEnabled(false);
+    ui.buttonProcess.setEnabled(false);
 }
-std::thread what_if_another_thread_fixes_it;
-void        MainWindow::startRecord()
+
+void MainWindow::startRecord()
 {
+    DisconnectControlSignals();
     ui.buttonPlay.setEnabled(false);
     ui.buttonProcess.setEnabled(false);
     ui.buttonSaveLoad.setEnabled(false);
+
+    // Swap buttons record & hide
     ui.buttonRecord.hide();
     ui.buttonStopRecord.show();
 
     Recording_SetStopPolicy(std::function<bool()>{});
     // Activer les bouton a la fin de la minute??
-    what_if_another_thread_fixes_it = std::thread{[]() {
-        //   rec = Record(NUM_SECONDS, SAMPLE_RATE, FRAMES_PER_BUFFER, 1);
-        rec = Record(15);
+    if(recordingThread.joinable())
+    {
+        recordingThread.join();
+    }
+    recordingThread = std::thread{[&]() {
+        try
+        {
+            rec = Record(15);
+        }
+        catch(const recorderException&)
+        {
+            // Do Nothing
+        }
     }};
+    ConnectControlSignals();
 }
 void MainWindow::stopRecord()
 {
+    DisconnectControlSignals();
+
     ui.buttonStopRecord.hide();
     ui.buttonRecord.show();
 
@@ -55,40 +66,83 @@ void MainWindow::stopRecord()
         return true;
     });
 
-    what_if_another_thread_fixes_it.join();
-    ui.buttonPlay.setEnabled(true);
-    ui.buttonProcess.setEnabled(true);
+    if(recordingThread.joinable())
+    {
+        recordingThread.join();
+    }
+
+    if(rec.isValid())
+    {
+        ui.buttonPlay.setEnabled(true);
+        ui.buttonProcess.setEnabled(true);
+    }
     ui.buttonSaveLoad.setEnabled(true);
+
+    ConnectControlSignals();
 }
 void MainWindow::play()
 {
+    DisconnectControlSignals();
+
     ui.buttonRecord.setEnabled(false);
     ui.buttonStopRecord.setEnabled(false);
     ui.buttonProcess.setEnabled(false);
     ui.buttonSaveLoad.setEnabled(false);
 
-    Playback(rec);    // Faudrait avoir un son par defaut ou avoir une
-    // autre boite contextuel qui donne acces au fichier
-
+    if(rec.isValid())
+    {
+        if(recordingThread.joinable())
+        {
+            recordingThread.join();
+        }
+        recordingThread = std::thread{[&]() {
+            try
+            {
+                Playback(rec);    // Faudrait avoir un son par defaut ou avoir une
+                // autre boite contextuel qui donne acces au fichier
+            }
+            catch(const recorderException&)
+            {
+                // Do Nothing
+            }
+        }};
+    }
 
     ui.buttonRecord.setEnabled(true);
     ui.buttonStopRecord.setEnabled(true);
     ui.buttonProcess.setEnabled(true);
     ui.buttonSaveLoad.setEnabled(true);
+
+    ConnectControlSignals();
 }
 void MainWindow::processing()
 {
+    DisconnectControlSignals();
+
     ui.buttonRecord.setEnabled(false);
     ui.buttonStopRecord.setEnabled(false);
     ui.buttonPlay.setEnabled(false);
     ui.buttonSaveLoad.setEnabled(false);
+    ui.buttonProcess.setEnabled(false);
 
-     analyse_rythme(rec);
+    if(rec.isValid())
+    {
+        if(recordingThread.joinable())
+        {
+            recordingThread.join();
+        }
+        recordingThread = std::thread{[&]() {
+            analyse_rythme(rec);
+        }};
+    }
 
     ui.buttonRecord.setEnabled(true);
     ui.buttonStopRecord.setEnabled(true);
     ui.buttonPlay.setEnabled(true);
     ui.buttonSaveLoad.setEnabled(true);
+    ui.buttonProcess.setEnabled(true);
+
+    ConnectControlSignals();
 }
 void MainWindow::saveOrLoad()
 {
@@ -116,44 +170,45 @@ void MainWindow::saveOrLoad()
 
     ui.buttonRecord.setEnabled(true);
     ui.buttonStopRecord.setEnabled(true);
-    ui.buttonPlay.setEnabled(true);
-    ui.buttonProcess.setEnabled(true);
+
+    if(rec.isValid())
+    {
+        ui.buttonPlay.setEnabled(true);
+        ui.buttonProcess.setEnabled(true);
+    }
 }
 void MainWindow::saving()
 {
-    ui.SaveName = QFileDialog::getSaveFileName(
-      this, tr("Save Address Book"), "", tr("Address Book (*.wav);;All Files (*)"));
-    ui.saveName = ui.SaveName.toStdString();
-    SaveToWav(ui.saveName, rec);
-    //ui.msgBoxSave.exec();
+    if(rec.isValid())
+    {
+        QString savename = QFileDialog::getSaveFileName(
+          this, tr("Save Address Book"), "", tr("Address Book (*.wav);;All Files (*)"));
+        std::string filename = savename.toStdString();
+        SaveToWav(filename, rec);
+    }
+    else
+    {
+        ui.msgBoxSave.exec();
+    }
 }
 
 void MainWindow::loading()
 {
-    ui.FileName = QFileDialog::getOpenFileName(
-      this, tr("Open File"), "/MelodiUS/more_sounds", tr("Sound Files (*.wav)"));
-    ui.fileName = ui.FileName.toStdString();
-    rec = LoadFromWav(ui.fileName);
-    // ui.msgBoxLoad.exec();
+    try
+    {
+        QString loadname = QFileDialog::getOpenFileName(
+          this, tr("Open File"), "/MelodiUS/more_sounds", tr("Sound Files (*.wav)"));
+        std::string filename = loadname.toStdString();
+        rec                  = LoadFromWav(filename);
+    }
+    catch(...)
+    {
+        ui.msgBoxLoad.exec();
+    }
 }
-// void MainWindow::darkMode()
-//{
-//    ui.buttonDark.hide();
-//    ui.buttonLight.show();
-//    ui.groupBoxMenu.setStyleSheet("background-color:#2c2f33");
-//    ui.groupBoxPartition.setStyleSheet("background-color:#2c2f33");
-//}
-// void MainWindow::lightMode()
-//{
-//    ui.buttonLight.hide();
-//    ui.buttonDark.show();
-//    ui.groupBoxMenu.setStyleSheet("background-color:#ffffff");
-//    ui.groupBoxPartition.setStyleSheet("background-color:#ffffff");
-//}
-
 void MainWindow::on_pushButtonA_clicked()
 {
-    int        nbs = ui.P.ajoutLigne();
+    int nbs = ui.P.ajoutLigne();
     if(nbs >= 6)
     {
         ui.groupBoxPartition.resize(ui.groupBoxPartition.width(), 885 + ((nbs - 6) * 150));
@@ -176,6 +231,22 @@ void MainWindow::updateBargraph()
     ui.bargraph4.setValue(adcValues[3]);
 }
 
-MainWindow::~MainWindow()
+
+
+void MainWindow::ConnectControlSignals()
 {
+    QObject::connect(&ui.buttonRecord, &QPushButton::clicked, this, &MainWindow::startRecord);
+    // QObject::connect(&ui.buttonStopRecord, &QPushButton::clicked, this, &MainWindow::stopRecord);
+    QObject::connect(&ui.buttonPlay, &QPushButton::clicked, this, &MainWindow::play);
+    QObject::connect(&ui.buttonProcess, &QPushButton::clicked, this, &MainWindow::processing);
+    QObject::connect(&ui.buttonSaveLoad, &QPushButton::clicked, this, &MainWindow::saveOrLoad);
+}
+void MainWindow::DisconnectControlSignals()
+{
+    QObject::disconnect(&ui.buttonRecord, &QPushButton::clicked, this, &MainWindow::startRecord);
+    // QObject::disconnect(&ui.buttonStopRecord, &QPushButton::clicked, this,
+    // &MainWindow::stopRecord);
+    QObject::disconnect(&ui.buttonPlay, &QPushButton::clicked, this, &MainWindow::play);
+    QObject::disconnect(&ui.buttonProcess, &QPushButton::clicked, this, &MainWindow::processing);
+    QObject::disconnect(&ui.buttonSaveLoad, &QPushButton::clicked, this, &MainWindow::saveOrLoad);
 }

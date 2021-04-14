@@ -51,6 +51,7 @@ void Playback(const Recording& rec)
     if(outputParameters.device == paNoDevice)
     {
         std::cerr << "Error: No default output device." << std::endl;
+        return;
     }
     outputParameters.channelCount = int(rec.getNumChannels());
     outputParameters.sampleFormat = PA_SAMPLE_TYPE;

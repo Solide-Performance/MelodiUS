@@ -18,6 +18,7 @@ public slots:
     void paintEvent(QPaintEvent*)
     {
         QColor background = isDown() ? QColor("grey") : QColor("lightgrey");
+        background = isEnabled() ? background : QColor("grey");
         int    diameter   = qMin(height(), width()) - 4;
 
         QPainter painter(this);

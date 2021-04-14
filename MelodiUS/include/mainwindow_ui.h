@@ -15,7 +15,6 @@
 #include <array>
 
 
-
 class Ui_MainWindow
 {
 public:
@@ -28,12 +27,6 @@ public:
     QMessageBox msgBoxSave;
     QMessageBox msgBoxLoad;
 
-    QString           FileName;
-    std::string fileName;
-    QString           SaveName;
-    std::string       saveName;
-
-
     QLabel label;
     QLabel label_A;
     QLabel label_I;
@@ -44,9 +37,7 @@ public:
     QLabel labelbar3;
     QLabel labelbar4;
 
-
     Partition P;
-
 
     QPushButton pushButtonA;
     RoundButton buttonRecord;
@@ -54,8 +45,6 @@ public:
     RoundButton buttonPlay;
     RoundButton buttonProcess;
     RoundButton buttonSaveLoad;
-    QPushButton buttonDark;
-    QPushButton buttonLight;
 
     QMessageBox SLD;
 
@@ -65,8 +54,6 @@ public:
     QProgressBar bargraph4;
 
     QTimer bargraphUpdater;
-
-
 
 
     Ui_MainWindow()               = delete;
@@ -92,10 +79,7 @@ public:
       labelbar3(&groupBoxMenu),
       labelbar4(&groupBoxMenu),
 
-
-
       P(&centralwidget, &groupBoxPartition),
-
 
       pushButtonA(&groupBoxPartition),
 
@@ -104,10 +88,6 @@ public:
       buttonPlay(&groupBoxMenu),
       buttonProcess(&groupBoxMenu),
       buttonSaveLoad(&groupBoxMenu),
-      buttonDark(&groupBoxPartition),
-      buttonLight(&groupBoxPartition),
-      //buttonDark(&groupBoxMenu),
-      //buttonLight(&groupBoxMenu),
 
       SLD(&groupBoxMenu),
 
@@ -117,9 +97,7 @@ public:
       bargraph4(&groupBoxMenu),
 
 
-      bargraphUpdater(&groupBoxMenu) 
-
-    
+      bargraphUpdater(&groupBoxMenu)
     {
     }
 
@@ -127,9 +105,7 @@ public:
     {
         mainWindow->showMaximized();
         groupBoxMenu.setGeometry(0, 0, 250, 900);
-        //groupBoxMenu.setStyleSheet("background-color:#ffffff");
         groupBoxPartition.setGeometry(250, 0, 1500, 1500);
-        //groupBoxPartition.setStyleSheet("background-color:#ffffff");
 
         scrollArea.setGeometry(250, 0, 1000, 1000);
         scrollArea.setWidget(&groupBoxPartition);
@@ -144,12 +120,11 @@ public:
         label_I.setGeometry(QRect(50, 200, 51, 101));
         label_I.setText("I");
         label_hey.setGeometry(QRect(50, 350, 51, 101));
-        label_hey.setText("HEY");
+        label_hey.setText(QString::fromWCharArray(L"É"));
         label_est.setGeometry(QRect(50, 500, 51, 101));
-        label_est.setText("EST");
+        label_est.setText(QString::fromWCharArray(L"È"));
 
         groupBoxPartition.setGeometry(250, 0, 980, 885);
-        //groupBoxPartition.setStyleSheet("background-color:#ffffff");
         scrollArea.setGeometry(250, 0, 1000, groupBoxMenu.height());
         scrollArea.setWidget(&groupBoxPartition);
         scrollArea.setWidgetResizable(false);
@@ -175,14 +150,6 @@ public:
         buttonSaveLoad.setGeometry(QRect(100, 500, 100, 100));
         buttonSaveLoad.SetImage({"images/save.png"});
 
-       /* buttonDark.setGeometry(QRect(0, 0, 50, 20));
-        buttonDark.setText("Nuit");
-        buttonDark.raise();
-
-        buttonLight.setGeometry(QRect(0, 0, 50, 20));
-        buttonLight.setText("Jour");
-        buttonLight.hide();*/
-
 
         SLD.setText("Solide Sauvegarde");
         SLD.setInformativeText(
@@ -190,14 +157,12 @@ public:
         SLD.setStandardButtons(QMessageBox::Save | QMessageBox::Open | QMessageBox::Cancel);
         SLD.setDefaultButton(QMessageBox::Cancel);
 
-        msgBoxSave.setText("Sous quel nom derirez vous enregistrer votre fichier");
-        msgBoxSave.setInformativeText("L'enregistrement sera sauvegarde sous la forme d'un .wav");
-        msgBoxLoad.setText("Quel document desirez vous importer ?");
-        msgBoxLoad.setInformativeText("Le fichier doit etre sous la forme .wav");
+        msgBoxSave.setText("Erreur");
+        msgBoxSave.setInformativeText("Erreur durant la sauvegarde (y-a-t'il un enregistrement actuel?)");
+        msgBoxLoad.setText("Erreur");
+        msgBoxLoad.setInformativeText("Erreur durant la charge (votre fichier est-il sous le bon format?)");
 
-
-
-
+        // Phoneme Bargraphs
         bargraph1.setMaximum(255);
         bargraph1.setMinimum(0);
         bargraph1.setOrientation(Qt::Vertical);

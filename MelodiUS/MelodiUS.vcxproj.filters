@@ -120,6 +120,11 @@
     <Filter Include="Header Files\include\widgets" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\widgets\roundbutton.h">
+      <Filter>Header Files\include\widgets</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="include\widgets\widget_note.h">
       <Filter>Header Files\include\widgets</Filter>
     </ClInclude>

@@ -116,6 +116,7 @@ Recording Record(size_t numSeconds, size_t sampleRate, size_t framesPerBuffer, s
     {
         std::cerr << "Error: No default input device." << std::endl;
         CALL_ERROR_HANDLER();
+        throw recorderException{};
     }
     inputParameters.channelCount = 2; /* stereo input */
     inputParameters.sampleFormat = PA_SAMPLE_TYPE;
