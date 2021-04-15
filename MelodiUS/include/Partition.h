@@ -6,7 +6,7 @@
 #else
 #include <QtWidgets/QAction>
 #endif
-#include "Portee.h"
+#include "Portee.h"             //On peut tout remplacer par Globaldef
 #include "Temps.h"
 #include <QtCore/QVariant>
 #include <QtGui/QBitmap>
@@ -45,7 +45,7 @@ public:
 
         
     };
-    ~Partition();
+    ~Partition() = default;
     int                ajoutLigne();
 private:
     QGroupBox*          PartitionGroupBox;

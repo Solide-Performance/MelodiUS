@@ -28,7 +28,13 @@ public:
             lines[i].show();
         }
         Cle.setGeometry(other.Cle.geometry());
+
+#if QT_VERSION >= 0x060000
         Cle.setPixmap(other.Cle.pixmap());
+#else
+        Cle.setPixmap(*other.Cle.pixmap());
+#endif
+
         Cle.show();
         Cle.lower();
     }
@@ -69,7 +75,7 @@ public:
         Cle.setPixmap(QPixmap(QString::fromUtf8("images/cle40x80T.png")));
         Cle.lower();
     };
-    
+
 
     std::array<QFrame, 10> lines;
     QLabel                 Cle;
