@@ -33,9 +33,6 @@
     <ClCompile Include="fasttrigo\fasttrigo.cpp">
       <Filter>Source Files\fasttrigo</Filter>
     </ClCompile>
-    <ClCompile Include="Temps.cpp">
-      <Filter>Source Files\source</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files\source" />

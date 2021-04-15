@@ -32,7 +32,7 @@ void Partition::ecrireMusique(std::vector<Note> vecNote)
     int valeurParMesure = nom * (4 / denom);
 
 
-    //=============== boute de code qui ce repete pour chaque note du vecteur============//
+    //=============== Boute de code qui ce repete pour chaque note du vecteur et qui transforme le tout en note prete a être mise dans une portee============//
     for(int i = 0; i < vecNote.size(); i++)
     {
         // On commence par verifier si la mesure est pleine et si oui on rajoute une mesuere
@@ -110,6 +110,8 @@ void Partition::ecrireMusique(std::vector<Note> vecNote)
                                          true));
         }
     }
+    //=============== Boute de code qui transforme les note en notewidget et qui affiche chaque mesure à la bonne place====================//
+
 }
 
 bool Partition::mesureEstPleine()
