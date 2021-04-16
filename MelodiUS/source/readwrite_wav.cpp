@@ -47,10 +47,8 @@
 /* Includes ------------------------------------------------------------------------------------ */
 #include "readwrite_wav.h"
 #include "globaldef.h"
-#include <array>
 #include <cstdio>
 #include <iostream>
-#include <string>
 
 
 /*************************************************************************************************/

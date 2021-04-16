@@ -1,5 +1,4 @@
 #pragma once
-#include <array>
 
 #pragma region Note type and value enums
 enum class NoteType

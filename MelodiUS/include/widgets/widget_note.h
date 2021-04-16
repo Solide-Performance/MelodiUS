@@ -3,8 +3,6 @@
 #include "globaldef.h"
 #include "note.h"
 
-#include <array>
-
 class NoteWidget
 {
 private:

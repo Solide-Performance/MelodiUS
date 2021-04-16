@@ -1,6 +1,7 @@
 #pragma once
 /*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
+#include <array>
 #include <cassert>
 #include <cmath>
 #include <cstddef>
@@ -10,7 +11,9 @@
 #include <numbers>
 #include <numeric>
 #include <stdexcept>
+#include <string>
 #include <type_traits>
+#include <utility>
 
 #include <gcem/gcem.hpp>
 
@@ -25,6 +28,7 @@
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QLabel>
 //#include <QtWidgets/QLineEdit>
+#include <QFileDialog>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QProgressBar>
@@ -32,7 +36,6 @@
 #include <QtWidgets/QScrollArea>
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
-#include <QFileDialog>
 
 
 #if QT_VERSION >= 0x060000
@@ -61,7 +64,7 @@ constexpr uint8_t CHAR_BIT = 8;
 template<typename T>
 constexpr void SAFE_DELETE(T** x)
 {
-    if(*x && x)
+    if(x && *x)
     {
         delete *x;
         *x = nullptr;

@@ -6,8 +6,6 @@
 #endif
 
 #include "globaldef.h"
-#include <array>
-#include <string>
 #include <thread>
 #include <vector>
 

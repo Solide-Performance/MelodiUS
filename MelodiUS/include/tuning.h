@@ -4,9 +4,6 @@
 #include "note.h"
 
 #include <algorithm>
-#include <array>
-#include <string>
-#include <utility>
 
 using noteLookup_t = std::tuple<double, std::string, NoteValue>;
 extern std::array<noteLookup_t, static_cast<int64_t>(NoteValue::UNKNOWN) + 1> noteLookup;
