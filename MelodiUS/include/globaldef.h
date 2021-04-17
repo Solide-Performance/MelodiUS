@@ -18,6 +18,7 @@
 #include <gcem/gcem.hpp>
 
 #pragma region Qt Includes
+#include <QFileDialog>
 #include <QtCore/QTimer>
 #include <QtGlobal>
 #include <QtGui/QBitmap>
@@ -25,10 +26,10 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QFrame>
+#include <QtWidgets/QGridLayout>
 #include <QtWidgets/QGroupBox>
+#include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
-//#include <QtWidgets/QLineEdit>
-#include <QFileDialog>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QProgressBar>
@@ -36,9 +37,7 @@
 #include <QtWidgets/QScrollArea>
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
-#include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QVBoxLayout>
-#include <QtWidgets/QGridLayout>
 
 
 #if QT_VERSION >= 0x060000
@@ -120,7 +119,6 @@ static auto EMPTY_FUNCTION = []() {
 #else
 #define INLINE
 #endif
-
 
 
 /*****************************************************************************/

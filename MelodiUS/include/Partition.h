@@ -6,14 +6,13 @@
 #else
 #include <QtWidgets/QAction>
 #endif
-#include "Portee.h"             //On peut tout remplacer par Globaldef
+#include "Portee.h"    //On peut tout remplacer par Globaldef
 #include "Temps.h"
 #include <QtCore/QVariant>
 #include <QtGui/QBitmap>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QFrame>
-#include <QtWidgets/QGroupBox>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QPushButton>
@@ -24,11 +23,7 @@
 class Partition
 {
 public:
-    Partition(QWidget* centralwidget, QGroupBox* partitionGroupBox)
-    : PartitionGroupBox(partitionGroupBox),
-      spinBox(PartitionGroupBox),
-      spinBox_2(PartitionGroupBox),
-      feuille{}
+    Partition(QWidget* parent) : m_parent(parent), spinBox(parent), spinBox_2(parent), feuille{}
     {
         nbsLigne = 0;
         ajoutLigne();
@@ -42,13 +37,12 @@ public:
         spinBox_2.setRange(2, 8);
         spinBox_2.setSingleStep(2);
         spinBox_2.raise();
-
-        
     };
     ~Partition() = default;
-    int                ajoutLigne();
+    int ajoutLigne();
+
 private:
-    QGroupBox*          PartitionGroupBox;
+    QWidget*            m_parent;
     int                 nbsLigne;
     QSpinBox            spinBox;
     QSpinBox            spinBox_2;

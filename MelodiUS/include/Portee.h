@@ -6,17 +6,17 @@ class Portee
 public:
     Portee() = delete;
     Portee(const Portee& other)
-    : Cle{(QGroupBox*)other.Cle.parent()},
-      lines{QFrame{(QGroupBox*)other.Cle.parent()},
-            QFrame{(QGroupBox*)other.Cle.parent()},
-            QFrame{(QGroupBox*)other.Cle.parent()},
-            QFrame{(QGroupBox*)other.Cle.parent()},
-            QFrame{(QGroupBox*)other.Cle.parent()},
-            QFrame{(QGroupBox*)other.Cle.parent()},
-            QFrame{(QGroupBox*)other.Cle.parent()},
-            QFrame{(QGroupBox*)other.Cle.parent()},
-            QFrame{(QGroupBox*)other.Cle.parent()},
-            QFrame{(QGroupBox*)other.Cle.parent()}}
+    : Cle{(QWidget*)other.Cle.parent()},
+      lines{QFrame{(QWidget*)other.Cle.parent()},
+            QFrame{(QWidget*)other.Cle.parent()},
+            QFrame{(QWidget*)other.Cle.parent()},
+            QFrame{(QWidget*)other.Cle.parent()},
+            QFrame{(QWidget*)other.Cle.parent()},
+            QFrame{(QWidget*)other.Cle.parent()},
+            QFrame{(QWidget*)other.Cle.parent()},
+            QFrame{(QWidget*)other.Cle.parent()},
+            QFrame{(QWidget*)other.Cle.parent()},
+            QFrame{(QWidget*)other.Cle.parent()}}
     {
         for(int i = 0; i <= lines.size() - 1; i++)
         {
@@ -37,18 +37,18 @@ public:
         Cle.lower();
     }
 
-    Portee(int n, QGroupBox* GroupBox)
-    : Cle(GroupBox),
-      lines{QFrame{GroupBox},
-            QFrame{GroupBox},
-            QFrame{GroupBox},
-            QFrame{GroupBox},
-            QFrame{GroupBox},
-            QFrame{GroupBox},
-            QFrame{GroupBox},
-            QFrame{GroupBox},
-            QFrame{GroupBox},
-            QFrame{GroupBox}}
+    Portee(int n, QWidget* parent)
+    : Cle(parent),
+      lines{QFrame{parent},
+            QFrame{parent},
+            QFrame{parent},
+            QFrame{parent},
+            QFrame{parent},
+            QFrame{parent},
+            QFrame{parent},
+            QFrame{parent},
+            QFrame{parent},
+            QFrame{parent}}
     {
         int decalage = (150 * n);
         ///=== LIGNE HORIZONTALE ========//
@@ -69,8 +69,10 @@ public:
         lines[5].setFrameShape(QFrame::VLine);
         lines[5].setFrameShadow(QFrame::Plain);
 
+        QPixmap ClePixmap{"images/cle40x80T.png"};
         Cle.setGeometry(QRect(10, 130 + decalage, 51, 101));
-        Cle.setPixmap(QPixmap(QString::fromUtf8("images/cle40x80T.png")));
+        Cle.setPixmap(ClePixmap);
+        Cle.setMask(ClePixmap.mask());
         Cle.lower();
     };
 

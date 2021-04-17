@@ -46,7 +46,7 @@ int invokeGUI(int argc, char* argv[])
     QCoreApplication::addLibraryPath(".");
     QApplication a(argc, argv);
     MainWindow   w;
-    w.show();
+    w.showMaximized();
     return a.exec();
 }
 
