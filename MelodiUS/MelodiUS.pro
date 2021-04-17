@@ -33,8 +33,8 @@ SOURCES += ./source/fft.cpp
 SOURCES += ./source/tuning.cpp
 SOURCES += ./source/Portee.cpp
 SOURCES += ./source/Partition.cpp
-SOURCE += ./source/Temps.cpp
-SOURCE += ./source/song_player.cpp
+SOURCES += ./source/Temps.cpp
+SOURCES += ./source/song_player.cpp
 
 
 # Platform-specific project settings

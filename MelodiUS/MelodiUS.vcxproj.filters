@@ -48,6 +48,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\Temps.cpp">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="source\detection_rythme.cpp">
       <Filter>Source Files\source</Filter>
     </ClCompile>
@@ -89,6 +94,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\recorder.cpp">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\song_player.cpp">
       <Filter>Source Files\source</Filter>
     </ClCompile>
   </ItemGroup>

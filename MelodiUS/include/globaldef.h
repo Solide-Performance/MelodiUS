@@ -31,6 +31,8 @@
 #include <QtWidgets/QHBoxLayout>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QMenuBar>
 #include <QtWidgets/QMessageBox>
 #include <QtWidgets/QProgressBar>
 #include <QtWidgets/QPushButton>
@@ -60,7 +62,7 @@ constexpr uint8_t CHAR_BIT = 8;
 /*****************************************************************************/
 /* Macros ------------------------------------------------------------------ */
 #define sizeof_array(x)    static_cast<size_t>(sizeof(x) / sizeof((x)[0]))    // NOLINT
-#define LABEL_TO_STRING(x) #x    // NOLINT
+#define LABEL_TO_STRING(x) #x                                                 // NOLINT
 
 
 template<typename T>

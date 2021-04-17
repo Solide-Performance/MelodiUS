@@ -154,6 +154,9 @@
     <ClCompile Include="source\Portee.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\Temps.cpp" />
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="source\detection_rythme.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -179,6 +182,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\recorder.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="source\song_player.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="source\tuning.cpp" />

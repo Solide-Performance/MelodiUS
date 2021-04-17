@@ -23,14 +23,18 @@ public slots:
     void saveOrLoad();
     void saving();
     void loading();
+    void interpret();
 
 public:
     MainWindow(QWidget* parent = nullptr);
     ~MainWindow() = default;
 
 private:
+    void DisableAllButtons();
+    void EnableAllButtons();
     void ConnectControlSignals();
     void DisconnectControlSignals();
+    void SetupMenus();
 
 private:
     Ui_MainWindow     ui;
