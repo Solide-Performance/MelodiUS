@@ -139,7 +139,7 @@ void MainWindow::lightMode()
     ui.groupBoxMenu.setStyleSheet("background-color:#ffffff");
     ui.groupBoxPartition.setStyleSheet("background-color:#ffffff");
 }
-
+void resizen
 void MainWindow::on_pushButtonA_clicked()
 {
     int        nbs = ui.P.ajoutLigne();

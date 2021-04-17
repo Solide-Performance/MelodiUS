@@ -28,6 +28,8 @@ public:
     MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
 
+    void resizeEvent(QResizeEvent* main);
+
 private:
     Ui_MainWindow ui;
 };

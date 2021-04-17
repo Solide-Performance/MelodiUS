@@ -83,8 +83,8 @@ public:
         lines[5].setFrameShape(QFrame::VLine);
         lines[5].setFrameShadow(QFrame::Plain);
 
-        Cle.setGeometry(QRect(10, 130 + decalage, 51, 101));
-        Cle.setPixmap(QPixmap(QString::fromUtf8("images/cle40x80T.png")));
+        Cle.setGeometry(QRect(10, 125 + decalage, 70, 115));
+        Cle.setPixmap(QPixmap(QString::fromUtf8("images/clef_sol.png")).scaled(70, 115, Qt::KeepAspectRatio));
         Cle.lower();
     };
     

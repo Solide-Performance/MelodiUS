@@ -57,6 +57,7 @@ public slots:
         int xOff     = (width() - diameter) / 2;
         int yOff     = (height() - diameter) / 2;
         setMask(QRegion(xOff, yOff, diameter, diameter, QRegion::Ellipse));
+         
     }
 };
 
@@ -152,7 +153,7 @@ public:
         mainWindow->resize(1250, 900);
         groupBoxMenu.setGeometry(0, 0, 250, 900);
         groupBoxMenu.setStyleSheet("background-color:#ffffff");
-
+        
         label.setGeometry(QRect(10, 850, 250, 10));
         label.setText("MelodiUS V1.5   Quelle Solide Performance!");
         
@@ -165,9 +166,9 @@ public:
         label_est.setGeometry(QRect(50, 500, 51, 101));
         label_est.setText("EST");
 
-        groupBoxPartition.setGeometry(250, 0, 980, 885);
+        groupBoxPartition.setGeometry(250, 0, (mainWindow->width()-250), mainWindow->height());
         //groupBoxPartition.setStyleSheet("background-color:#ffffff");
-        scrollArea.setGeometry(250, 0, 1000, groupBoxMenu.height());
+        scrollArea.setGeometry(250, 0, (mainWindow->width() - 250), groupBoxMenu.height());
         scrollArea.setWidget(&groupBoxPartition);
         scrollArea.setWidgetResizable(false);
         scrollArea.show();
@@ -259,5 +260,15 @@ public:
 
         mainWindow->setCentralWidget(&centralwidget);
         groupBoxMenu.raise();
+    }
+public slots:
+    void resizeEvent(QResizeEvent* event) override
+    {
+        ::resizeEvent(event);
+
+        int diameter = qMin(height(), width()) + 4;
+        int xOff     = (width() - diameter) / 2;
+        int yOff     = (height() - diameter) / 2;
+        setMask(QRegion(xOff, yOff, diameter, diameter, QRegion::Ellipse));
     }
 };

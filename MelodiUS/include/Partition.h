@@ -33,12 +33,12 @@ public:
     {
         nbsLigne = 0;
         ajoutLigne();
-        spinBox.setGeometry(QRect(50, 150, 30, 22));
+        spinBox.setGeometry(QRect(55, 150, 30, 22));
         spinBox.setValue(4);
         spinBox.setRange(1, 8);
         spinBox.raise();
 
-        spinBox_2.setGeometry(QRect(50, 190, 30, 22));
+        spinBox_2.setGeometry(QRect(55, 190, 30, 22));
         spinBox_2.setValue(4);
         spinBox_2.setRange(2, 8);
         spinBox_2.setSingleStep(2);

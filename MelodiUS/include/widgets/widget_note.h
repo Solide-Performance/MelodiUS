@@ -102,15 +102,15 @@ private:
     {
         static const std::array<QString, static_cast<int64_t>(NoteValue::UNKNOWN)> lookupTable{
           "images/ronde.png",
-          "images/blancheHead.png",
-          "images/noireHead.png",
-          "images/noireHead.png", /* Les croches */
+          "images/blanche.png",
+          "images/noire.png",
+          "images/croche.png", /* Les croches */
           "images/noireHead.png",
           "images/pause.png",
-          "images/demiPause.png",
+          "images/demi_pause.png",
           "images/silence.png",
-          "images/demiSilence.png",
-          "images/quartSilence.png",
+          "images/demi_silence.png",
+          "images/quart_silence.png",
         };
 
         return QPixmap{lookupTable[static_cast<int64_t>(note)]};
