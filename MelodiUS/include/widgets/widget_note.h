@@ -23,15 +23,16 @@ private:
 
 public:
     NoteWidget() = delete;
-    NoteWidget(QWidget* parent, Note note, int x,int ligne)
-    : m_note{note}, m_x{x}, m_y{LookupNoteHeight(note.noteValue)+(150*ligne)}
+    NoteWidget(QWidget* parent, Note note, int x, int ligne)
+    : m_note{note}, m_x{x}, m_y{LookupNoteHeight(note.noteValue) + (150 * ligne)}
     {
         /* Setup note head*/
         m_noteHead         = new QLabel(parent);
-        QPixmap headPixmap = LookupNoteHead(note.noteType);
+        QPixmap headPixmap = LookupNoteHead(note.noteType).scaled(30,65,Qt::KeepAspectRatio);
         m_noteHead->setPixmap(headPixmap);
         m_noteHead->setMask(headPixmap.mask());
         m_noteHead->setGeometry(QRect{m_x, m_y, headPixmap.width(), headPixmap.height()});
+        
     }
     NoteType getNoteType()
     {

@@ -261,14 +261,4 @@ public:
         mainWindow->setCentralWidget(&centralwidget);
         groupBoxMenu.raise();
     }
-public slots:
-    void resizeEvent(QResizeEvent* event) override
-    {
-        ::resizeEvent(event);
-
-        int diameter = qMin(height(), width()) + 4;
-        int xOff     = (width() - diameter) / 2;
-        int yOff     = (height() - diameter) / 2;
-        setMask(QRegion(xOff, yOff, diameter, diameter, QRegion::Ellipse));
-    }
 };

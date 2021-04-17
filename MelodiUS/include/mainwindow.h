@@ -14,6 +14,7 @@ public slots:
    void startRecord();
    void stopRecord();
    void updateBargraph();
+   void resizeEvent(QResizeEvent* event);
 
    void play();
    void processing();
@@ -28,7 +29,6 @@ public:
     MainWindow(QWidget* parent = nullptr);
     ~MainWindow();
 
-    void resizeEvent(QResizeEvent* main);
 
 private:
     Ui_MainWindow ui;
