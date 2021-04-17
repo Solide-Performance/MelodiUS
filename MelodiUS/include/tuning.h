@@ -40,6 +40,20 @@ inline static void InitNoteLookup()
     }
 }
 
+[[nodiscard]] inline static double FindFreqFromNote(NoteValue val)
+{
+    /* clang-format off */
+    auto it = std::find_if(noteLookup.begin(), noteLookup.end(),
+                           [val](const noteLookup_t& look)
+                           {
+                               NoteValue otherVal = std::get<2>(look);
+                               return otherVal == val;
+                           });
+    /* clang-format on */
+
+    return std::get<0>(*it);
+}
+
 [[nodiscard]] inline static std::pair<std::string, NoteValue> FindNoteFromFreq(double freq)
 {
     /* clang-format off */

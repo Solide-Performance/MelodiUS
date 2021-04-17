@@ -61,7 +61,7 @@ NotesPacket analyse_rythme_impl(std::vector<float> volume_plat,
 
 /*****************************************************************************/
 /* Function definitions ---------------------------------------------------- */
-std::vector<Recording> analyse_rythme(const Recording& rec)
+std::vector<Note> analyse_rythme(const Recording& rec)
 {
     const size_t dt            = rec.getSampleRate() / 9;
     size_t       sample_cutoff = rec.getSampleRate() / 5;
@@ -216,7 +216,7 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
     }
     std::cout << std::endl;
 
-    return {{}};
+    return vn;
 }
 
 NotesPacket analyse_rythme_impl(std::vector<float> volume_plat,

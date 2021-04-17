@@ -3,6 +3,7 @@
 
 #include "mainwindow_ui.h"
 #include "recording.h"
+#include "note.h"
 
 #include <QtWidgets/QMainWindow>
 #include <thread>
@@ -32,8 +33,9 @@ private:
     void DisconnectControlSignals();
 
 private:
-    Ui_MainWindow ui;
-    Recording     rec{};
-    std::thread   recordingThread;
+    Ui_MainWindow     ui;
+    Recording         rec{};
+    std::thread       recordingThread;
+    std::vector<Note> playedNotes;
 };
 #endif    // MAINWINDOW_H

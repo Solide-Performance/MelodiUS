@@ -8,7 +8,7 @@ enum class NoteType
     Noire,
     Croche,
     DoubleCroche,
-    Pause,
+    Pause = 0,
     DemiPause,
     Silence,
     DemiSilence,

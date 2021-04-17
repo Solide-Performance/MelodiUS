@@ -11,6 +11,7 @@
 #include "recorder.h"
 #include "recording.h"
 #include "tuning.h"
+#include "song_player.h"
 
 #include "mainwindow.h"
 
