@@ -1,10 +1,15 @@
+/*************************************************************************************************/
+/* Includes ------------------------------------------------------------------------------------ */
 #include "song_player.h"
 #include "generator.h"
 #include "playback.h"
 #include "recording.h"
 #include "tuning.h"
 
-double LengthFromTempo(NoteType noteType, double bpm)
+
+/*************************************************************************************************/
+/* Static functions definitions ---------------------------------------------------------------- */
+static double LengthFromTempo(NoteType noteType, double bpm)
 {
     double bps = bpm / 60.;
     switch(noteType)
@@ -33,6 +38,9 @@ double LengthFromTempo(NoteType noteType, double bpm)
     }
 }
 
+
+/*************************************************************************************************/
+/* Function definitions ------------------------------------------------------------------------ */
 void Play_Song(const std::vector<Note>& notes, double bpm)
 {
     for(Note note : notes)
@@ -43,3 +51,6 @@ void Play_Song(const std::vector<Note>& notes, double bpm)
         Playback(playedNote);
     }
 }
+
+/*************************************************************************************************/
+/* END OF FILE --------------------------------------------------------------------------------- */

@@ -1,16 +1,20 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
-
+#pragma once
+/*************************************************************************************************/
+/* Includes ------------------------------------------------------------------------------------ */
 #include "mainwindow_ui.h"
 #include "recording.h"
 #include "note.h"
 
-#include <QtWidgets/QMainWindow>
 #include <thread>
 
 
+/*************************************************************************************************/
+/* Class definition ---------------------------------------------------------------------------- */
 class MainWindow : public QMainWindow
 {
+public:
+    MainWindow(QWidget* parent = nullptr);
+    ~MainWindow() = default;
 
 public slots:
     void on_pushButtonA_clicked();
@@ -25,10 +29,6 @@ public slots:
     void loading();
     void interpret();
 
-public:
-    MainWindow(QWidget* parent = nullptr);
-    ~MainWindow() = default;
-
 private:
     void DisableAllButtons();
     void EnableAllButtons();
@@ -42,4 +42,7 @@ private:
     std::thread       recordingThread;
     std::vector<Note> playedNotes;
 };
-#endif    // MAINWINDOW_H
+
+
+/*************************************************************************************************/
+/* END OF FILE --------------------------------------------------------------------------------- */
