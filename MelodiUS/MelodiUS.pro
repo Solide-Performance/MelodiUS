@@ -60,7 +60,7 @@ win32 {
         LIB          += ./CommunicationFPGA/CommunicationFPGA-release.lib
     }
 
-    HEADERS += ./include/widgets/widget_note.h ./include/widgets/roundbutton.h
+    HEADERS += ./include/widgets/widget_note.h ./include/widgets/roundbutton.h ./include/widgets/levelled_progressbar.h
     HEADERS += ./include/mainwindow.h ./include/mainwindow_ui.h
 
     SOURCES += ./source/mainwindow.cpp

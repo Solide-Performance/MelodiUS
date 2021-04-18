@@ -28,7 +28,7 @@
 
 /*****************************************************************************/
 /* Constants --------------------------------------------------------------- */
-constexpr double epsilon = 0.005;
+constexpr float epsilon = 0.005f;
 
 
 /*****************************************************************************/
@@ -82,7 +82,7 @@ std::vector<Note> analyse_rythme(const Recording& rec)
     float volmax = *std::max_element(volume.cbegin(), volume.cend());
     for(size_t i = 0; i < taille - 1; i++)
     {
-        if(COMPARE_FLOATS(derive[i], 0.0f, epsilon) && rec[i] > 0)
+        if(COMPARE_VALUES(derive[i], 0.0f, epsilon) && rec[i] > 0)
         {
             maximum = rec[i];
         }

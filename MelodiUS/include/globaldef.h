@@ -63,7 +63,7 @@ constexpr uint8_t CHAR_BIT = 8;
 /*****************************************************************************/
 /* Macros ------------------------------------------------------------------ */
 #define sizeof_array(x)    static_cast<size_t>(sizeof(x) / sizeof((x)[0]))    // NOLINT
-#define LABEL_TO_STRING(x) #x    // NOLINT
+#define LABEL_TO_STRING(x) #x                                                 // NOLINT
 
 
 template<typename T>
@@ -77,15 +77,13 @@ constexpr void SAFE_DELETE(T** x)
 }
 
 
-/* Epsilon is a margin between the two floating point values */
-template<typename floating>
-constexpr bool COMPARE_FLOATS(floating f1, floating f2, double epsilon = 0.0005)
+/* Epsilon is a margin between the two values */
+template<typename T>
+constexpr bool COMPARE_VALUES(const T f1, const T f2, const T epsilon = 0.0005)
 {
-    static_assert(std::is_floating_point<floating>::value,
-                  "Argument must be a floating point type");
-
     /* Due to floating point representation imprecision, two floating-point values should never be
-     * compared together */
+     * compared together directly. This function can be used for integer values as well, as a simple
+     * margin. */
     return std::abs(f1 - f2) <= epsilon;
 }
 

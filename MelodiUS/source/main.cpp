@@ -10,8 +10,8 @@
 #include "readwrite_wav.h"
 #include "recorder.h"
 #include "recording.h"
-#include "tuning.h"
 #include "song_player.h"
+#include "tuning.h"
 
 #include "mainwindow.h"
 
@@ -324,7 +324,7 @@ void fpgaMenuHandler()
     Recording rec;
 
     // clang-format off
-    FPGA::SetPhonemeCallback(Phoneme::a, [&rec]() mutable
+    /*FPGA::SetPhonemeCallback(Phoneme::a, [&rec]() mutable
                                          {
                                              rec = Record(60);
                                          });
@@ -363,7 +363,7 @@ void fpgaMenuHandler()
                                              {
                                                  analyse_rythme(rec);
                                              }
-                                         });
+                                         });*/
     // clang-format on
 
     FPGA::StartListener();
