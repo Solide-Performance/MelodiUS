@@ -114,6 +114,9 @@
     <ClInclude Include="CommunicationFPGA\CommunicationFPGA.h">
       <Filter>Header Files\CommunicationFPGA</Filter>
     </ClInclude>
+    <ClInclude Include="include\widgets\levelled_progressbar.h">
+      <Filter>Header Files\include\widgets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files\fasttrigo" />

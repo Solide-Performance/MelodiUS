@@ -15,7 +15,7 @@ public:
     }
 
 public slots:
-    void paintEvent(QPaintEvent*)
+    void paintEvent(QPaintEvent*) override
     {
         QColor background = isDown() ? QColor("grey") : QColor("lightgrey");
         background = isEnabled() ? background : QColor("grey");
