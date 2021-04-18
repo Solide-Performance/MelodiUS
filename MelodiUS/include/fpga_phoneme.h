@@ -57,6 +57,8 @@ void StartListener();
 [[nodiscard]] uint8_t                GetADC(size_t channel);
 [[nodiscard]] Phoneme                GetCurrentPhoneme();
 void SetPhonemeCallback(Phoneme number, std::function<void()> callback);
+void UpdatePhonemeThreshold(std::array<int, 4> newThreshold);
+void UpdatePhonemeThreshold(Phoneme phoneme, int newThreshold);
 
 void WriteLED(uint8_t val);
 

@@ -30,6 +30,7 @@ public slots:
     void interpret();
 
 private:
+    void Calibrate(Phoneme phoneme);
     void DisableAllButtons();
     void EnableAllButtons();
     void ConnectControlSignals();

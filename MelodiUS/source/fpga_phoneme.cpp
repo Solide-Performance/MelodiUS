@@ -65,13 +65,14 @@ CommunicationFPGA* m_fpga = nullptr;
 void* m_fpga = nullptr;
 #endif
 
-bool                                        m_run = true;
-std::thread                                 m_listener;
-std::array<int, 4>                          m_adc{};
-std::array<std::function<void()>, 5>        m_phonemeCallbacks{EMPTY_FUNCTION};
-Phoneme                                     m_currentPhoneme = Phoneme::UNKNOWN;
-Phoneme                                     m_oldPhoneme     = Phoneme::UNKNOWN;
-size_t                                      m_phonemeCounter = 0;
+bool                                 m_run = true;
+std::thread                          m_listener;
+std::array<int, 4>                   m_adc{};
+std::array<int, 4>                   m_adcThreshold{0x80, 0x80, 0x80, 0x80};
+std::array<std::function<void()>, 5> m_phonemeCallbacks{EMPTY_FUNCTION};
+Phoneme                              m_currentPhoneme = Phoneme::UNKNOWN;
+Phoneme                              m_oldPhoneme     = Phoneme::UNKNOWN;
+size_t                               m_phonemeCounter = 0;
 
 
 /*****************************************************************************/
@@ -379,6 +380,24 @@ void SetPhonemeCallback(Phoneme number, std::function<void()> callback)
     {
         m_phonemeCallbacks[static_cast<size_t>(number)] = EMPTY_FUNCTION;
     }
+}
+
+void UpdatePhonemeThreshold(std::array<int, 4> newThreshold)
+{
+    for(int& thres : newThreshold)
+    {
+        /* Make sure the threshold is between 0x00 and 0xFF */
+        thres = std::max(0, std::min(255, thres));
+    }
+
+    m_adcThreshold = newThreshold;
+}
+void UpdatePhonemeThreshold(Phoneme phoneme, int newThreshold)
+{
+    /* Make sure the threshold is between 0x00 and 0xFF */
+    newThreshold = std::max(0, std::min(255, newThreshold));
+
+    m_adcThreshold[static_cast<size_t>(phoneme)] = newThreshold;
 }
 
 

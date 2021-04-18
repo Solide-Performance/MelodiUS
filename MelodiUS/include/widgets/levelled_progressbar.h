@@ -59,7 +59,7 @@ private:
         m_level.setGeometry(position.left() - 1,
                             position.top() + frameHeight,
                             position.width() + 2,
-                            21);
+                            1);
         /* clang-format on */
     }
 
