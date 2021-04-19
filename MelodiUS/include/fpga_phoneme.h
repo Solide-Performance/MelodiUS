@@ -62,6 +62,7 @@ void StartListener();
 /* --------------------------------- */
 /* Accessors                         */
 [[nodiscard]] bool                   isOk();
+[[nodiscard]] bool                   isConnected();
 [[nodiscard]] std::string            ErrorMsg();
 [[nodiscard]] std::array<uint8_t, 4> GetADC();
 [[nodiscard]] uint8_t                GetADC(size_t channel);
@@ -70,7 +71,7 @@ void SetPhonemeCallback(Phoneme number, std::function<void()> callback);
 void UpdatePhonemeThreshold(std::array<std::array<int, 4>, 4> newThreshold);
 void UpdatePhonemeThreshold(Phoneme phoneme, std::array<int, 4> newThreshold);
 [[nodiscard]] std::array<std::array<int, 4>, 4> GetPhonemeThresholds();
-void SetPhonemeCallbackEnabled(bool enabled);
+void                                            SetPhonemeCallbackEnabled(bool enabled);
 
 void WriteLED(uint8_t val);
 

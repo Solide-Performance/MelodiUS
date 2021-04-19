@@ -21,6 +21,7 @@ public slots:
     void startRecord();
     void stopRecord();
     void updateBargraph();
+    void updateFpgaConnection();
     void resizeEvent(QResizeEvent* event);
 
     void play();
