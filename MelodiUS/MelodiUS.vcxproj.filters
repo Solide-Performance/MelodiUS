@@ -93,6 +93,11 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="source\song_player.cpp">
+      <Filter>Source Files\source</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <ClCompile Include="source\tuning.cpp">
       <Filter>Source Files\source</Filter>
     </ClCompile>
@@ -120,6 +125,16 @@
     <Filter Include="Header Files\include\widgets" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="include\widgets\levelled_progressbar.h">
+      <Filter>Header Files\include\widgets</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\widgets\roundbutton.h">
+      <Filter>Header Files\include\widgets</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
     <ClInclude Include="include\widgets\widget_note.h">
       <Filter>Header Files\include\widgets</Filter>
     </ClInclude>
@@ -131,11 +146,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Portee.h">
-      <Filter>Header Files\include</Filter>
-    </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <ClInclude Include="include\Temps.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
   </ItemGroup>
@@ -196,6 +206,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\recording.h">
+      <Filter>Header Files\include</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="include\song_player.h">
       <Filter>Header Files\include</Filter>
     </ClInclude>
   </ItemGroup>

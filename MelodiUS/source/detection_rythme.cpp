@@ -10,9 +10,10 @@
 #include <cmath>
 #include <fstream>
 #include <iostream>
-#include <string>
 #include <thread>
 #include <vector>
+
+#include "benchmark.h"
 
 #ifndef LINUX_
 #include <immintrin.h>
@@ -27,7 +28,7 @@
 
 /*****************************************************************************/
 /* Constants --------------------------------------------------------------- */
-constexpr double epsilon = 0.005;
+constexpr float epsilon = 0.005f;
 
 
 /*****************************************************************************/
@@ -60,7 +61,7 @@ NotesPacket analyse_rythme_impl(std::vector<float> volume_plat,
 
 /*****************************************************************************/
 /* Function definitions ---------------------------------------------------- */
-std::vector<Recording> analyse_rythme(const Recording& rec)
+std::vector<Note> analyse_rythme(const Recording& rec)
 {
     const size_t dt            = rec.getSampleRate() / 9;
     size_t       sample_cutoff = rec.getSampleRate() / 5;
@@ -81,8 +82,8 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
     float volmax = *std::max_element(volume.cbegin(), volume.cend());
     for(size_t i = 0; i < taille - 1; i++)
     {
-        if(COMPARE_FLOATS(derive[i], 0.0f, epsilon) && rec[i] > 0 /*marge_volume*/)
-        {    // comparaison avec marge d'erreur, utilise la fonction de pascal
+        if(COMPARE_VALUES(derive[i], 0.0f, epsilon) && rec[i] > 0)
+        {
             maximum = rec[i];
         }
         volume[i] = maximum;
@@ -215,7 +216,7 @@ std::vector<Recording> analyse_rythme(const Recording& rec)
     }
     std::cout << std::endl;
 
-    return {{}};
+    return vn;
 }
 
 NotesPacket analyse_rythme_impl(std::vector<float> volume_plat,
@@ -260,7 +261,7 @@ NotesPacket analyse_rythme_impl(std::vector<float> volume_plat,
         for(; i < max; i += dt)
         {
             float currentValue = volume_plat[i];
-            if(currentValue < 0.05f * valeurAttaque) 
+            if(currentValue < 0.05f * valeurAttaque)
             {
                 break;
             }
@@ -271,6 +272,7 @@ NotesPacket analyse_rythme_impl(std::vector<float> volume_plat,
 
 
     np.notes.reserve(np.debut_note.size());
+
 
     for(size_t i = 0; i < np.debut_note.size(); i++)
     {
@@ -286,6 +288,7 @@ NotesPacket analyse_rythme_impl(std::vector<float> volume_plat,
         np.notes.push_back(val);
         np.noteNames.push_back(str);
     }
+
 
     correct_fuckaroos(np, dt);
 

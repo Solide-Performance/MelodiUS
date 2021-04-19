@@ -8,7 +8,7 @@
 /*****************************************************************************/
 /* Function definitions ---------------------------------------------------- */
 Recording Generate_Sine(size_t freq,
-                        size_t numSeconds,
+                        double numSeconds,
                         size_t sampleRate,
                         size_t numChannels,
                         size_t framesPerBuffer,
@@ -16,8 +16,8 @@ Recording Generate_Sine(size_t freq,
 {
     assert(numChannels >= MONO && numChannels <= STEREO);
 
-    size_t size   = numSeconds * sampleRate * numChannels;
-    double cycles = static_cast<double>(numSeconds) / (1. / static_cast<double>(freq));
+    size_t size   = std::ceil(numSeconds) * sampleRate * numChannels;
+    double cycles = numSeconds / (1. / static_cast<double>(freq));
 
     std::vector<SAMPLE> data(size);
 

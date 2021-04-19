@@ -4,6 +4,7 @@
 #include <iostream>
 
 
+
 namespace FPGA
 {
 
@@ -44,8 +45,9 @@ namespace FPGA
 
 /*****************************************************************************/
 /* Constants --------------------------------------------------------------- */
-constexpr uint8_t ADC_PHONEME_THRESHOLD         = 0x80; /* 50% */
-constexpr size_t  COUNTER_MAX_PHONEME_THRESHOLD = 5;
+constexpr uint8_t                   ADC_PHONEME_THRESHOLD         = 0x80; /* 50% */
+constexpr int                       ADC_PHONEME_MARGIN            = 0x20; /* 12.5% */
+constexpr size_t                    COUNTER_MAX_PHONEME_THRESHOLD = 5;
 
 
 /*****************************************************************************/
@@ -65,13 +67,17 @@ CommunicationFPGA* m_fpga = nullptr;
 void* m_fpga = nullptr;
 #endif
 
-bool                                        m_run = true;
-std::thread                                 m_listener;
-std::array<int, 4>                          m_adc{};
-std::array<std::function<void()>, 5>        m_phonemeCallbacks{EMPTY_FUNCTION};
-Phoneme                                     m_currentPhoneme = Phoneme::UNKNOWN;
-Phoneme                                     m_oldPhoneme     = Phoneme::UNKNOWN;
-size_t                                      m_phonemeCounter = 0;
+bool                                 m_run = true;
+std::thread                          m_listener;
+std::array<int, 4>                   m_adc{};
+std::array<std::array<int, 4>, 4>    m_adcThreshold{std::array{0x80, 0x80, 0x80, 0x80},
+                                                 {0x80, 0x80, 0x80, 0x80},
+                                                 {0x80, 0x80, 0x80, 0x80},
+                                                 {0x80, 0x80, 0x80, 0x80}};
+std::array<std::function<void()>, 5> m_phonemeCallbacks{EMPTY_FUNCTION};
+Phoneme                              m_currentPhoneme = Phoneme::UNKNOWN;
+Phoneme                              m_oldPhoneme     = Phoneme::UNKNOWN;
+size_t                               m_phonemeCounter = 0;
 
 
 /*****************************************************************************/
@@ -96,9 +102,7 @@ void DeInit()
 
     try
     {
-
         m_listener.join();
-
         // delete m_fpga;
     }
     catch(...)
@@ -152,66 +156,46 @@ void ListenerThread()
         /* Display ADC value (selected with switches) on the 7-segment display */
         DisplayADC();
 
-        /* Sleep for 100 ms */
-        std::this_thread::sleep_for(std::chrono::milliseconds{100});
+        /* Sleep */
+        std::this_thread::sleep_for(ADC_MEASURE_DELAY);
+
+      
+    }
+}
+
+Phoneme CheckADCThresholds(Phoneme phonemeToCheck)
+{
+    std::array<int, 4>& threshold   = m_adcThreshold[PHONEME_INDEX(phonemeToCheck)];
+    uint8_t             phonemeMask = 0x00;
+    if((COMPARE_VALUES(m_adc[0], threshold[0], ADC_PHONEME_MARGIN) == true)
+       && (COMPARE_VALUES(m_adc[1], threshold[1], ADC_PHONEME_MARGIN) == true)
+       && (COMPARE_VALUES(m_adc[2], threshold[2], ADC_PHONEME_MARGIN) == true)
+       && (COMPARE_VALUES(m_adc[3], threshold[3], ADC_PHONEME_MARGIN) == true))
+    {
+        return phonemeToCheck;
+    }
+    else
+    {
+        return Phoneme::UNKNOWN;
     }
 }
 
 void CheckADCPhonemes()
 {
-    /* This function uses a mask that is enabled at each detected phoneme level */
-    /* The mask values are :
-     *  - 0b0001 (0x01) for the 1st channel
-     *  - 0b0010 (0x02) for the 2nd channel
-     *  - 0b0100 (0x04) for the 3rd channel
-     *  - 0b1000 (0x08) for the 4th channel
-     * The 4 MSB are ignored
-     *
-     * Phonemes correspond to certain mask values:
-     * - 'A'  is 0b0011
-     * - 'EY' is 0b1110
-     * - 'AE' is 0b0010
-     * - 'I'  is 0b1000
-     */
-    uint8_t phonemeMask = 0x00;
-    if(m_adc[0] >= ADC_PHONEME_THRESHOLD)
+    m_currentPhoneme = CheckADCThresholds(Phoneme::a);
+    if(m_currentPhoneme == Phoneme::UNKNOWN)
     {
-        phonemeMask |= 0b0001;
-    }
-    if(m_adc[1] >= ADC_PHONEME_THRESHOLD)
-    {
-        phonemeMask |= 0b0010;
-    }
-    if(m_adc[2] >= ADC_PHONEME_THRESHOLD)
-    {
-        phonemeMask |= 0b0100;
-    }
-    if(m_adc[3] >= ADC_PHONEME_THRESHOLD)
-    {
-        phonemeMask |= 0b1000;
+        m_currentPhoneme = CheckADCThresholds(Phoneme::ey);
+        if(m_currentPhoneme == Phoneme::UNKNOWN)
+        {
+            m_currentPhoneme = CheckADCThresholds(Phoneme::ae);
+            if(m_currentPhoneme == Phoneme::UNKNOWN)
+            {
+                m_currentPhoneme = CheckADCThresholds(Phoneme::i);
+            }
+        }
     }
 
-    phonemeMask &= 0x0F;
-    if(phonemeMask == 0b0011)
-    {
-        m_currentPhoneme = Phoneme::a;
-    }
-    else if(phonemeMask == 0b1110)
-    {
-        m_currentPhoneme = Phoneme::ey;
-    }
-    else if(phonemeMask == 0b0010)
-    {
-        m_currentPhoneme = Phoneme::ae;
-    }
-    else if(phonemeMask == 0b1000)
-    {
-        m_currentPhoneme = Phoneme::i;
-    }
-    else
-    {
-        m_currentPhoneme = Phoneme::UNKNOWN;
-    }
 
     if(m_currentPhoneme != m_oldPhoneme)
     {
@@ -276,7 +260,7 @@ void CheckButtonPhonemes()
 void CallCallback(Phoneme channel)
 {
     /* Call callback function */
-    auto callback = m_phonemeCallbacks[static_cast<uint8_t>(channel)];
+    auto callback = m_phonemeCallbacks[PHONEME_INDEX(channel)];
     if(callback)
     {
         callback();
@@ -373,13 +357,50 @@ void SetPhonemeCallback(Phoneme number, std::function<void()> callback)
      * If not callable, clear the callback function */
     if(callback)
     {
-        m_phonemeCallbacks[static_cast<size_t>(number)] = callback;
+        m_phonemeCallbacks[PHONEME_INDEX(number)] = callback;
     }
     else
     {
-        m_phonemeCallbacks[static_cast<size_t>(number)] = EMPTY_FUNCTION;
+        m_phonemeCallbacks[PHONEME_INDEX(number)] = EMPTY_FUNCTION;
     }
 }
+
+void UpdatePhonemeThreshold(std::array<std::array<int, 4>, 4> newThreshold)
+{
+    for(std::array<int, 4>& thres : newThreshold)
+    {
+        for(int& thr : thres)
+        {
+            /* Make sure the threshold is between 0x00 and 0xFF */
+            thr = std::max(0, std::min(255, thr));
+        }
+    }
+
+    m_adcThreshold = newThreshold;
+}
+void UpdatePhonemeThreshold(Phoneme phoneme, std::array<int, 4> newThreshold)
+{
+    /* Make sure the threshold is between 0x00 and 0xFF */
+    for(int& thr : newThreshold)
+    {
+        /* Make sure the threshold is between 0x00 and 0xFF */
+        thr = std::max(0, std::min(255, thr));
+    }
+
+    m_adcThreshold[PHONEME_INDEX(phoneme)] = newThreshold;
+}
+
+void SetFlag(bool voiceFlag)
+{
+    //FPGA::SetPhonemeCallbackEnabled(voiceFlag);
+
+
+}
+[[nodiscard]] std::array<std::array<int, 4>, 4> GetPhonemeThresholds()
+{
+    return m_adcThreshold;
+}
+
 
 
 /*****************************************************************************/

@@ -1,6 +1,4 @@
 #pragma once
-#include <array>
-
 #include "globaldef.h"
 
 class Portee
@@ -8,17 +6,17 @@ class Portee
 public:
     Portee() = delete;
     Portee(const Portee& other)
-    : Cle{(QGroupBox*)other.Cle.parent()},
-      lines{QFrame{(QGroupBox*)other.Cle.parent()},
-            QFrame{(QGroupBox*)other.Cle.parent()},
-            QFrame{(QGroupBox*)other.Cle.parent()},
-            QFrame{(QGroupBox*)other.Cle.parent()},
-            QFrame{(QGroupBox*)other.Cle.parent()},
-            QFrame{(QGroupBox*)other.Cle.parent()},
-            QFrame{(QGroupBox*)other.Cle.parent()},
-            QFrame{(QGroupBox*)other.Cle.parent()},
-            QFrame{(QGroupBox*)other.Cle.parent()},
-            QFrame{(QGroupBox*)other.Cle.parent()}}
+    : Cle{(QWidget*)other.Cle.parent()},
+      lines{QFrame{(QWidget*)other.Cle.parent()},
+            QFrame{(QWidget*)other.Cle.parent()},
+            QFrame{(QWidget*)other.Cle.parent()},
+            QFrame{(QWidget*)other.Cle.parent()},
+            QFrame{(QWidget*)other.Cle.parent()},
+            QFrame{(QWidget*)other.Cle.parent()},
+            QFrame{(QWidget*)other.Cle.parent()},
+            QFrame{(QWidget*)other.Cle.parent()},
+            QFrame{(QWidget*)other.Cle.parent()},
+            QFrame{(QWidget*)other.Cle.parent()}}
     {
         for(int i = 0; i <= lines.size() - 1; i++)
         {
@@ -34,22 +32,23 @@ public:
 #else
         Cle.setPixmap(*other.Cle.pixmap());
 #endif
+
         Cle.show();
         Cle.lower();
     }
 
-    Portee(int n, QGroupBox* GroupBox)
-    : Cle(GroupBox),
-      lines{QFrame{GroupBox},
-            QFrame{GroupBox},
-            QFrame{GroupBox},
-            QFrame{GroupBox},
-            QFrame{GroupBox},
-            QFrame{GroupBox},
-            QFrame{GroupBox},
-            QFrame{GroupBox},
-            QFrame{GroupBox},
-            QFrame{GroupBox}}
+    Portee(int n, QWidget* parent)
+    : Cle(parent),
+      lines{QFrame{parent},
+            QFrame{parent},
+            QFrame{parent},
+            QFrame{parent},
+            QFrame{parent},
+            QFrame{parent},
+            QFrame{parent},
+            QFrame{parent},
+            QFrame{parent},
+            QFrame{parent}}
     {
         int decalage = (150 * n);
         ///=== LIGNE HORIZONTALE ========//
@@ -62,7 +61,7 @@ public:
         ///=== LIGNE VERTICALE ========//
         for(int i = 6; i < 10; i++)
         {
-            lines[i].setGeometry(QRect(237 * (i - 5), 140 + decalage, 20, 81));
+            lines[i].setGeometry(QRect(215.75 * (i - 5)+85, 140 + decalage, 20, 81));
             lines[i].setFrameShape(QFrame::VLine);
             lines[i].setFrameShadow(QFrame::Plain);
         }
@@ -70,8 +69,8 @@ public:
         lines[5].setFrameShape(QFrame::VLine);
         lines[5].setFrameShadow(QFrame::Plain);
 
-        Cle.setGeometry(QRect(10, 130 + decalage, 51, 101));
-        Cle.setPixmap(QPixmap(QString::fromUtf8("images/cle40x80T.png")));
+        Cle.setGeometry(QRect(10, 125 + decalage, 70, 115));
+        Cle.setPixmap(QPixmap(QString::fromUtf8("images/clef_sol.png")).scaled(70, 115, Qt::KeepAspectRatio));
         Cle.lower();
    
     };

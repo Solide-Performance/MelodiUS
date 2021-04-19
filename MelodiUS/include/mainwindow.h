@@ -1,38 +1,58 @@
-#ifndef MAINWINDOW_H
-#define MAINWINDOW_H
-
+#pragma once
+/*************************************************************************************************/
+/* Includes ------------------------------------------------------------------------------------ */
 #include "mainwindow_ui.h"
+#include "note.h"
 #include "recording.h"
-#include <QtWidgets/QMainWindow>
+
+#include <thread>
 
 
+/*************************************************************************************************/
+/* Class definition ---------------------------------------------------------------------------- */
 class MainWindow : public QMainWindow
 {
+public:
+    MainWindow(QWidget* parent = nullptr);
+    ~MainWindow() = default;
 
 public slots:
     void on_pushButtonA_clicked();
     void startRecord();
     void stopRecord();
     void updateBargraph();
+    void resizeEvent(QResizeEvent* event);
 
     void play();
     void processing();
     void saveOrLoad();
     void saving();
     void loading();
+    void interpret();
+
+
+private:
+    void Calibrate(Phoneme phoneme);
+    void DisableAllButtons();
+    void EnableAllButtons();
+    void ConnectControlSignals();
+    void DisconnectControlSignals();
+    void SetupMenus();
     void keyPressEvent(QKeyEvent* event);
     void keyReleaseEvent(QKeyEvent* event);
-    //void darkMode();
-    //void lightMode();
-
 
 public:
-    MainWindow(QWidget* parent = nullptr);
-    ~MainWindow();
+   // MainWindow(QWidget* parent = nullptr);
+    //~MainWindow();
     bool voiceKey = false;
 
 private:
-    Ui_MainWindow ui;
-    Recording     rec{};
+    Ui_MainWindow     ui;
+    Recording         rec{};
+    std::thread       recordingThread;
+    std::vector<Note> playedNotes;
 };
-#endif    // MAINWINDOW_H
+
+
+/*************************************************************************************************/
+/* END OF FILE --------------------------------------------------------------------------------- */
