@@ -73,6 +73,7 @@ public:
         Cle.setGeometry(QRect(10, 130 + decalage, 51, 101));
         Cle.setPixmap(QPixmap(QString::fromUtf8("images/cle40x80T.png")));
         Cle.lower();
+   
     };
 
 

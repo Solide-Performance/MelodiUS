@@ -4,28 +4,26 @@
 #include <iostream>
 #include <thread>
 
+#include "detection_rythme.h"
 #include "generator.h"
 #include "playback.h"
-#include "recording.h"
-#include "widgets/widget_note.h"
 #include "readwrite_wav.h"
-#include "detection_rythme.h"
+#include "widgets/widget_note.h"
 
 
-static Recording rec{};
 
 MainWindow::MainWindow(QWidget* parent) : QMainWindow(parent), ui(this)
 {
     ui.setupUi(this);
 
-    QObject::connect(&ui.pushButtonA, &QPushButton::clicked, this, &MainWindow::on_pushButtonA_clicked);
+
+    QObject::connect(
+      &ui.pushButtonA, &QPushButton::clicked, this, &MainWindow::on_pushButtonA_clicked);
     QObject::connect(&ui.buttonRecord, &QPushButton::clicked, this, &MainWindow::startRecord);
     QObject::connect(&ui.buttonStopRecord, &QPushButton::clicked, this, &MainWindow::stopRecord);
     QObject::connect(&ui.buttonPlay, &QPushButton::clicked, this, &MainWindow::play);
     QObject::connect(&ui.buttonProcess, &QPushButton::clicked, this, &MainWindow::processing);
     QObject::connect(&ui.buttonSaveLoad, &QPushButton::clicked, this, &MainWindow::saveOrLoad);
-    //  QObject::connect(&ui.buttonDark, &QPushButton::clicked, this, &MainWindow::darkMode);
-    // QObject::connect(&ui.buttonLight, &QPushButton::clicked, this, &MainWindow::lightMode);
     QObject::connect(&ui.bargraphUpdater, &QTimer::timeout, this, &MainWindow::updateBargraph);
 
     ui.bargraphUpdater.start(100);
@@ -41,7 +39,7 @@ void        MainWindow::startRecord()
 
     Recording_SetStopPolicy(std::function<bool()>{});
     // Activer les bouton a la fin de la minute??
-    what_if_another_thread_fixes_it = std::thread{[]() {
+    what_if_another_thread_fixes_it = std::thread{[&]() {
         //   rec = Record(NUM_SECONDS, SAMPLE_RATE, FRAMES_PER_BUFFER, 1);
         rec = Record(10);
     }};
@@ -67,7 +65,6 @@ void MainWindow::play()
     ui.buttonPlay.setEnabled(false);
     ui.buttonProcess.setEnabled(false);
     ui.buttonSaveLoad.setEnabled(false);
-
     Playback(rec);    // Faudrait avoir un son par defaut ou avoir une
     // autre boite contextuel qui donne acces au fichier
 
@@ -75,7 +72,8 @@ void MainWindow::play()
     ui.buttonRecord.setEnabled(true);
     ui.buttonStopRecord.setEnabled(true);
     ui.buttonProcess.setEnabled(true);
-    ui.buttonPlay.setEnabled(true);     //Peut etre qui le réactive trop vite ? but idk didnt test it tib
+    ui.buttonPlay.setEnabled(
+      true);    // Peut etre qui le réactive trop vite ? but idk didnt test it tib
     ui.buttonSaveLoad.setEnabled(true);
 }
 void MainWindow::processing()
@@ -86,7 +84,7 @@ void MainWindow::processing()
     ui.buttonProcess.setEnabled(false);
     ui.buttonSaveLoad.setEnabled(false);
 
-     analyse_rythme(rec);
+    analyse_rythme(rec);
 
     ui.buttonRecord.setEnabled(true);
     ui.buttonStopRecord.setEnabled(true);
@@ -131,7 +129,7 @@ void MainWindow::saving()
       this, tr("Save Address Book"), "", tr("Address Book (*.wav);;All Files (*)"));
     ui.saveName = ui.SaveName.toStdString();
     SaveToWav(ui.saveName, rec);
-    //ui.msgBoxSave.exec();
+    // ui.msgBoxSave.exec();
 }
 
 void MainWindow::loading()
@@ -139,7 +137,7 @@ void MainWindow::loading()
     ui.FileName = QFileDialog::getOpenFileName(
       this, tr("Open File"), "/MelodiUS/more_sounds", tr("Sound Files (*.wav)"));
     ui.fileName = ui.FileName.toStdString();
-    rec = LoadFromWav(ui.fileName);
+    rec         = LoadFromWav(ui.fileName);
     // ui.msgBoxLoad.exec();
 }
 // void MainWindow::darkMode()
@@ -159,7 +157,7 @@ void MainWindow::loading()
 
 void MainWindow::on_pushButtonA_clicked()
 {
-    int        nbs = ui.P.ajoutLigne();
+    int nbs = ui.P.ajoutLigne();
     if(nbs >= 6)
     {
         ui.groupBoxPartition.resize(ui.groupBoxPartition.width(), 885 + ((nbs - 6) * 150));
@@ -184,4 +182,20 @@ void MainWindow::updateBargraph()
 
 MainWindow::~MainWindow()
 {
+}
+void MainWindow::keyPressEvent(QKeyEvent* event)
+{
+    if(event->key() == Qt::Key_Space)    // si space fuck le chien Key_U
+    {
+        printf("space pressed ");
+        voiceKey = true;
+    }
+}
+void MainWindow::keyReleaseEvent(QKeyEvent* event)
+{
+    if(event->key() == Qt::Key_Space)
+    {
+        printf("space release ");
+        voiceKey = false;
+    }
 }

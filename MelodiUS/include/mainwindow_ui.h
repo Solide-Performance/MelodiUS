@@ -29,10 +29,10 @@ public:
     QMessageBox msgBoxLoad;
     QMessageBox SLD;
 
-    QString           FileName;
+    QString     FileName;
     std::string fileName;
-    QString           SaveName;
-    std::string       saveName;
+    QString     SaveName;
+    std::string saveName;
 
 
     QLabel label;
@@ -55,10 +55,10 @@ public:
     RoundButton buttonPlay;
     RoundButton buttonProcess;
     RoundButton buttonSaveLoad;
-   // QPushButton buttonDark;
-    //QPushButton buttonLight;
+    /*  QPushButton buttonDark;
+      QPushButton buttonLight;*/
 
-   
+
 
     QProgressBar bargraph1;
     QProgressBar bargraph2;
@@ -66,6 +66,7 @@ public:
     QProgressBar bargraph4;
 
     QTimer bargraphUpdater;
+
 
 
 
@@ -102,15 +103,17 @@ public:
       buttonPlay(&groupBoxMenu),
       buttonProcess(&groupBoxMenu),
       buttonSaveLoad(&groupBoxMenu),
-      //buttonDark(&groupBoxMenu),
-      //buttonLight(&groupBoxMenu),
+      // buttonDark(&groupBoxMenu),
+      // buttonLight(&groupBoxMenu),
 
       bargraph1(&groupBoxMenu),
       bargraph2(&groupBoxMenu),
       bargraph3(&groupBoxMenu),
       bargraph4(&groupBoxMenu),
 
-      bargraphUpdater(&groupBoxMenu)     
+      bargraphUpdater(&groupBoxMenu)
+
+
     {
     }
 
@@ -118,15 +121,12 @@ public:
     {
         mainWindow->showMaximized();
         groupBoxMenu.setGeometry(0, 0, 250, 900);
-        //groupBoxMenu.setStyleSheet("background-color:#ffffff");
         groupBoxPartition.setGeometry(250, 0, 1500, 1500);
-        //groupBoxPartition.setStyleSheet("background-color:#ffffff");
 
         scrollArea.setGeometry(250, 0, 1000, 1000);
         scrollArea.setWidget(&groupBoxPartition);
         scrollArea.setWidgetResizable(false);
         scrollArea.show();
-
 
         label.setGeometry(QRect(10, 850, 250, 10));
         label.setText("MelodiUS V1.6   UwU Solide Performance");
@@ -140,12 +140,11 @@ public:
         label_est.setText("EST");
 
         groupBoxPartition.setGeometry(250, 0, 980, 885);
-        //groupBoxPartition.setStyleSheet("background-color:#ffffff");
+        // groupBoxPartition.setStyleSheet("background-color:#ffffff");
         scrollArea.setGeometry(250, 0, 1000, groupBoxMenu.height());
         scrollArea.setWidget(&groupBoxPartition);
         scrollArea.setWidgetResizable(false);
         scrollArea.show();
-
 
         pushButtonA.setGeometry(QRect(0, 0, 93, 50));
         pushButtonA.setText("Ajouter Portee");
@@ -166,15 +165,6 @@ public:
         buttonSaveLoad.setGeometry(QRect(100, 500, 100, 100));
         buttonSaveLoad.SetImage({"images/save.png"});
 
-       /* buttonDark.setGeometry(QRect(0, 0, 50, 20));
-        buttonDark.setText("Nuit");
-        buttonDark.raise();
-
-        buttonLight.setGeometry(QRect(0, 0, 50, 20));
-        buttonLight.setText("Jour");
-        buttonLight.hide();*/
-
-
         SLD.setText("Solide Sauvegarde");
         SLD.setInformativeText(
           "Vous pouvez enregistrer votre dernier enregistrement ou utiliser un fichier existant");    // Mettre des mots plus tard!
@@ -185,9 +175,6 @@ public:
         msgBoxSave.setInformativeText("L'enregistrement sera sauvegarde sous la forme d'un .wav");
         msgBoxLoad.setText("Quel document desirez vous importer ?");
         msgBoxLoad.setInformativeText("Le fichier doit etre sous la forme .wav");
-
-
-
 
         bargraph1.setMaximum(255);
         bargraph1.setMinimum(0);

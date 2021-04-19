@@ -33,6 +33,9 @@
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
 #include <QFileDialog>
+#include <QKeyEvent>
+#include <QMenuBar>
+#include <QMenu>
 
 
 #if QT_VERSION >= 0x060000
