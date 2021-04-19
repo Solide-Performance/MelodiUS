@@ -75,7 +75,7 @@ public:
         ///=== LIGNE VERTICALE ========//
         for(int i = 6; i < 10; i++)
         {
-            lines[i].setGeometry(QRect(237 * (i - 5), 140 + decalage, 20, 81));
+            lines[i].setGeometry(QRect(215.75 * (i - 5)+85, 140 + decalage, 20, 81));
             lines[i].setFrameShape(QFrame::VLine);
             lines[i].setFrameShadow(QFrame::Plain);
         }

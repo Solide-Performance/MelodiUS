@@ -57,7 +57,6 @@ public slots:
         int xOff     = (width() - diameter) / 2;
         int yOff     = (height() - diameter) / 2;
         setMask(QRegion(xOff, yOff, diameter, diameter, QRegion::Ellipse));
-         
     }
 };
 
@@ -77,7 +76,7 @@ public:
     QLabel label_I;
     QLabel label_hey;
     QLabel label_est;
-    
+
     QFrame lineDeTest;
 
     Partition P;
@@ -153,10 +152,10 @@ public:
         mainWindow->resize(1250, 900);
         groupBoxMenu.setGeometry(0, 0, 250, 900);
         groupBoxMenu.setStyleSheet("background-color:#ffffff");
-        
+
         label.setGeometry(QRect(10, 850, 250, 10));
         label.setText("MelodiUS V1.5   Quelle Solide Performance!");
-        
+
         label_A.setGeometry(QRect(50, 50, 51, 101));
         label_A.setText("A");
         label_I.setGeometry(QRect(50, 200, 51, 101));
@@ -166,8 +165,9 @@ public:
         label_est.setGeometry(QRect(50, 500, 51, 101));
         label_est.setText("EST");
 
-        groupBoxPartition.setGeometry(250, 0, (mainWindow->width()-250), mainWindow->height());
-        //groupBoxPartition.setStyleSheet("background-color:#ffffff");
+        groupBoxPartition.setGeometry(250, 0, (mainWindow->width() - 270), 300);
+        groupBoxPartition.setFlat(true);
+
         scrollArea.setGeometry(250, 0, (mainWindow->width() - 250), groupBoxMenu.height());
         scrollArea.setWidget(&groupBoxPartition);
         scrollArea.setWidgetResizable(false);
@@ -249,12 +249,12 @@ public:
         labelbar4.setGeometry(QRect(200, 680, 10, 30));
         labelbar4.setText("4");
 
-        
+
         /*==============Test==============*/
         lineDeTest.setGeometry(QRect());
         lineDeTest.setFrameShape(QFrame::VLine);
         lineDeTest.setFrameShadow(QFrame::Plain);
-        
+
         /*==============Fin des test==============*/
 
 

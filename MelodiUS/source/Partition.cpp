@@ -37,7 +37,7 @@ void Partition::ecrireMusique(std::vector<Note> vecNote)
     {
         // On commence par verifier si la mesure est pleine et si oui on rajoute une mesuere
         double sum = 0;
-        for(int j = 0; i < compo[mesure].size(); i++)
+        for(int j = 0; j < compo[mesure].size(); j++)
         {
             sum += compo[mesure][j].getNoteSum();
         }
@@ -45,6 +45,7 @@ void Partition::ecrireMusique(std::vector<Note> vecNote)
         {
             mesure++;
             compo.push_back(std::vector<Note>());
+            sum = 0;
         }
         //============================================================================
         // On regarde maintenant si la note rentre telle quelle dans le vecteur
@@ -111,7 +112,24 @@ void Partition::ecrireMusique(std::vector<Note> vecNote)
         }
     }
     //=============== Boute de code qui transforme les note en notewidget et qui affiche chaque mesure à la bonne place====================//
-
+    ligne  = 0;
+    bool passage = false;
+    for(int  i = 0; i < compo.size(); i++)
+    {
+        if(i % 4 == 0&&passage)
+        {
+            ajoutLigne();
+            PartitionGroupBox->resize(PartitionGroupBox->width(), PartitionGroupBox->height() + 150);
+            ligne++;
+        }
+        for(int j = 0; j < compo[i].size(); j++)
+        {
+            NoteWidget* a = new NoteWidget(PartitionGroupBox,compo[i][j],(int)((((i%4)*215)+85)+(((j+1)*(200/compo[i].size()))-(200/compo[i].size())+15)),ligne);
+            composition.push_back(*a);
+            a->show();
+        }
+        passage = true;
+    }
 }
 
 bool Partition::mesureEstPleine()
@@ -120,7 +138,7 @@ bool Partition::mesureEstPleine()
 }
 NoteType GetNoteValueValue(double d, NoteValue t)
 {
-    if(t == NoteValue::UNKNOWN)
+    if(t != NoteValue::UNKNOWN)
     {
         if(d == 4)
         {

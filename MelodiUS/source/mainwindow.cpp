@@ -141,17 +141,44 @@ void MainWindow::lightMode()
 }
 void MainWindow::on_pushButtonA_clicked()
 {
-    int        nbs = ui.P.ajoutLigne();
-    if(nbs >= 6)
-    {
-        ui.groupBoxPartition.resize(ui.groupBoxPartition.width(), 885 + ((nbs - 6) * 150));
-    }
-    NoteWidget A{&ui.groupBoxPartition, Note{NoteType::Noire, NoteValue::A4},100,0};
-    A.show();
-    NoteWidget B{&ui.groupBoxPartition, Note{NoteType::Blanche, NoteValue::A5},150,0};
-    B.show();
-    NoteWidget C{&ui.groupBoxPartition, Note{NoteType::Croche, NoteValue::C4}, 200,0};
-    C.show();
+    std::vector<Note> test;
+    
+
+    Note a(NoteType::Noire, NoteValue::B2);
+    Note b(NoteType::Blanche, NoteValue::B3);
+    Note c(NoteType::Blanche, NoteValue::B4);
+    test.push_back(a);
+    test.push_back(b);
+    test.push_back(c);
+    test.push_back(a);
+    test.push_back(b);
+    test.push_back(c);
+    test.push_back(a);
+    test.push_back(b);
+    test.push_back(c);
+    test.push_back(a);
+    test.push_back(b);
+    test.push_back(c);
+    test.push_back(a);
+    test.push_back(b);
+    test.push_back(c);
+    test.push_back(a);
+    test.push_back(b);
+    test.push_back(c);
+    test.push_back(a);
+    test.push_back(b);
+    test.push_back(c);
+    test.push_back(a);
+    test.push_back(b);
+    test.push_back(c);
+    test.push_back(a);
+    test.push_back(b);
+    test.push_back(c);
+    test.push_back(a);
+    test.push_back(b);
+    test.push_back(c);
+    
+    ui.P.ecrireMusique(test);
 }
 
 void MainWindow::updateBargraph()
@@ -167,6 +194,11 @@ void MainWindow::updateBargraph()
 void MainWindow::resizeEvent(QResizeEvent* event)
 {
     QMainWindow::resizeEvent(event);
+    ui.scrollArea.setGeometry(250, 0, (width() - 250), height());
+    ui.scrollArea.setWidget(&ui.groupBoxPartition);
+    ui.scrollArea.setWidgetResizable(false);
+    ui.scrollArea.show();
+    ui.groupBoxPartition.resize(ui.scrollArea.width() - 20, ui.groupBoxPartition.height());
 
 }
 
