@@ -19,6 +19,7 @@ HEADERS += ./include/note.h
 HEADERS += ./include/Partition.h
 HEADERS += ./include/Portee.h
 HEADERS += ./include/Temps.h
+HEADERS += ./include/song_player.h
 
 # Sources
 SOURCES += ./source/main.cpp
@@ -32,7 +33,8 @@ SOURCES += ./source/fft.cpp
 SOURCES += ./source/tuning.cpp
 SOURCES += ./source/Portee.cpp
 SOURCES += ./source/Partition.cpp
-SOOURCE += ./source/Temps.cpp
+SOURCES += ./source/Temps.cpp
+SOURCES += ./source/song_player.cpp
 
 
 # Platform-specific project settings
@@ -58,7 +60,7 @@ win32 {
         LIB          += ./CommunicationFPGA/CommunicationFPGA-release.lib
     }
 
-    HEADERS += ./include/widgets/widget_note.h
+    HEADERS += ./include/widgets/widget_note.h ./include/widgets/roundbutton.h ./include/widgets/levelled_progressbar.h
     HEADERS += ./include/mainwindow.h ./include/mainwindow_ui.h
 
     SOURCES += ./source/mainwindow.cpp

@@ -4,9 +4,6 @@
 #include "note.h"
 
 #include <algorithm>
-#include <array>
-#include <string>
-#include <utility>
 
 using noteLookup_t = std::tuple<double, std::string, NoteValue>;
 extern std::array<noteLookup_t, static_cast<int64_t>(NoteValue::UNKNOWN) + 1> noteLookup;
@@ -41,6 +38,20 @@ inline static void InitNoteLookup()
                       {932.33, "A#5", NoteValue::As5},        {987.77, "B5", NoteValue::B5},
                       {1046.50, "C6", NoteValue::C6},         {0., "UNKNOWN", NoteValue::UNKNOWN}};
     }
+}
+
+[[nodiscard]] inline static double FindFreqFromNote(NoteValue val)
+{
+    /* clang-format off */
+    auto it = std::find_if(noteLookup.begin(), noteLookup.end(),
+                           [val](const noteLookup_t& look)
+                           {
+                               NoteValue otherVal = std::get<2>(look);
+                               return otherVal == val;
+                           });
+    /* clang-format on */
+
+    return std::get<0>(*it);
 }
 
 [[nodiscard]] inline static std::pair<std::string, NoteValue> FindNoteFromFreq(double freq)

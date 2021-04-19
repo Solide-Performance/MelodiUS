@@ -4,7 +4,6 @@
 #include "globaldef.h"
 
 #include <algorithm>
-#include <array>
 #include <cmath>
 #include <iostream>
 #include <thread>

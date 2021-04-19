@@ -10,6 +10,7 @@
 #include "readwrite_wav.h"
 #include "recorder.h"
 #include "recording.h"
+#include "song_player.h"
 #include "tuning.h"
 
 #include "mainwindow.h"
@@ -20,13 +21,12 @@
 
 #include <filesystem>
 #include <iostream>
-#include <string>
 #include <thread>
 
 
 /*****************************************************************************/
 /* Constants --------------------------------------------------------------- */
-constexpr size_t SECONDS_MAX = 60;
+constexpr size_t SECONDS_MAX = 120;
 constexpr size_t SECONDS_MIN = 0;
 constexpr size_t FREQ_MAX    = 20000;
 constexpr size_t FREQ_MIN    = 50;
@@ -42,20 +42,21 @@ bool setupFPGA();
 
 /*****************************************************************************/
 /* Entry point ------------------------------------------------------------- */
+int invokeGUI(int argc, char* argv[])
+{
+    QCoreApplication::addLibraryPath(".");
+    QApplication a(argc, argv);
+    MainWindow   w;
+    w.showMaximized();
+    return a.exec();
+}
+
 int main(int argc, char* argv[])
 {
     InitNoteLookup();
 
     /* Invoke GUI */
-    std::thread gui{[](int argc, char* argv[]) {
-                        QCoreApplication::addLibraryPath(".");
-                        QApplication a(argc, argv);
-                        MainWindow   w;
-                        w.show();
-                        return a.exec();
-                    },
-                    argc,
-                    argv};
+    std::thread gui{&invokeGUI, argc, argv};
 
     /* portaudio init */
     std::thread portAudioInitThread(setupPortaudio);
@@ -323,7 +324,7 @@ void fpgaMenuHandler()
     Recording rec;
 
     // clang-format off
-    FPGA::SetPhonemeCallback(Phoneme::a, [&rec]() mutable
+    /*FPGA::SetPhonemeCallback(Phoneme::a, [&rec]() mutable
                                          {
                                              rec = Record(60);
                                          });
@@ -362,7 +363,7 @@ void fpgaMenuHandler()
                                              {
                                                  analyse_rythme(rec);
                                              }
-                                         });
+                                         });*/
     // clang-format on
 
     FPGA::StartListener();
