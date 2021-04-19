@@ -73,13 +73,16 @@ class Note
 public:
     const NoteType  noteType;
     const NoteValue noteValue;
+    bool            liee;
 
-    constexpr Note() : noteType{NoteType::UNKNOWN}, noteValue{NoteValue::UNKNOWN}
+    constexpr Note() : noteType{NoteType::UNKNOWN}, noteValue{NoteValue::UNKNOWN}, liee{false}
     {
     }
-    constexpr Note(NoteType nt, NoteValue nv) : noteType{nt}, noteValue{nv}
+    constexpr Note(NoteType nt, NoteValue nv, bool lieee = false) : noteType{nt}, noteValue{nv}, liee{lieee}
     {
     }
+    constexpr Note(const Note& other) = default;
+
     NoteType getNoteType()
     {
         return noteType;
@@ -88,6 +91,59 @@ public:
     {
         return noteValue;
     }
+
+    double getNoteSum()
+    {
+        if(noteType == NoteType::Ronde)
+        {
+            return 4;
+        }
+        else if(noteType == NoteType::Blanche)
+        {
+            return 2;
+        }
+        else if(noteType == NoteType::Noire)
+        {
+            return 1;
+        }
+        else if(noteType == NoteType::Croche)
+        {
+            return 0.5;
+        }
+        else if(noteType == NoteType::DoubleCroche)
+        {
+            return 0.25;
+        }
+        else if(noteType == NoteType::Pause)
+        {
+            return 4;
+        }
+        else if(noteType == NoteType::DemiPause)
+        {
+            return 2;
+        }
+        else if(noteType == NoteType::Silence)
+        {
+            return 1;
+        }
+        else if(noteType == NoteType::DemiSilence)
+        {
+            return 0.5;
+        }
+        else if(noteType == NoteType::QuartSilence)
+        {
+            return 0.25;
+        }
+    }
+    bool isLiee()
+    {
+        return liee;
+    }
+    void setLiee(bool val)
+    {
+        liee = val;
+    }
+
     [[nodiscard]] bool isSharp()
     {
         static std::array<bool, static_cast<int64_t>(NoteValue::UNKNOWN) + 1> lookupTable{
@@ -107,7 +163,8 @@ public:
     }
 
 
-        static std::unordered_map<NoteType, std::string> lookupTable{LOOKUP_NOTE_TYPE(NoteType::Ronde),
+        static std::unordered_map<NoteType, std::string> lookupTable{
+          LOOKUP_NOTE_TYPE(NoteType::Ronde),
           LOOKUP_NOTE_TYPE(NoteType::Blanche),
           LOOKUP_NOTE_TYPE(NoteType::Noire),
           LOOKUP_NOTE_TYPE(NoteType::Croche),
@@ -117,8 +174,7 @@ public:
           LOOKUP_NOTE_TYPE(NoteType::Silence),
           LOOKUP_NOTE_TYPE(NoteType::DemiSilence),
           LOOKUP_NOTE_TYPE(NoteType::QuartSilence),
-          LOOKUP_NOTE_TYPE(NoteType::UNKNOWN)
-        };
+          LOOKUP_NOTE_TYPE(NoteType::UNKNOWN)};
 
         return lookupTable[noteType];
     }

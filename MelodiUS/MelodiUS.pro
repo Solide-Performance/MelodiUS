@@ -18,7 +18,6 @@ HEADERS += ./include/tuning.h
 HEADERS += ./include/note.h
 HEADERS += ./include/Partition.h
 HEADERS += ./include/Portee.h
-HEADERS += ./include/Temps.h
 HEADERS += ./include/song_player.h
 
 # Sources
@@ -33,7 +32,6 @@ SOURCES += ./source/fft.cpp
 SOURCES += ./source/tuning.cpp
 SOURCES += ./source/Portee.cpp
 SOURCES += ./source/Partition.cpp
-SOURCES += ./source/Temps.cpp
 SOURCES += ./source/song_player.cpp
 
 

@@ -17,18 +17,20 @@ private:
     int m_x;
     int m_y;
 
+    bool liee;
 
 public:
     NoteWidget() = delete;
-    NoteWidget(QWidget* parent, Note note, int x)
-    : m_note{note}, m_x{x}, m_y{LookupNoteHeight(note.noteValue)}
+    NoteWidget(QWidget* parent, Note note, int x, int ligne)
+    : m_note{note}, m_x{x}, m_y{LookupNoteHeight(note.noteValue) + (150 * ligne)}
     {
         /* Setup note head*/
         m_noteHead         = new QLabel(parent);
-        QPixmap headPixmap = LookupNoteHead(note.noteType);
+        QPixmap headPixmap = LookupNoteHead(note.noteType).scaled(30,65,Qt::KeepAspectRatio);
         m_noteHead->setPixmap(headPixmap);
         m_noteHead->setMask(headPixmap.mask());
         m_noteHead->setGeometry(QRect{m_x, m_y, headPixmap.width(), headPixmap.height()});
+        
     }
     NoteType getNoteType()
     {
@@ -77,6 +79,10 @@ public:
             m_noteTailEnd->hide();
         }
     }
+    void lieeNote(bool val)
+    {
+        liee = val;
+    }
 
 private:
     static int LookupNoteHeight(NoteValue note)
@@ -95,15 +101,15 @@ private:
     {
         static const std::array<QString, static_cast<int64_t>(NoteValue::UNKNOWN)> lookupTable{
           "images/ronde.png",
-          "images/blancheHead.png",
-          "images/noireHead.png",
-          "images/noireHead.png", /* Les croches */
+          "images/blanche.png",
+          "images/noire.png",
+          "images/croche.png", /* Les croches */
           "images/noireHead.png",
           "images/pause.png",
-          "images/demiPause.png",
+          "images/demi_pause.png",
           "images/silence.png",
-          "images/demiSilence.png",
-          "images/quartSilence.png",
+          "images/demi_silence.png",
+          "images/quart_silence.png",
         };
 
         return QPixmap{lookupTable[static_cast<int64_t>(note)]};

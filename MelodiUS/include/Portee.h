@@ -61,7 +61,7 @@ public:
         ///=== LIGNE VERTICALE ========//
         for(int i = 6; i < 10; i++)
         {
-            lines[i].setGeometry(QRect(237 * (i - 5), 140 + decalage, 20, 81));
+            lines[i].setGeometry(QRect(215.75 * (i - 5)+85, 140 + decalage, 20, 81));
             lines[i].setFrameShape(QFrame::VLine);
             lines[i].setFrameShadow(QFrame::Plain);
         }
@@ -69,10 +69,8 @@ public:
         lines[5].setFrameShape(QFrame::VLine);
         lines[5].setFrameShadow(QFrame::Plain);
 
-        QPixmap ClePixmap{"images/cle40x80T.png"};
-        Cle.setGeometry(QRect(10, 130 + decalage, 51, 101));
-        Cle.setPixmap(ClePixmap);
-        Cle.setMask(ClePixmap.mask());
+        Cle.setGeometry(QRect(10, 125 + decalage, 70, 115));
+        Cle.setPixmap(QPixmap(QString::fromUtf8("images/clef_sol.png")).scaled(70, 115, Qt::KeepAspectRatio));
         Cle.lower();
     };
 

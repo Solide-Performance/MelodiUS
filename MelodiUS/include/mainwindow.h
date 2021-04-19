@@ -2,8 +2,8 @@
 /*************************************************************************************************/
 /* Includes ------------------------------------------------------------------------------------ */
 #include "mainwindow_ui.h"
-#include "recording.h"
 #include "note.h"
+#include "recording.h"
 
 #include <thread>
 
@@ -21,6 +21,7 @@ public slots:
     void startRecord();
     void stopRecord();
     void updateBargraph();
+    void resizeEvent(QResizeEvent* event);
 
     void play();
     void processing();
@@ -29,6 +30,7 @@ public slots:
     void loading();
     void interpret();
 
+
 private:
     void Calibrate(Phoneme phoneme);
     void DisableAllButtons();
@@ -36,6 +38,7 @@ private:
     void ConnectControlSignals();
     void DisconnectControlSignals();
     void SetupMenus();
+
 
 private:
     Ui_MainWindow     ui;
