@@ -58,6 +58,7 @@ public:
         if(note.liee && note.getNoteValue() != NoteValue::UNKNOWN)
         {
             m_legato = new QLabel(parent);
+            m_legato->setAttribute(Qt::WidgetAttribute::WA_DeleteOnClose);
             if((int)note.getNoteValue() >= 19 && (int)note.getNoteValue() != 45)
             {
                 QPixmap h = QPixmap("images/legato.png");
@@ -82,6 +83,7 @@ public:
         if(note.isSharp())
         {
             m_diese   = new QLabel(parent);
+            m_diese->setAttribute(Qt::WidgetAttribute::WA_DeleteOnClose);
             QPixmap d = QPixmap("images/diese.png");
             d         = d.scaled(20, 25, Qt::IgnoreAspectRatio);
             m_diese->setPixmap(d);
@@ -102,6 +104,7 @@ public:
                 break;
             case 1:
                 m_ledger = new QFrame(parent);
+                m_ledger->setAttribute(Qt::WidgetAttribute::WA_DeleteOnClose);
                 if((int)note.getNoteValue() >= 19 && (int)note.getNoteValue() != 45)
                 {
                     m_ledger->setGeometry(QRect(m_x - 5, m_y - 40, 40, 100));
@@ -119,6 +122,7 @@ public:
                 break;
             case 2:
                 m_ledger = new QFrame(parent);
+                m_ledger->setAttribute(Qt::WidgetAttribute::WA_DeleteOnClose);
                 m_ledger->setGeometry(QRect(m_x - 5, m_y + 14, 40, 100));
                 m_ledger->setFrameShape(QFrame::HLine);
                 m_ledger->setFrameShadow(QFrame::Plain);
@@ -126,6 +130,7 @@ public:
                 break;
             case 3:
                 m_ledger = new QFrame(parent);
+                m_ledger->setAttribute(Qt::WidgetAttribute::WA_DeleteOnClose);
                 m_ledger->setGeometry(QRect(m_x - 5, m_y - 47, 40, 100));
                 m_ledger->setFrameShape(QFrame::HLine);
                 m_ledger->setFrameShadow(QFrame::Plain);
@@ -172,6 +177,21 @@ public:
         {
             m_noteHead->close();
             m_noteHead = nullptr;
+        }
+        if(m_diese)
+        {
+            m_diese->close();
+            m_diese = nullptr;
+        }
+        if(m_legato)
+        {
+            m_legato->close();
+            m_legato = nullptr;
+        }
+        if(m_ledger)
+        {
+            m_ledger->close();
+            m_ledger = nullptr;
         }
     }
 

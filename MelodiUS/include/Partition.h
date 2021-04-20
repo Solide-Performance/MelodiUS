@@ -33,11 +33,12 @@ public:
         valeur = 0;
         nbsLigne = 0;       
         composition.clear();
-
+        compo.clear();
         for(size_t i = 1; i < feuille.size(); i++)
         {
             feuille[i].~Portee();
         }
+        ajoutLigne();
     }
     void resteApres(double reste, int mesure, int valeurParMesure, std::vector<Note> vecNote,int i);
 
