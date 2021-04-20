@@ -73,6 +73,7 @@ public:
         Cle.setPixmap(QPixmap(QString::fromUtf8("images/clef_sol.png")).scaled(70, 115, Qt::KeepAspectRatio));
         Cle.lower();
     };
+    ~Portee() = default;
 
 
     std::array<QFrame, 10> lines;

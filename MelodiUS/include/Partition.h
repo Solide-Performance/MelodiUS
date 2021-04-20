@@ -31,10 +31,13 @@ public:
         nom = 0;
         denom = 0;
         valeur = 0;
-        nbsLigne = 0;
-        //feuille.clear();
-        
+        nbsLigne = 0;       
         composition.clear();
+
+        for(size_t i = 1; i < feuille.size(); i++)
+        {
+            feuille[i].~Portee();
+        }
     }
 
 private:
