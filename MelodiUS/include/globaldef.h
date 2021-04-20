@@ -18,14 +18,16 @@
 #include <gcem/gcem.hpp>
 
 #pragma region Qt Includes
-#include <QFileDialog>
+#include <QDebug>
 #include <QtCore/QTimer>
 #include <QtGlobal>
 #include <QtGui/QBitmap>
 #include <QtGui/QPainter>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QComboBox>
+#include <QtWidgets/QFileDialog>
 #include <QtWidgets/QFrame>
+#include <QtWidgets/QGraphicsPixmapItem>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHBoxLayout>
@@ -41,7 +43,6 @@
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QVBoxLayout>
-#include <QtWidgets/QGraphicsPixmapItem>
 
 
 

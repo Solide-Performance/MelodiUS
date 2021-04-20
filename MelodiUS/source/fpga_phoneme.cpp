@@ -102,6 +102,7 @@ static Phoneme                              m_oldPhoneme             = Phoneme::
 static size_t                               m_phonemeCounter         = 0;
 static size_t                               m_errorCounter           = 0;
 static bool                                 m_phonemeCallbackEnabled = true;
+static bool                                 m_wait                   = false;
 
 
 /*****************************************************************************/
@@ -329,6 +330,11 @@ bool LoadCalibrationFile()
     }
 }
 
+void Wait()
+{
+    m_wait = true;
+}
+
 
 /*****************************************************************************/
 /* Static functions definitions -------------------------------------------- */
@@ -339,8 +345,16 @@ static void ListenerThread()
 
     while(m_run == true)
     {
+        if(m_wait == true)
+        {
+            /* Sleep */
+            m_wait = false;
+            std::this_thread::sleep_for(ADC_MEASURE_DELAY * 20);
+            continue;
+        }
         if(m_isConnected == false)
         {
+            m_wait = false;
             /* Sleep */
             std::this_thread::sleep_for(ADC_MEASURE_DELAY * 10);
             continue;
