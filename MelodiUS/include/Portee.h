@@ -50,26 +50,26 @@ public:
             QFrame{parent},
             QFrame{parent}}
     {
-        int decalage = (150 * n);
+        int decalage = (350 * n);
         ///=== LIGNE HORIZONTALE ========//
         for(int i = 0; i < 5; i++)
         {
-            lines[i].setGeometry(QRect(20, 130 + (20 * i) + decalage, 938, 21));
+            lines[i].setGeometry(QRect(20, 160 + (20 * i) + decalage, 938, 21));
             lines[i].setFrameShape(QFrame::HLine);
             lines[i].setFrameShadow(QFrame::Plain);
         }
         ///=== LIGNE VERTICALE ========//
         for(int i = 6; i < 10; i++)
         {
-            lines[i].setGeometry(QRect(215.75 * (i - 5)+85, 140 + decalage, 20, 81));
+            lines[i].setGeometry(QRect(215.75 * (i - 5)+85, 170 + decalage, 20, 81));
             lines[i].setFrameShape(QFrame::VLine);
             lines[i].setFrameShadow(QFrame::Plain);
         }
-        lines[5].setGeometry(QRect(10, 140 + decalage, 20, 81));    // debut
+        lines[5].setGeometry(QRect(10, 170 + decalage, 20, 81));    // debut
         lines[5].setFrameShape(QFrame::VLine);
         lines[5].setFrameShadow(QFrame::Plain);
 
-        Cle.setGeometry(QRect(10, 125 + decalage, 70, 115));
+        Cle.setGeometry(QRect(10, 155 + decalage, 70, 115));
         Cle.setPixmap(QPixmap(QString::fromUtf8("images/clef_sol.png")).scaled(70, 115, Qt::KeepAspectRatio));
         Cle.lower();
     };
