@@ -47,6 +47,11 @@ namespace FPGA
 
 /*****************************************************************************/
 /* Constants --------------------------------------------------------------- */
+constexpr float FILTER1_WEIGTH = 1.f;
+constexpr float FILTER2_WEIGTH = 1.f;
+constexpr float FILTER3_WEIGTH = 0.5f;
+constexpr float FILTER4_WEIGTH = 2.f;
+
 constexpr uint8_t ADC_PHONEME_DEFAULT_THRESHOLD = 0x80; /* 50% */
 constexpr int     ADC_PHONEME_MARGIN            = 0x80; /* 50% */
 constexpr size_t  COUNTER_MAX_PHONEME_THRESHOLD = 5;
@@ -73,7 +78,7 @@ static void ListenerThread();
 static bool CheckADCPhonemes();
 static void CheckButtonPhonemes();
 static void CallCallback(Phoneme channel);
-static int  CheckADCDistance(Phoneme phonemeToCheck);
+static int  CheckADCDistance(const std::array<int, 4>& values, Phoneme phonemeToCheck);
 static void DisplayADC();
 static bool AddError();
 
@@ -363,15 +368,16 @@ static void ListenerThread()
         int     adc2p = adc2 / 255.f * 100.f;
         int     adc3p = adc3 / 255.f * 100.f;
         int     adc4p = adc4 / 255.f * 100.f;
-        std::printf("\r 0x%2X (%2.d%%)\t| 0x%2X (%2.d%%)\t| 0x%2X (%2.d%%)\t| 0x%2X (%2.d%%)",
-                    adc1,
-                    adc1p,
-                    adc2,
-                    adc2p,
-                    adc3,
-                    adc3p,
-                    adc4,
-                    adc4p);
+
+        /* clang-format off */
+        std::printf(
+          "\r 0x%2X (%2.d%%)\t| 0x%2X (%2.d%%)\t| 0x%2X (%2.d%%)\t| 0x%2X (%2.d%%) \t Vu:%s \t",
+              adc1,  adc1p,     adc2,  adc2p,     adc3,  adc3p,     adc4,  adc4p, 
+          m_currentPhoneme == Phoneme::a ? "A" :
+          m_currentPhoneme == Phoneme::ey ? "EY" :
+          m_currentPhoneme == Phoneme::ae ? "AE" :
+          m_currentPhoneme == Phoneme::i ? "I" : "  ");
+        /* clang-format on */
 
         /* Check for phonemes in the buttons */
         CheckButtonPhonemes();
@@ -387,26 +393,33 @@ static void ListenerThread()
     }
 }
 
-static int CheckADCDistance(Phoneme phonemeToCheck)
+static int CheckADCDistance(const std::array<int, 4>& values, Phoneme phonemeToCheck)
 {
     std::array<int, 4>& threshold = m_adcThreshold[PHONEME_INDEX(phonemeToCheck)];
 
-    int distanceFilter1 = std::abs(m_adc[0] - threshold[0]);
-    int distanceFilter2 = std::abs(m_adc[1] - threshold[1]);
-    int distanceFilter3 = std::abs(m_adc[2] - threshold[2]);
-    int distanceFilter4 = std::abs(m_adc[3] - threshold[3]);
+    int distanceFilter1 = std::abs(values[0] - threshold[0]) / FILTER1_WEIGTH;
+    int distanceFilter2 = std::abs(values[1] - threshold[1]) / FILTER2_WEIGTH;
+    int distanceFilter3 = std::abs(values[2] - threshold[2]) / FILTER3_WEIGTH;
+    int distanceFilter4 = std::abs(values[3] - threshold[3]) / FILTER4_WEIGTH;
 
     return distanceFilter1 + distanceFilter2 + distanceFilter3 + distanceFilter4;
 }
 
 static bool CheckADCPhonemes()
 {
-    std::array<int, 5> distances = {0, 0, 0, 0, ADC_PHONEME_MARGIN};
+    int thresholdDistance1 = CheckADCDistance({}, Phoneme::a);
+    int thresholdDistance2 = CheckADCDistance({}, Phoneme::ey);
+    int thresholdDistance3 = CheckADCDistance({}, Phoneme::ae);
+    int thresholdDistance4 = CheckADCDistance({}, Phoneme::i);
+    int minThresholdDistance =
+      std::min({thresholdDistance1, thresholdDistance2, thresholdDistance3, thresholdDistance4});
 
-    distances[0] = CheckADCDistance(Phoneme::a);
-    distances[1] = CheckADCDistance(Phoneme::ey);
-    distances[2] = CheckADCDistance(Phoneme::ae);
-    distances[3] = CheckADCDistance(Phoneme::i);
+    std::array<int, 6> distances = {0, 0, 0, 0, ADC_PHONEME_MARGIN, minThresholdDistance / 2};
+
+    distances[0] = CheckADCDistance(m_adc, Phoneme::a);
+    distances[1] = CheckADCDistance(m_adc, Phoneme::ey);
+    distances[2] = CheckADCDistance(m_adc, Phoneme::ae);
+    distances[3] = CheckADCDistance(m_adc, Phoneme::i);
 
     auto smallest = std::min_element(distances.begin(), distances.end()) - distances.begin();
 
@@ -425,6 +438,8 @@ static bool CheckADCPhonemes()
             m_currentPhoneme = Phoneme::i;
             break;
         case 4:
+            [[fallthrough]];
+        case 5:
             [[fallthrough]];
         default:
             m_currentPhoneme = Phoneme::UNKNOWN;
