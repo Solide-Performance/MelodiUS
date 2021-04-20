@@ -13,13 +13,13 @@ int Partition::ajoutLigne()
 
 void Partition::ecrireMusique(std::vector<Note> vecNote)
 {
-    nom                                   = spinBox.value();
-    denom                                 = spinBox.value();
-    int                            ligne  = 0;
-    int                            mesure = 0;
-    std::vector<std::vector<Note>> compo;
+    nom        = spinBox.value();
+    denom      = spinBox.value();
+    int ligne  = 0;
+    int mesure = 0;
+
     compo.push_back(std::vector<Note>());
-    std::array<double, 5> valNoteComparasion = {4, 2, 1, 0.5, 0.25};
+    std::array<double, 5> valNoteComparasion = {4, 2, 1, 0.5};
     if((nom != 1 && nom != 2 && nom != 4 && nom != 8 && nom != 16)
        && (denom != 1 && denom != 2 && denom != 3 && denom != 4 && denom != 5 && denom != 6
            && denom != 7 && denom != 8))
@@ -30,7 +30,7 @@ void Partition::ecrireMusique(std::vector<Note> vecNote)
 
 
     //=============== Boute de code qui ce repete pour chaque note du vecteur et qui transforme le
-    //tout en note prete a etre mise dans une portee============//
+    // tout en note prete a etre mise dans une portee============//
     for(int i = 0; i < vecNote.size(); i++)
     {
         // On commence par verifier si la mesure est pleine et si oui on rajoute une mesuere
@@ -54,87 +54,207 @@ void Partition::ecrireMusique(std::vector<Note> vecNote)
         else    // si sa rentre pas
         {
             // on commence par rentrer ce qui renrte et definir le reste qui rentre pas
-            double reste        = sum + vecNote[i].getNoteSum() - valeurParMesure;
-            double noteAAjouter = valeurParMesure - sum;
-            compo[mesure].push_back(Note(GetNoteValueValue(noteAAjouter, vecNote[i].getNoteValue()),
-                                         vecNote[i].getNoteValue(),
-                                         false));
-            mesure++;    // on change de mesure pour la suite
-            compo.push_back(std::vector<Note>());
-            while(std::find(valNoteComparasion.begin(), valNoteComparasion.end(), reste)
+            double reste      = sum + vecNote[i].getNoteSum() - valeurParMesure;
+            double resteAvant = valeurParMesure - sum;
+            bool   first      = true;
+            while(std::find(valNoteComparasion.begin(), valNoteComparasion.end(), resteAvant)
                   == valNoteComparasion.end())
             {
-                // on regarde si la mesure suivante est pleine
-                double sum = 0;
-                for(int j = 0; i < compo[mesure].size(); i++)
+                double noteAAjouter = 0;
+                if(resteAvant - 4 > 0)
                 {
-                    sum += compo[mesure][j].getNoteSum();
+                    noteAAjouter = 4;
                 }
-                // on regarde si sa rentre dans la mesure
-                if(sum + reste >= valeurParMesure)    // si non
+                else if(resteAvant - 2 > 0)
                 {
-                    double noteAAjouter = valeurParMesure - sum;
-                    compo[mesure].push_back(
-                      Note(GetNoteValueValue(noteAAjouter, vecNote[i].getNoteValue()),
-                           vecNote[i].getNoteValue(),
-                           true));
-                    mesure++;    // on change de mesure pour la suite
-                    compo.push_back(std::vector<Note>());
-                    reste = reste - noteAAjouter;
+                    noteAAjouter = 2;
                 }
-                else    // si oui
+                else if(resteAvant - 1 > 0)
                 {
-                    double noteAAjouter = 0;
-                    if(reste - 2 > 0)
-                    {
-                        noteAAjouter = 2;
-                    }
-                    else if(reste - 1 > 0)
-                    {
-                        noteAAjouter = 1;
-                    }
-                    else if(reste - 0.5 > 0)
-                    {
-                        noteAAjouter = 0.5;
-                    }
-                    compo[mesure].push_back(
-                      Note(GetNoteValueValue(noteAAjouter, vecNote[i].getNoteValue()),
-                           vecNote[i].getNoteValue(),
-                           true));
-                    reste = reste - noteAAjouter;
+                    noteAAjouter = 1;
                 }
+                else if(resteAvant - 0.5 > 0)
+                {
+                    noteAAjouter = 0.5;
+                }
+                compo[mesure].push_back(
+                  Note(GetNoteValueValue(noteAAjouter, vecNote[i].getNoteValue()),
+                       vecNote[i].getNoteValue(),
+                       !first));
+                first      = false;
+                resteAvant = resteAvant - noteAAjouter;
             }
-            compo[mesure].push_back(Note(GetNoteValueValue(reste, vecNote[i].getNoteValue()),
+            compo[mesure].push_back(Note(GetNoteValueValue(resteAvant, vecNote[i].getNoteValue()),
                                          vecNote[i].getNoteValue(),
-                                         true));
+                                         !first));
+            mesure++;
+            compo.push_back(std::vector<Note>());
+            resteApres(reste, mesure, valeurParMesure, vecNote, i);
         }
     }
+    
+    double sum = 0;
+    for(int j = 0; j < compo[mesure].size(); j++)
+    {
+        sum += compo[mesure][j].getNoteSum();
+    }
+    double resteAvant = valeurParMesure - sum;
+    if(resteAvant!=0)
+    {
+        while(std::find(valNoteComparasion.begin(), valNoteComparasion.end(), resteAvant)
+              == valNoteComparasion.end())
+        {
+            double noteAAjouter = 0;
+            if(resteAvant - 4 > 0)
+            {
+                noteAAjouter = 4;
+            }
+            else if(resteAvant - 2 > 0)
+            {
+                noteAAjouter = 2;
+            }
+            else if(resteAvant - 1 > 0)
+            {
+                noteAAjouter = 1;
+            }
+            else if(resteAvant - 0.5 > 0)
+            {
+                noteAAjouter = 0.5;
+            }
+            compo[mesure].push_back(
+              Note(GetNoteValueValue(noteAAjouter, NoteValue::UNKNOWN), NoteValue::UNKNOWN, false));
+            resteAvant = resteAvant - noteAAjouter;
+        }
+        compo[mesure].push_back(
+          Note(GetNoteValueValue(resteAvant, NoteValue::UNKNOWN), NoteValue::UNKNOWN, false));
+    }
+    
+
     //=============== Boute de code qui transforme les note en notewidget et qui affiche chaque
-    //mesure a la bonne place====================//
-    ligne        = 0;
-    bool passage = false;
+    // mesure a la bonne place====================//
+    ligne          = 0;
+    bool   passage = false;
+    int lastX   = 0;
+    int    nbsNote = 0;
     for(int i = 0; i < compo.size(); i++)
     {
         if(i % 4 == 0 && passage)
         {
             ajoutLigne();
-            m_parent->resize(m_parent->width(), m_parent->height() + 150);
+            m_parent->resize(m_parent->width(), m_parent->height() + 350);
             ligne++;
         }
         for(int j = 0; j < compo[i].size(); j++)
         {
-            NoteWidget* a = new NoteWidget(
-              m_parent,
-              compo[i][j],
+            int posX =
               (int)((((i % 4) * 215) + 85)
-                    + (((j + 1) * (200 / compo[i].size())) - (200 / compo[i].size()) + 15)),
-              ligne);
+                    + (((j + 1) * (200 / compo[i].size())) - (200 / compo[i].size()) + 15));
+           
+            if(!(i == 0 && j == 0))
+            {
+                if((posX - (composition[nbsNote - 1].getX()) < 500))
+                {
+                    lastX = composition[nbsNote - 1].getX();
+                }
+            }
+            else
+            { 
+                lastX = posX-125;
+            }
+            NoteWidget* a = new NoteWidget(m_parent, compo[i][j], posX, ligne, lastX);
             composition.push_back(*a);
             a->show();
+            nbsNote++;
         }
         passage = true;
     }
 }
+void Partition::resteApres(double            reste,
+                           int               mesure,
+                           int               valeurParMesure,
+                           std::vector<Note> vecNote,
+                           int               i)
+{
+
+    std::array<double, 5> valNoteComparasion = {4, 2, 1, 0.5};
+
+    while(std::find(valNoteComparasion.begin(), valNoteComparasion.end(), reste)
+          == valNoteComparasion.end())
+    {
+        // on regarde si la mesure suivante est pleine
+        double sum = 0;
+        for(int j = 0; j < compo[mesure].size(); j++)
+        {
+            sum += compo[mesure][j].getNoteSum();
+        }
+
+        // on regarde si sa rentre dans la mesure
+        if(sum + reste >= valeurParMesure)    // si non
+        {
+            if(sum >= valeurParMesure)
+            {
+                mesure++;
+                compo.push_back(std::vector<Note>());
+                sum = 0;
+            }
+            double resteAvant   = valeurParMesure - sum;
+            double noteAAjouter = 0;
+            if(resteAvant - 4 > 0)
+            {
+                noteAAjouter = 4;
+            }
+            else if(resteAvant - 2 > 0)
+            {
+                noteAAjouter = 2;
+            }
+            else if(resteAvant - 1 > 0)
+            {
+                noteAAjouter = 1;
+            }
+            else if(resteAvant - 0.5 > 0)
+            {
+                noteAAjouter = 0.5;
+            }
+            compo[mesure].push_back(Note(GetNoteValueValue(noteAAjouter, vecNote[i].getNoteValue()),
+                                         vecNote[i].getNoteValue(),
+                                         true));
+            reste = reste - noteAAjouter;
+
+            resteApres(reste, mesure, valeurParMesure, vecNote, i);
+        }
+        else    // si oui
+        {
+            double noteAAjouter = 0;
+            if(reste - 4 > 0)
+            {
+                noteAAjouter = 4;
+            }
+            else if(reste - 2 > 0)
+            {
+                noteAAjouter = 2;
+            }
+            else if(reste - 1 > 0)
+            {
+                noteAAjouter = 1;
+            }
+            else if(reste - 0.5 > 0)
+            {
+                noteAAjouter = 0.5;
+            }
+            compo[mesure].push_back(Note(GetNoteValueValue(noteAAjouter, vecNote[i].getNoteValue()),
+                                         vecNote[i].getNoteValue(),
+                                         true));
+            reste = reste - noteAAjouter;
+        }
+    }
+    if(reste != 0)
+    {
+        compo[mesure].push_back(Note(
+          GetNoteValueValue(reste, vecNote[i].getNoteValue()), vecNote[i].getNoteValue(), true));
+    }
+}
+
+
 
 bool Partition::mesureEstPleine()
 {

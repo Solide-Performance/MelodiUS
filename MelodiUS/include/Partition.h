@@ -12,20 +12,21 @@ public:
     {
         nbsLigne = 0;
         ajoutLigne();
-        spinBox.setGeometry(QRect(55, 150, 30, 22));
+        spinBox.setGeometry(QRect(55, 180, 30, 22));
         spinBox.setValue(4);
         spinBox.setRange(1, 8);
         spinBox.raise();
 
-        spinBox_2.setGeometry(QRect(55, 190, 30, 22));
+        spinBox_2.setGeometry(QRect(55, 210, 30, 22));
         spinBox_2.setValue(4);
-        spinBox_2.setRange(2, 8);
+        spinBox_2.setRange(1, 8);
         spinBox_2.setSingleStep(2);
         spinBox_2.raise();
     };
     ~Partition() = default;
 
     void ecrireMusique(std::vector<Note> Note);
+    void resteApres(double reste, int mesure, int valeurParMesure, std::vector<Note> vecNote,int i);
 
 private:
     QWidget* m_parent;
@@ -42,4 +43,5 @@ private:
 
     std::vector<Portee>     feuille;
     std::vector<NoteWidget> composition;
+    std::vector<std::vector<Note>> compo;
 };

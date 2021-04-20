@@ -41,6 +41,8 @@
 #include <QtWidgets/QSpinBox>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QGraphicsPixmapItem>
+
 
 
 #if QT_VERSION >= 0x060000
