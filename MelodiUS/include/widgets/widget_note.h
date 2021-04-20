@@ -14,23 +14,35 @@ private:
     QLabel* m_noteTailEnd = nullptr;
     QLabel* m_noteSharp   = nullptr;
     QLabel* m_legato      = nullptr;
+    QLabel* m_diese       = nullptr;
+    QFrame* m_ledger      = nullptr;
     int64_t m_tailLength;
 
-    int    m_x;
-    int    m_y;
+    int m_x;
+    int m_y;
     int theLastOfX;
 
 public:
     NoteWidget() = delete;
-    NoteWidget(QWidget* parent, Note note, int x, int ligne, int theLastOfX )
+    NoteWidget(QWidget* parent, Note note, int x, int ligne, int theLastOfX)
     : m_note{note},
       m_x{x},
       m_y{LookupNoteHeight(note.noteValue) + (350 * ligne)},
       theLastOfX{theLastOfX}
     {
+        if(note.getNoteValue() == NoteValue::UNKNOWN)
+        {
+            if(note.getNoteType() == NoteType::Pause)
+            {
+                m_y = 187 + (350 * ligne);
+            }
+            else if(note.getNoteType() == NoteType::DemiPause)
+            {
+                m_y = 199 + (350 * ligne);
+            }
+        }
         /* Setup note head*/
         m_noteHead         = new QLabel(parent);
-        m_legato           = new QLabel(parent);
         QPixmap headPixmap = LookupNoteHead(note.noteType).scaled(30, 65, Qt::KeepAspectRatio);
         if((int)note.getNoteValue() >= 19 && (int)note.getNoteValue() != 45)
         {
@@ -44,18 +56,18 @@ public:
         m_noteHead->setMask(headPixmap.mask());
         m_noteHead->setGeometry(QRect{m_x, m_y, headPixmap.width(), headPixmap.height()});
 
-        if(note.liee)
+        if(note.liee&&note.getNoteValue()!=NoteValue::UNKNOWN)
         {
-            
+            m_legato = new QLabel(parent);
             if((int)note.getNoteValue() >= 19 && (int)note.getNoteValue() != 45)
             {
                 QPixmap h = QPixmap("images/legato.png");
-                h = h.scaled(m_x - theLastOfX, h.height(), Qt::IgnoreAspectRatio);
+                h         = h.scaled(m_x - theLastOfX, h.height(), Qt::IgnoreAspectRatio);
                 m_legato->setPixmap(h);
-                m_legato->setGeometry(QRect{theLastOfX+10, m_y -25,m_x-theLastOfX, h.height()});
+                m_legato->setGeometry(
+                  QRect{theLastOfX + 10, m_y - 25, m_x - theLastOfX, h.height()});
                 m_legato->show();
-                std::cout <<m_y << std::endl;
-                
+                std::cout << m_y << std::endl;
             }
             else
             {
@@ -63,9 +75,65 @@ public:
                 h         = h.transformed(QTransform().rotate(180));
                 h         = h.scaled(m_x - theLastOfX, h.height(), Qt::IgnoreAspectRatio);
                 m_legato->setPixmap(h);
-                m_legato->setGeometry(QRect{theLastOfX+10, m_y + 55, m_x - theLastOfX, h.height()});
+                m_legato->setGeometry(
+                  QRect{theLastOfX + 10, m_y + 55, m_x - theLastOfX, h.height()});
                 m_legato->show();
             }
+        }
+        if(note.isSharp())
+        {
+            m_diese   = new QLabel(parent);
+            QPixmap d = QPixmap("images/diese.png");
+            d         = d.scaled(20, 25, Qt::IgnoreAspectRatio);
+            m_diese->setPixmap(d);
+            if((int)note.getNoteValue() >= 19 && (int)note.getNoteValue() != 45)
+            {
+                m_diese->setGeometry(QRect{m_x - 20, m_y, d.width(), d.height()});
+            }
+            else
+            {
+                m_diese->setGeometry(QRect{m_x - 20, m_y + 40, d.width(), d.height()});
+            }
+            m_diese->show();
+        }
+        int ledger = LookupNoteLedger(note.getNoteValue());
+        switch(ledger)
+        {
+            case 0:
+                break;
+            case 1:
+                m_ledger = new QFrame(parent);
+                if((int)note.getNoteValue() >= 19 && (int)note.getNoteValue() != 45)
+                {
+                    m_ledger->setGeometry(QRect(m_x - 5, m_y - 40, 40, 100));
+                    m_ledger->setFrameShape(QFrame::HLine);
+                    m_ledger->setFrameShadow(QFrame::Plain);
+                    m_ledger->show();
+                }
+                else
+                {
+                    m_ledger->setGeometry(QRect(m_x - 5, m_y + 7, 40, 100));
+                    m_ledger->setFrameShape(QFrame::HLine);
+                    m_ledger->setFrameShadow(QFrame::Plain);
+                    m_ledger->show();
+                }
+                break;
+            case 2:
+                m_ledger = new QFrame(parent);
+                m_ledger->setGeometry(QRect(m_x - 5, m_y + 14, 40, 100));
+                m_ledger->setFrameShape(QFrame::HLine);
+                m_ledger->setFrameShadow(QFrame::Plain);
+                m_ledger->show();
+                break;
+            case 3:
+                m_ledger = new QFrame(parent);
+                m_ledger->setGeometry(QRect(m_x - 5, m_y - 47, 40, 100));
+                m_ledger->setFrameShape(QFrame::HLine);
+                m_ledger->setFrameShadow(QFrame::Plain);
+                m_ledger->show();
+                break;
+            default:
+                break;
         }
     }
     NoteType getNoteType()
@@ -118,20 +186,26 @@ public:
             m_noteTailEnd->hide();
         }
     }
-  
+
 
 private:
     static int LookupNoteHeight(NoteValue note)
     {
 
-        static constexpr std::array<int64_t, static_cast<int64_t>(NoteValue::UNKNOWN)> lookupTable{
-          235, 225, 225, 215, 215, 205, 205, 195, 185, 185, 175, 175, 165, 155, 155,
-          145, 145, 135, 135, 170, 160, 160, 150, 150, 140, 130, 130, 120, 120, 110,
-          110, 100, 90,  90,  80,  80,  70,  60,  60,  50,  50,  40,  40,  30,  20};
+        static constexpr std::array<int64_t, static_cast<int64_t>(NoteValue::UNKNOWN) + 1>
+          lookupTable{235, 225, 225, 215, 215, 205, 205, 195, 185, 185, 175, 175,
+                      165, 155, 155, 145, 145, 135, 135, 170, 160, 160, 150, 150,
+                      140, 130, 130, 120, 120, 110, 110, 100, 90,  90,  80,  80,
+                      70,  60,  60,  50,  50,  40,  40,  30,  20,  150};
 
         return lookupTable[static_cast<int64_t>(note)] + 30;
     }
-
+    static int LookupNoteLedger(NoteValue note)
+    {
+        static constexpr std::array<int64_t, static_cast<int64_t>(NoteValue::UNKNOWN) + 1>
+          lookupTable{2,1,1,2,2,1,1,2,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,1,3,1,1,3,3,1,3,3,1,1,3,3,1,3,0};
+        return lookupTable[static_cast<int64_t>(note)];
+    }
     static QPixmap LookupNoteHead(NoteType note)
     {
         static const std::array<QString, static_cast<int64_t>(NoteValue::UNKNOWN)> lookupTable{
