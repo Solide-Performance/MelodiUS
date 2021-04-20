@@ -75,6 +75,9 @@ void                                            SetPhonemeCallbackEnabled(bool e
 
 void WriteLED(uint8_t val);
 
+void SaveCalibrationFile();
+bool LoadCalibrationFile();
+
 
 
 /*****************************************************************************/

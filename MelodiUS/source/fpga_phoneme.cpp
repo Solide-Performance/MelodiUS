@@ -1,6 +1,8 @@
 /*****************************************************************************/
 /* Includes ---------------------------------------------------------------- */
 #include "fpga_phoneme.h"
+#include <filesystem>
+#include <fstream>
 #include <iostream>
 
 
@@ -49,15 +51,26 @@ constexpr uint8_t ADC_PHONEME_DEFAULT_THRESHOLD = 0x80; /* 50% */
 constexpr int     ADC_PHONEME_MARGIN            = 0x80; /* 50% */
 constexpr size_t  COUNTER_MAX_PHONEME_THRESHOLD = 5;
 constexpr size_t  MAX_ERROR_COUNT               = 10;
-/* clang-format off */
+
+constexpr std::chrono::seconds MIN_DELAY_BETWEEN_PHONEMES{2};
+
+/* constexpr char* is not a const char* but a char* const */
+constexpr const char* CALIB_FILE_NAME = "phonemes.calib";
+
 constexpr std::array<uint8_t, 4> EMPTY_ADC_ARRAY{0xFF, 0xFF, 0xFF, 0xFF};
+
+/* clang-format off */
+constexpr std::array<std::array<int, 4>, 4> DEFAULT_THRESHOLDS{std::array{0x80, 0x80, 0x80, 0x80},
+                                                                         {0x80, 0x80, 0x80, 0x80},
+                                                                         {0x80, 0x80, 0x80, 0x80},
+                                                                         {0x80, 0x80, 0x80, 0x80}};
 /* clang-format on */
 
 
 /*****************************************************************************/
 /* Static method declarations ---------------------------------------------- */
 static void ListenerThread();
-static void CheckADCPhonemes();
+static bool CheckADCPhonemes();
 static void CheckButtonPhonemes();
 static void CallCallback(Phoneme channel);
 static int  CheckADCDistance(Phoneme phonemeToCheck);
@@ -77,10 +90,7 @@ static bool                                 m_run         = true;
 static bool                                 m_isConnected = false;
 static std::thread                          m_listener;
 static std::array<int, 4>                   m_adc{};
-static std::array<std::array<int, 4>, 4>    m_adcThreshold{std::array{0x80, 0x80, 0x80, 0x80},
-                                                        {0x80, 0x80, 0x80, 0x80},
-                                                        {0x80, 0x80, 0x80, 0x80},
-                                                        {0x80, 0x80, 0x80, 0x80}};
+static std::array<std::array<int, 4>, 4>    m_adcThreshold{DEFAULT_THRESHOLDS};
 static std::array<std::function<void()>, 5> m_phonemeCallbacks{EMPTY_FUNCTION};
 static Phoneme                              m_currentPhoneme         = Phoneme::UNKNOWN;
 static Phoneme                              m_oldPhoneme             = Phoneme::UNKNOWN;
@@ -115,9 +125,9 @@ void Init()
         {
             struct OnSeFaitPasChierAvecLaLibAdept
             {
-                bool _pas_acces_au_membre_pas_grave;
-                char _les_variables_privees_ne_marretent_pas[1024];
-                unsigned long  hif;
+                bool          _pas_acces_au_membre_pas_grave;
+                char          _les_variables_privees_ne_marretent_pas[1024];
+                unsigned long hif;
             };
             reinterpret_cast<OnSeFaitPasChierAvecLaLibAdept*>(m_fpga)->hif = 1;
             SAFE_DELETE(&m_fpga);
@@ -269,6 +279,51 @@ void SetPhonemeCallbackEnabled(bool enabled)
     return m_adcThreshold;
 }
 
+void SaveCalibrationFile()
+{
+    std::ofstream calibFile{"phonemes.calib"};
+
+    for(const std::array<int, 4>& filter : m_adcThreshold)
+    {
+        for(int phoneme : filter)
+        {
+            calibFile << phoneme << '\n';
+        }
+    }
+
+    calibFile.close();
+}
+bool LoadCalibrationFile()
+{
+    if(std::filesystem::exists("phonemes.calib"))
+    {
+        try
+        {
+            std::ifstream calibFile{"phonemes.calib"};
+
+            for(size_t filter = 0; filter < m_adcThreshold.size(); filter++)
+            {
+                for(size_t phoneme = 0; phoneme < m_adcThreshold[filter].size(); phoneme++)
+                {
+                    calibFile >> m_adcThreshold[filter][phoneme];
+                }
+            }
+
+            calibFile.close();
+            return true;
+        }
+        catch(...)
+        {
+            m_adcThreshold = {DEFAULT_THRESHOLDS};
+            return false;
+        }
+    }
+    else
+    {
+        return false;
+    }
+}
+
 
 /*****************************************************************************/
 /* Static functions definitions -------------------------------------------- */
@@ -322,13 +377,13 @@ static void ListenerThread()
         CheckButtonPhonemes();
 
         /* Check for phonemes in the ADC channel */
-        CheckADCPhonemes();
+        bool foundPhoneme = CheckADCPhonemes();
 
         /* Display ADC value (selected with switches) on the 7-segment display */
         DisplayADC();
 
         /* Sleep */
-        std::this_thread::sleep_for(ADC_MEASURE_DELAY);
+        std::this_thread::sleep_for(foundPhoneme ? MIN_DELAY_BETWEEN_PHONEMES : ADC_MEASURE_DELAY);
     }
 }
 
@@ -344,7 +399,7 @@ static int CheckADCDistance(Phoneme phonemeToCheck)
     return distanceFilter1 + distanceFilter2 + distanceFilter3 + distanceFilter4;
 }
 
-static void CheckADCPhonemes()
+static bool CheckADCPhonemes()
 {
     std::array<int, 5> distances = {0, 0, 0, 0, ADC_PHONEME_MARGIN};
 
@@ -396,9 +451,14 @@ static void CheckADCPhonemes()
         {
             m_phonemeCounter = std::numeric_limits<size_t>::max();
 
-            CallCallback(m_currentPhoneme);
+            if(m_currentPhoneme != Phoneme::UNKNOWN)
+            {
+                CallCallback(m_currentPhoneme);
+                return true;
+            }
         }
     }
+    return false;
 }
 
 static void CheckButtonPhonemes()
