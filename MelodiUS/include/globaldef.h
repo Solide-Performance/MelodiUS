@@ -52,14 +52,6 @@
 
 
 
-
-/*****************************************************************************/
-/* Constants --------------------------------------------------------------- */
-#ifdef LINUX_
-constexpr uint8_t CHAR_BIT = 8;
-#endif
-
-
 /*****************************************************************************/
 /* Macros ------------------------------------------------------------------ */
 #define sizeof_array(x)    static_cast<size_t>(sizeof(x) / sizeof((x)[0]))    // NOLINT
@@ -71,8 +63,14 @@ constexpr void SAFE_DELETE(T** x)
 {
     if(x && *x)
     {
-        delete *x;
-        *x = nullptr;
+        try
+        {
+            delete *x;
+            *x = nullptr;
+        }
+        catch(...)
+        {
+        }
     }
 }
 
@@ -103,6 +101,7 @@ constexpr floating lin_to_db(floating lin)
     static_assert(std::is_floating_point<floating>::value,
                   "Argument must be a floating point type");
 
+    /* gcem::log is base e, we need to rebase it. */
     return 20 * (gcem::log(lin) / gcem::log(10.0));
 }
 

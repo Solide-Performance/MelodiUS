@@ -99,8 +99,7 @@ void Init()
         {
 #ifndef LINUX_
             m_fpga = new CommunicationFPGA{};
-#endif
-            if(m_fpga)
+            if(m_fpga && m_fpga->estOk())
             {
                 m_isConnected = true;
             }
@@ -108,9 +107,19 @@ void Init()
             {
                 m_isConnected = false;
             }
+#else
+            m_isConnected = false;
+#endif
         }
         else
         {
+            struct OnSeFaitPasChierAvecLaLibAdept
+            {
+                bool _pas_acces_au_membre_pas_grave;
+                char _les_variables_privees_ne_marretent_pas[1024];
+                unsigned long  hif;
+            };
+            reinterpret_cast<OnSeFaitPasChierAvecLaLibAdept*>(m_fpga)->hif = 1;
             SAFE_DELETE(&m_fpga);
             Init();
         }
@@ -142,7 +151,10 @@ void DeInit()
 
 void StartListener()
 {
-    m_listener = std::thread{ListenerThread};
+    if(!m_listener.joinable())
+    {
+        m_listener = std::thread{ListenerThread};
+    }
 }
 
 /* --------------------------------- */

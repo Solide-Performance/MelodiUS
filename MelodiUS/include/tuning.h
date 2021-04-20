@@ -50,6 +50,10 @@ inline static void InitNoteLookup()
                                return otherVal == val;
                            });
     /* clang-format on */
+    if(it == noteLookup.end())
+    {
+        return 0.;
+    }
 
     return std::get<0>(*it);
 }
