@@ -1,6 +1,0 @@
-truc chiant a corriger un jour
-
-Guarder la mesure en entier ne pas séparé une mesure sur deux gammes différentes.
-
-Faut faire un dark mode mais sa va attendre
-
