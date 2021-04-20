@@ -175,9 +175,9 @@
     </CustomBuild>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="include\mainwindow.h">
+    <CustomBuild Include="include\mainwindow.h">
       <Filter>Header Files\include</Filter>
-    </ClInclude>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\mainwindow_ui.h">
@@ -231,6 +231,11 @@
     <Filter Include="Generated Files\debug" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="debug\moc_mainwindow.cpp">
+      <Filter>Generated Files\debug</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
     <CustomBuild Include="debug\moc_predefs.h.cbt">
       <Filter>Generated Files\debug</Filter>
     </CustomBuild>
@@ -245,6 +250,11 @@
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Generated Files\release" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="release\moc_mainwindow.cpp">
+      <Filter>Generated Files\release</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="release\moc_predefs.h.cbt">

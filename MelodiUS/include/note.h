@@ -71,17 +71,19 @@ enum class NoteValue : int64_t
 class Note
 {
 public:
-    const NoteType  noteType;
-    const NoteValue noteValue;
+    NoteType  noteType;
+    NoteValue noteValue;
     bool            liee;
 
     constexpr Note() : noteType{NoteType::UNKNOWN}, noteValue{NoteValue::UNKNOWN}, liee{false}
     {
     }
-    constexpr Note(NoteType nt, NoteValue nv, bool lieee = false) : noteType{nt}, noteValue{nv}, liee{lieee}
+    constexpr Note(NoteType nt, NoteValue nv, bool lieee = false)
+    : noteType{nt}, noteValue{nv}, liee{lieee}
     {
     }
-    constexpr Note(const Note& other) = default;
+    constexpr Note(const Note&) = default;
+    Note& operator=(const Note&) = default;
 
     NoteType getNoteType()
     {

@@ -30,7 +30,7 @@ void Partition::ecrireMusique(std::vector<Note> vecNote)
 
 
     //=============== Boute de code qui ce repete pour chaque note du vecteur et qui transforme le
-    //tout en note prete a etre mise dans une portee============//
+    // tout en note prete a etre mise dans une portee============//
     for(int i = 0; i < vecNote.size(); i++)
     {
         // On commence par verifier si la mesure est pleine et si oui on rajoute une mesuere
@@ -110,7 +110,15 @@ void Partition::ecrireMusique(std::vector<Note> vecNote)
         }
     }
     //=============== Boute de code qui transforme les note en notewidget et qui affiche chaque
-    //mesure a la bonne place====================//
+    // mesure a la bonne place====================//
+
+    /* Allocates size of the composition vector in advance to avoid NoteWidget copies */
+    size_t totalSize = std::accumulate(
+      compo.begin(), compo.end(), 0, [](size_t sum, const std::vector<Note>& current) {
+          return sum + current.size();
+      });
+    composition.reserve(totalSize);
+
     ligne        = 0;
     bool passage = false;
     for(int i = 0; i < compo.size(); i++)
@@ -123,14 +131,13 @@ void Partition::ecrireMusique(std::vector<Note> vecNote)
         }
         for(int j = 0; j < compo[i].size(); j++)
         {
-            NoteWidget* a = new NoteWidget(
+            composition.emplace_back(
               m_parent,
               compo[i][j],
               (int)((((i % 4) * 215) + 85)
                     + (((j + 1) * (200 / compo[i].size())) - (200 / compo[i].size()) + 15)),
               ligne);
-            composition.push_back(*a);
-            a->show();
+            composition[composition.size() - 1].show();
         }
         passage = true;
     }

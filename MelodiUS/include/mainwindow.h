@@ -12,9 +12,11 @@
 /* Class definition ---------------------------------------------------------------------------- */
 class MainWindow : public QMainWindow
 {
+    Q_OBJECT;
+
 public:
     MainWindow(QWidget* parent = nullptr);
-    ~MainWindow() = default;
+    ~MainWindow();
 
 public slots:
     void on_pushButtonA_clicked();
@@ -31,6 +33,10 @@ public slots:
     void loading();
     void interpret();
 
+    void writePartitionSlot();
+
+signals:
+    void writePartitionSignal();
 
 private:
     void Calibrate(Phoneme phoneme);

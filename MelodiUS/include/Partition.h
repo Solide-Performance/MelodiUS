@@ -26,6 +26,16 @@ public:
     ~Partition() = default;
 
     void ecrireMusique(std::vector<Note> Note);
+    void clear()
+    {
+        nom = 0;
+        denom = 0;
+        valeur = 0;
+        nbsLigne = 0;
+        //feuille.clear();
+        
+        composition.clear();
+    }
 
 private:
     QWidget* m_parent;
