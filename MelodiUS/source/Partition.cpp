@@ -14,7 +14,7 @@ int Partition::ajoutLigne()
 void Partition::ecrireMusique(std::vector<Note> vecNote)
 {
     nom        = spinBox.value();
-    denom      = spinBox.value();
+    denom      = spinBox_2.value();
     int ligne  = 0;
     int mesure = 0;
 
@@ -129,6 +129,26 @@ void Partition::ecrireMusique(std::vector<Note> vecNote)
           Note(GetNoteValueValue(resteAvant, NoteValue::UNKNOWN), NoteValue::UNKNOWN, false));
     }
     
+    for(int i = 0; i < compo.size(); i++)
+    {
+        for(int j = 0; j < compo[mesure].size(); j++)
+        {
+            if(compo[mesure][j].getNoteType() == NoteType::Croche && !compo[mesure][j].isLiee())
+            {
+                if(compo[mesure].size()-1!=j)
+                {
+                    if(compo[mesure][j + 1].getNoteType()
+                       == NoteType::Croche&& !compo[mesure][j+1].isLiee())
+                    {
+                        compo[mesure][j + 1].setDeuxCroche(true, true);
+                        compo[mesure][j].setDeuxCroche(true, false);
+                        j++;
+                    }
+                }
+                
+            }
+        }
+    }
 
     //=============== Boute de code qui transforme les note en notewidget et qui affiche chaque
     // mesure a la bonne place====================//
@@ -141,6 +161,8 @@ void Partition::ecrireMusique(std::vector<Note> vecNote)
     ligne          = 0;
     bool   passage = false;
     int lastX   = 0;
+    int    lastY   = 0;
+    NoteValue lastNoteValue;
     int    nbsNote = 0;
     for(int i = 0; i < compo.size(); i++)
     {
@@ -158,16 +180,19 @@ void Partition::ecrireMusique(std::vector<Note> vecNote)
            
             if(!(i == 0 && j == 0))
             {
+                lastNoteValue = composition[nbsNote - 1].getNoteValue();
                 if((posX - (composition[nbsNote - 1].getX()) < 500))
                 {
                     lastX = composition[nbsNote - 1].getX();
+                    lastY = composition[nbsNote - 1].getY();
                 }
+
             }
             else
             { 
                 lastX = posX-125;
             }
-            NoteWidget& a = composition.emplace_back(m_parent, compo[i][j], posX, ligne, lastX);
+            NoteWidget& a = composition.emplace_back(m_parent, compo[i][j], posX, ligne, lastX,lastY,lastNoteValue);
             a.show();
             nbsNote++;
         }

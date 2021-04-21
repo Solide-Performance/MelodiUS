@@ -73,13 +73,19 @@ class Note
 public:
     NoteType  noteType;
     NoteValue noteValue;
-    bool            liee;
-
-    constexpr Note() : noteType{NoteType::UNKNOWN}, noteValue{NoteValue::UNKNOWN}, liee{false}
+    bool      liee;
+    bool      deuxCroche;
+    bool      deuxiemeDeuxCroche;
+    constexpr Note()
+    : noteType{NoteType::UNKNOWN},
+      noteValue{NoteValue::UNKNOWN},
+      liee{false},
+      deuxCroche{false},
+      deuxiemeDeuxCroche{false}
     {
     }
     constexpr Note(NoteType nt, NoteValue nv, bool lieee = false)
-    : noteType{nt}, noteValue{nv}, liee{lieee}
+    : noteType{nt}, noteValue{nv}, liee{lieee}, deuxCroche{false}, deuxiemeDeuxCroche{false}
     {
     }
     constexpr Note(const Note&) = default;
@@ -136,6 +142,12 @@ public:
         {
             return 0.25;
         }
+    }
+    void setDeuxCroche(bool deuxcroche, bool derniere)
+    {
+        deuxiemeDeuxCroche = derniere;
+        deuxCroche = deuxcroche;
+
     }
     bool isLiee()
     {
