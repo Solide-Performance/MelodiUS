@@ -1,7 +1,7 @@
 /****************************************************************************
 ** Meta object code from reading C++ file 'mainwindow.h'
 **
-** Created by: The Qt Meta Object Compiler version 67 (Qt 5.15.2)
+** Created by: The Qt Meta Object Compiler version 68 (Qt 6.0.1)
 **
 ** WARNING! All changes made in this file will be lost!
 *****************************************************************************/
@@ -12,8 +12,8 @@
 #include <QtCore/qmetatype.h>
 #if !defined(Q_MOC_OUTPUT_REVISION)
 #error "The header file 'mainwindow.h' doesn't include <QObject>."
-#elif Q_MOC_OUTPUT_REVISION != 67
-#error "This file was generated using the moc from 5.15.2. It"
+#elif Q_MOC_OUTPUT_REVISION != 68
+#error "This file was generated using the moc from 6.0.1. It"
 #error "cannot be used with the include files from this version of Qt."
 #error "(The moc has changed too much.)"
 #endif
@@ -22,34 +22,31 @@ QT_BEGIN_MOC_NAMESPACE
 QT_WARNING_PUSH
 QT_WARNING_DISABLE_DEPRECATED
 struct qt_meta_stringdata_MainWindow_t {
-    QByteArrayData data[18];
+    const uint offsetsAndSize[36];
     char stringdata0[218];
 };
-#define QT_MOC_LITERAL(idx, ofs, len) \
-    Q_STATIC_BYTE_ARRAY_DATA_HEADER_INITIALIZER_WITH_OFFSET(len, \
-    qptrdiff(offsetof(qt_meta_stringdata_MainWindow_t, stringdata0) + ofs \
-        - idx * sizeof(QByteArrayData)) \
-    )
+#define QT_MOC_LITERAL(ofs, len) \
+    uint(offsetof(qt_meta_stringdata_MainWindow_t, stringdata0) + ofs), len 
 static const qt_meta_stringdata_MainWindow_t qt_meta_stringdata_MainWindow = {
     {
-QT_MOC_LITERAL(0, 0, 10), // "MainWindow"
-QT_MOC_LITERAL(1, 11, 20), // "writePartitionSignal"
-QT_MOC_LITERAL(2, 32, 0), // ""
-QT_MOC_LITERAL(3, 33, 22), // "on_pushButtonA_clicked"
-QT_MOC_LITERAL(4, 56, 11), // "startRecord"
-QT_MOC_LITERAL(5, 68, 10), // "stopRecord"
-QT_MOC_LITERAL(6, 79, 14), // "updateBargraph"
-QT_MOC_LITERAL(7, 94, 20), // "updateFpgaConnection"
-QT_MOC_LITERAL(8, 115, 11), // "resizeEvent"
-QT_MOC_LITERAL(9, 127, 13), // "QResizeEvent*"
-QT_MOC_LITERAL(10, 141, 5), // "event"
-QT_MOC_LITERAL(11, 147, 4), // "play"
-QT_MOC_LITERAL(12, 152, 10), // "processing"
-QT_MOC_LITERAL(13, 163, 10), // "saveOrLoad"
-QT_MOC_LITERAL(14, 174, 6), // "saving"
-QT_MOC_LITERAL(15, 181, 7), // "loading"
-QT_MOC_LITERAL(16, 189, 9), // "interpret"
-QT_MOC_LITERAL(17, 199, 18) // "writePartitionSlot"
+QT_MOC_LITERAL(0, 10), // "MainWindow"
+QT_MOC_LITERAL(11, 20), // "writePartitionSignal"
+QT_MOC_LITERAL(32, 0), // ""
+QT_MOC_LITERAL(33, 22), // "on_pushButtonA_clicked"
+QT_MOC_LITERAL(56, 11), // "startRecord"
+QT_MOC_LITERAL(68, 10), // "stopRecord"
+QT_MOC_LITERAL(79, 14), // "updateBargraph"
+QT_MOC_LITERAL(94, 20), // "updateFpgaConnection"
+QT_MOC_LITERAL(115, 11), // "resizeEvent"
+QT_MOC_LITERAL(127, 13), // "QResizeEvent*"
+QT_MOC_LITERAL(141, 5), // "event"
+QT_MOC_LITERAL(147, 4), // "play"
+QT_MOC_LITERAL(152, 10), // "processing"
+QT_MOC_LITERAL(163, 10), // "saveOrLoad"
+QT_MOC_LITERAL(174, 6), // "saving"
+QT_MOC_LITERAL(181, 7), // "loading"
+QT_MOC_LITERAL(189, 9), // "interpret"
+QT_MOC_LITERAL(199, 18) // "writePartitionSlot"
 
     },
     "MainWindow\0writePartitionSignal\0\0"
@@ -65,7 +62,7 @@ QT_MOC_LITERAL(17, 199, 18) // "writePartitionSlot"
 static const uint qt_meta_data_MainWindow[] = {
 
  // content:
-       8,       // revision
+       9,       // revision
        0,       // classname
        0,    0, // classinfo
       14,   14, // methods
@@ -75,23 +72,23 @@ static const uint qt_meta_data_MainWindow[] = {
        0,       // flags
        1,       // signalCount
 
- // signals: name, argc, parameters, tag, flags
-       1,    0,   84,    2, 0x06 /* Public */,
+ // signals: name, argc, parameters, tag, flags, initial metatype offsets
+       1,    0,   98,    2, 0x06,    0 /* Public */,
 
- // slots: name, argc, parameters, tag, flags
-       3,    0,   85,    2, 0x0a /* Public */,
-       4,    0,   86,    2, 0x0a /* Public */,
-       5,    0,   87,    2, 0x0a /* Public */,
-       6,    0,   88,    2, 0x0a /* Public */,
-       7,    0,   89,    2, 0x0a /* Public */,
-       8,    1,   90,    2, 0x0a /* Public */,
-      11,    0,   93,    2, 0x0a /* Public */,
-      12,    0,   94,    2, 0x0a /* Public */,
-      13,    0,   95,    2, 0x0a /* Public */,
-      14,    0,   96,    2, 0x0a /* Public */,
-      15,    0,   97,    2, 0x0a /* Public */,
-      16,    0,   98,    2, 0x0a /* Public */,
-      17,    0,   99,    2, 0x0a /* Public */,
+ // slots: name, argc, parameters, tag, flags, initial metatype offsets
+       3,    0,   99,    2, 0x0a,    1 /* Public */,
+       4,    0,  100,    2, 0x0a,    2 /* Public */,
+       5,    0,  101,    2, 0x0a,    3 /* Public */,
+       6,    0,  102,    2, 0x0a,    4 /* Public */,
+       7,    0,  103,    2, 0x0a,    5 /* Public */,
+       8,    1,  104,    2, 0x0a,    6 /* Public */,
+      11,    0,  107,    2, 0x0a,    8 /* Public */,
+      12,    0,  108,    2, 0x0a,    9 /* Public */,
+      13,    0,  109,    2, 0x0a,   10 /* Public */,
+      14,    0,  110,    2, 0x0a,   11 /* Public */,
+      15,    0,  111,    2, 0x0a,   12 /* Public */,
+      16,    0,  112,    2, 0x0a,   13 /* Public */,
+      17,    0,  113,    2, 0x0a,   14 /* Public */,
 
  // signals: parameters
     QMetaType::Void,
@@ -118,7 +115,7 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
 {
     if (_c == QMetaObject::InvokeMetaMethod) {
         auto *_t = static_cast<MainWindow *>(_o);
-        Q_UNUSED(_t)
+        (void)_t;
         switch (_id) {
         case 0: _t->writePartitionSignal(); break;
         case 1: _t->on_pushButtonA_clicked(); break;
@@ -148,12 +145,18 @@ void MainWindow::qt_static_metacall(QObject *_o, QMetaObject::Call _c, int _id, 
     }
 }
 
-QT_INIT_METAOBJECT const QMetaObject MainWindow::staticMetaObject = { {
+const QMetaObject MainWindow::staticMetaObject = { {
     QMetaObject::SuperData::link<QMainWindow::staticMetaObject>(),
-    qt_meta_stringdata_MainWindow.data,
+    qt_meta_stringdata_MainWindow.offsetsAndSize,
     qt_meta_data_MainWindow,
     qt_static_metacall,
     nullptr,
+qt_incomplete_metaTypeArray<qt_meta_stringdata_MainWindow_t
+, QtPrivate::TypeAndForceComplete<void, std::false_type>
+, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<QResizeEvent *, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>, QtPrivate::TypeAndForceComplete<void, std::false_type>
+
+
+>,
     nullptr
 } };
 
@@ -182,7 +185,7 @@ int MainWindow::qt_metacall(QMetaObject::Call _c, int _id, void **_a)
         _id -= 14;
     } else if (_c == QMetaObject::RegisterMethodArgumentMetaType) {
         if (_id < 14)
-            *reinterpret_cast<int*>(_a[0]) = -1;
+            *reinterpret_cast<QMetaType *>(_a[0]) = QMetaType();
         _id -= 14;
     }
     return _id;
