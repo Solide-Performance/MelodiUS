@@ -19,8 +19,8 @@ public:
 
         spinBox_2.setGeometry(QRect(55, 210, 30, 22));
         spinBox_2.setValue(4);
-        spinBox_2.setRange(1, 8);
-        spinBox_2.setSingleStep(2);
+        spinBox_2.setRange(1, 4);
+        spinBox_2.setSingleStep(1);
         spinBox_2.raise();
     };
     ~Partition() = default;

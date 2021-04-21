@@ -318,6 +318,11 @@ public:
             m_ligneDeuxCroche->close();
             m_ligneDeuxCroche = nullptr;
         }
+        if(m_ziglouigloui)
+        {
+            m_ziglouigloui->close();
+            m_ziglouigloui = nullptr;
+        }
     }
 
 private:
