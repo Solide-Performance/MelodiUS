@@ -15,6 +15,11 @@ constexpr size_t NUM_SECONDS       = 60;
 /* #define DITHER_FLAG     (paDitherOff) */
 constexpr bool DITHER_FLAG = false;
 
+/* clang-format off */
+static std::function<bool()> EMPTY_STOP_POLICY{};
+static std::function<bool()> TRUE_STOP_POLICY{[]{ return true; }};
+/* clang-format on */
+
 
 /*****************************************************************************/
 /* Type definitions -------------------------------------------------------- */

@@ -216,6 +216,7 @@ std::vector<Note> analyse_rythme(const Recording& rec)
     }
     std::cout << std::endl;
 
+
     return vn;
 }
 
@@ -371,7 +372,7 @@ std::vector<Note> analyse_note(const NotesPacket& np, size_t recordingLength)
       *std::max_element(liste_duree.begin(), liste_duree.end(), std::less());
 
     const std::vector<int64_t> fractions = {
-      maxLength, maxLength / 2, maxLength / 4, maxLength / 8, maxLength / 16, 0};
+      maxLength, maxLength / 2, maxLength / 4, maxLength / 8, 0};
 
     for(int64_t noteLength : liste_duree)
     {
@@ -547,61 +548,6 @@ std::vector<Note> analyse_note(const NotesPacket& np, size_t recordingLength)
                 else if(liste_ratios[i] == 3)
                 {
                     liste_symbole.push_back(Note(NoteType::DemiSilence, NoteValue::UNKNOWN));
-                }
-            }
-        }
-    }
-    else if(max_ratio == 4)
-    {
-        int j = 0;
-        for(int i = 0; i < liste_ratios.size(); i++)
-        {
-            if(i % 2 == 0)
-            {
-
-                if(liste_ratios[i] == 0)
-                {
-                    liste_symbole.push_back(Note(NoteType::Ronde, np.notes[j++]));
-                }
-                else if(liste_ratios[i] == 1)
-                {
-                    liste_symbole.push_back(Note(NoteType::Blanche, np.notes[j++]));
-                }
-                else if(liste_ratios[i] == 2)
-                {
-                    liste_symbole.push_back(Note(NoteType::Noire, np.notes[j++]));
-                }
-                else if(liste_ratios[i] == 3)
-                {
-                    liste_symbole.push_back(Note(NoteType::Croche, np.notes[j++]));
-                }
-                else if(liste_ratios[i] == 4)
-                {
-                    liste_symbole.push_back(Note(NoteType::DoubleCroche, np.notes[j++]));
-                }
-            }
-            else
-            {
-
-                if(liste_ratios[i] == 0)
-                {
-                    liste_symbole.push_back(Note(NoteType::Pause, NoteValue::UNKNOWN));
-                }
-                else if(liste_ratios[i] == 1)
-                {
-                    liste_symbole.push_back(Note(NoteType::DemiPause, NoteValue::UNKNOWN));
-                }
-                else if(liste_ratios[i] == 2)
-                {
-                    liste_symbole.push_back(Note(NoteType::Silence, NoteValue::UNKNOWN));
-                }
-                else if(liste_ratios[i] == 3)
-                {
-                    liste_symbole.push_back(Note(NoteType::DemiSilence, NoteValue::UNKNOWN));
-                }
-                else if(liste_ratios[i] == 4)
-                {
-                    liste_symbole.push_back(Note(NoteType::QuartSilence, NoteValue::UNKNOWN));
                 }
             }
         }

@@ -2,36 +2,149 @@
 
 #include "globaldef.h"
 #include "note.h"
+#include <iostream>
 
 class NoteWidget
 {
 private:
     Note m_note;
 
-    QLabel* m_noteHead    = nullptr;
-    QLabel* m_noteTail    = nullptr;
-    QLabel* m_noteTailEnd = nullptr;
-    QLabel* m_noteSharp   = nullptr;
+    QLabel* m_noteHead = nullptr;
+    QLabel* m_legato   = nullptr;
+    QLabel* m_diese    = nullptr;
+    QFrame* m_ledger   = nullptr;
     int64_t m_tailLength;
 
     int m_x;
     int m_y;
-
-    bool liee;
+    int theLastOfX;
 
 public:
     NoteWidget() = delete;
-    NoteWidget(QWidget* parent, Note note, int x, int ligne)
-    : m_note{note}, m_x{x}, m_y{LookupNoteHeight(note.noteValue) + (150 * ligne)}
+    NoteWidget(QWidget* parent, Note note, int x, int ligne, int theLastOfX)
+    : m_note{note},
+      m_x{x},
+      m_y{LookupNoteHeight() + (350 * ligne)},
+      theLastOfX{theLastOfX}
     {
+        if(note.getNoteValue() == NoteValue::UNKNOWN)
+        {
+            if(note.getNoteType() == NoteType::Pause)
+            {
+                m_y = 187 + (350 * ligne);
+            }
+            else if(note.getNoteType() == NoteType::DemiPause)
+            {
+                m_y = 199 + (350 * ligne);
+            }
+        }
         /* Setup note head*/
-        m_noteHead         = new QLabel(parent);
-        QPixmap headPixmap = LookupNoteHead(note.noteType).scaled(30,65,Qt::KeepAspectRatio);
+        m_noteHead = new QLabel(parent);
+        m_noteHead->setAttribute(Qt::WidgetAttribute::WA_DeleteOnClose);
+
+        QPixmap headPixmap = LookupNoteHead(note.noteType).scaled(30, 65, Qt::KeepAspectRatio);
+        if((int)note.getNoteValue() >= 19 && (int)note.getNoteValue() != 45)
+        {
+            headPixmap = LookupNoteHeadrotated(note.noteType).scaled(30, 65, Qt::KeepAspectRatio);
+        }
+        if(note.getNoteType() == NoteType::Ronde)
+        {
+            m_y += 3;
+        }
         m_noteHead->setPixmap(headPixmap);
         m_noteHead->setMask(headPixmap.mask());
         m_noteHead->setGeometry(QRect{m_x, m_y, headPixmap.width(), headPixmap.height()});
-        
+
+        if(note.liee && note.getNoteValue() != NoteValue::UNKNOWN)
+        {
+            m_legato = new QLabel(parent);
+            m_legato->setAttribute(Qt::WidgetAttribute::WA_DeleteOnClose);
+            if((int)note.getNoteValue() >= 19 && (int)note.getNoteValue() != 45)
+            {
+                QPixmap h = QPixmap("images/legato.png");
+                h         = h.scaled(m_x - theLastOfX, h.height(), Qt::IgnoreAspectRatio);
+                m_legato->setPixmap(h);
+                m_legato->setGeometry(
+                  QRect{theLastOfX + 10, m_y - 25, m_x - theLastOfX, h.height()});
+                m_legato->show();
+                std::cout << m_y << std::endl;
+            }
+            else
+            {
+                QPixmap h = QPixmap("images/legato.png");
+                h         = h.transformed(QTransform().rotate(180));
+                h         = h.scaled(m_x - theLastOfX, h.height(), Qt::IgnoreAspectRatio);
+                m_legato->setPixmap(h);
+                m_legato->setGeometry(
+                  QRect{theLastOfX + 10, m_y + 55, m_x - theLastOfX, h.height()});
+                m_legato->show();
+            }
+        }
+        if(note.isSharp())
+        {
+            m_diese   = new QLabel(parent);
+            m_diese->setAttribute(Qt::WidgetAttribute::WA_DeleteOnClose);
+            QPixmap d = QPixmap("images/diese.png");
+            d         = d.scaled(20, 25, Qt::IgnoreAspectRatio);
+            m_diese->setPixmap(d);
+            if((int)note.getNoteValue() >= 19 && (int)note.getNoteValue() != 45)
+            {
+                m_diese->setGeometry(QRect{m_x - 20, m_y, d.width(), d.height()});
+            }
+            else
+            {
+                m_diese->setGeometry(QRect{m_x - 20, m_y + 40, d.width(), d.height()});
+            }
+            m_diese->show();
+        }
+        int ledger = LookupNoteLedger(note.getNoteValue());
+        switch(ledger)
+        {
+            case 0:
+                break;
+            case 1:
+                m_ledger = new QFrame(parent);
+                m_ledger->setAttribute(Qt::WidgetAttribute::WA_DeleteOnClose);
+                if((int)note.getNoteValue() >= 19 && (int)note.getNoteValue() != 45)
+                {
+                    m_ledger->setGeometry(QRect(m_x - 5, m_y - 40, 40, 100));
+                    m_ledger->setFrameShape(QFrame::HLine);
+                    m_ledger->setFrameShadow(QFrame::Plain);
+                    m_ledger->show();
+                }
+                else
+                {
+                    m_ledger->setGeometry(QRect(m_x - 5, m_y + 7, 40, 100));
+                    m_ledger->setFrameShape(QFrame::HLine);
+                    m_ledger->setFrameShadow(QFrame::Plain);
+                    m_ledger->show();
+                }
+                break;
+            case 2:
+                m_ledger = new QFrame(parent);
+                m_ledger->setAttribute(Qt::WidgetAttribute::WA_DeleteOnClose);
+                m_ledger->setGeometry(QRect(m_x - 5, m_y + 14, 40, 100));
+                m_ledger->setFrameShape(QFrame::HLine);
+                m_ledger->setFrameShadow(QFrame::Plain);
+                m_ledger->show();
+                break;
+            case 3:
+                m_ledger = new QFrame(parent);
+                m_ledger->setAttribute(Qt::WidgetAttribute::WA_DeleteOnClose);
+                m_ledger->setGeometry(QRect(m_x - 5, m_y - 47, 40, 100));
+                m_ledger->setFrameShape(QFrame::HLine);
+                m_ledger->setFrameShadow(QFrame::Plain);
+                m_ledger->show();
+                break;
+            default:
+                break;
+        }
     }
+    ~NoteWidget()
+    {
+        clear();
+    }
+
     NoteType getNoteType()
     {
         return m_note.getNoteType();
@@ -46,57 +159,60 @@ public:
         {
             m_noteHead->show();
         }
-        if(m_noteSharp)
-        {
-            m_noteSharp->show();
-        }
-        if(m_noteTail)
-        {
-            m_noteTail->show();
-        }
-        if(m_noteTailEnd)
-        {
-            m_noteTailEnd->show();
-        }
     }
-
+    int getX()
+    {
+        return m_x;
+    }
     void hide()
     {
         if(m_noteHead)
         {
             m_noteHead->hide();
         }
-        if(m_noteSharp)
-        {
-            m_noteSharp->hide();
-        }
-        if(m_noteTail)
-        {
-            m_noteTail->hide();
-        }
-        if(m_noteTailEnd)
-        {
-            m_noteTailEnd->hide();
-        }
     }
-    void lieeNote(bool val)
+    void clear()
     {
-        liee = val;
+        if(m_noteHead)
+        {
+            m_noteHead->close();
+            m_noteHead = nullptr;
+        }
+        if(m_diese)
+        {
+            m_diese->close();
+            m_diese = nullptr;
+        }
+        if(m_legato)
+        {
+            m_legato->close();
+            m_legato = nullptr;
+        }
+        if(m_ledger)
+        {
+            m_ledger->close();
+            m_ledger = nullptr;
+        }
     }
 
 private:
-    static int LookupNoteHeight(NoteValue note)
+    int LookupNoteHeight()
     {
-        static constexpr int64_t multiplier = 5;
-        static constexpr int64_t offset     = 19;
-        static constexpr std::array<int64_t, static_cast<int64_t>(NoteValue::UNKNOWN)> lookupTable{
-          0,  1,  1,  2,  2,  3,  3,  4,  5,  5,  6,  6,  7,  8,  8,
-          9,  9,  10, 10, 11, 12, 12, 13, 13, 14, 15, 16, 17, 17, 18,
-          18, 19, 20, 20, 21, 21, 22, 23, 23, 24, 24, 25, 25, 26, 27};
+        static constexpr std::array<int64_t, static_cast<int64_t>(NoteValue::UNKNOWN) + 1>
+          lookupTable{235, 225, 225, 215, 215, 205, 205, 195, 185, 185, 175, 175,
+                      165, 155, 155, 145, 145, 135, 135, 170, 160, 160, 150, 150,
+                      140, 130, 130, 120, 120, 110, 110, 100, 90,  90,  80,  80,
+                      70,  60,  60,  50,  50,  40,  40,  30,  20,  150};
 
-        return multiplier * (lookupTable[static_cast<int64_t>(note)] + offset);
+        return lookupTable[static_cast<int64_t>(m_note.noteValue)] + 30;
     }
-
+    static int LookupNoteLedger(NoteValue note)
+    {
+        static constexpr std::array<int64_t, static_cast<int64_t>(NoteValue::UNKNOWN) + 1>
+          lookupTable{2, 1, 1, 2, 2, 1, 1, 2, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                      0, 0, 0, 0, 0, 0, 1, 1, 3, 1, 1, 3, 3, 1, 3, 3, 1, 1, 3, 3, 1, 3, 0};
+        return lookupTable[static_cast<int64_t>(note)];
+    }
     static QPixmap LookupNoteHead(NoteType note)
     {
         static const std::array<QString, static_cast<int64_t>(NoteValue::UNKNOWN)> lookupTable{
@@ -105,6 +221,23 @@ private:
           "images/noire.png",
           "images/croche.png", /* Les croches */
           "images/noireHead.png",
+          "images/pause.png",
+          "images/demi_pause.png",
+          "images/silence.png",
+          "images/demi_silence.png",
+          "images/quart_silence.png",
+        };
+
+        return QPixmap{lookupTable[static_cast<int64_t>(note)]};
+    }
+    static QPixmap LookupNoteHeadrotated(NoteType note)
+    {
+        static const std::array<QString, static_cast<int64_t>(NoteValue::UNKNOWN)> lookupTable{
+          "images/ronde_bas.png",
+          "images/blanche_bas.png",
+          "images/noire_bas.png",
+          "images/croche_bas.png", /* Les croches */
+          "images/noireHead_bas.png",
           "images/pause.png",
           "images/demi_pause.png",
           "images/silence.png",

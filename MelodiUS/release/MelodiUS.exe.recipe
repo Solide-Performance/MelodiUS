@@ -2,7 +2,11 @@
 <Project>
   <ProjectOutputs>
     <ProjectOutput>
+<<<<<<< HEAD
       <FullPath>C:\MelodiUS\MelodiUS\MelodiUS\MelodiUS\release\MelodiUS.exe</FullPath>
+=======
+      <FullPath>C:\MelodiUS\MelodiUS\release\MelodiUS.exe</FullPath>
+>>>>>>> origin/master
     </ProjectOutput>
   </ProjectOutputs>
   <ContentFiles />

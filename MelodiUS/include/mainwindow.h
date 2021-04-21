@@ -12,15 +12,18 @@
 /* Class definition ---------------------------------------------------------------------------- */
 class MainWindow : public QMainWindow
 {
+    Q_OBJECT;
+
 public:
     MainWindow(QWidget* parent = nullptr);
-    ~MainWindow() = default;
+    ~MainWindow();
 
 public slots:
     void on_pushButtonA_clicked();
     void startRecord();
     void stopRecord();
     void updateBargraph();
+    void updateFpgaConnection();
     void resizeEvent(QResizeEvent* event);
 
     void play();
@@ -30,6 +33,10 @@ public slots:
     void loading();
     void interpret();
 
+    void writePartitionSlot();
+
+signals:
+    void writePartitionSignal();
 
 private:
     void Calibrate(Phoneme phoneme);
@@ -39,8 +46,8 @@ private:
     void DisconnectControlSignals();
     void SetupMenus();
     void creditBox();
-    void keyPressEvent(QKeyEvent* event);
-    void keyReleaseEvent(QKeyEvent* event);
+   // void keyPressEvent(QKeyEvent* event);
+  //  void keyReleaseEvent(QKeyEvent* event);
 
 public:
    // MainWindow(QWidget* parent = nullptr);

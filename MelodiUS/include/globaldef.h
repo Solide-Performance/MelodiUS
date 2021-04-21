@@ -18,14 +18,16 @@
 #include <gcem/gcem.hpp>
 
 #pragma region Qt Includes
-#include <QFileDialog>
+#include <QDebug>
 #include <QtCore/QTimer>
 #include <QtGlobal>
 #include <QtGui/QBitmap>
 #include <QtGui/QPainter>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QComboBox>
+#include <QtWidgets/QFileDialog>
 #include <QtWidgets/QFrame>
+#include <QtWidgets/QGraphicsPixmapItem>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QGroupBox>
 #include <QtWidgets/QHBoxLayout>
@@ -47,6 +49,7 @@
 #include <QtWidgets/QVBoxLayout>
 
 
+
 #if QT_VERSION >= 0x060000
 #include <QtGui/QAction>
 #else
@@ -54,14 +57,6 @@
 #endif
 #pragma endregion
 
-
-
-
-/*****************************************************************************/
-/* Constants --------------------------------------------------------------- */
-#ifdef LINUX_
-constexpr uint8_t CHAR_BIT = 8;
-#endif
 
 
 /*****************************************************************************/
@@ -75,8 +70,14 @@ constexpr void SAFE_DELETE(T** x)
 {
     if(x && *x)
     {
-        delete *x;
-        *x = nullptr;
+        try
+        {
+            delete *x;
+            *x = nullptr;
+        }
+        catch(...)
+        {
+        }
     }
 }
 
@@ -107,14 +108,16 @@ constexpr floating lin_to_db(floating lin)
     static_assert(std::is_floating_point<floating>::value,
                   "Argument must be a floating point type");
 
+    /* gcem::log is base e, we need to rebase it. */
     return 20 * (gcem::log(lin) / gcem::log(10.0));
 }
 
 
 /*****************************************************************************/
 /* Utility ----------------------------------------------------------------- */
-static auto EMPTY_FUNCTION = []() {
-};
+/* clang-format off */
+static auto EMPTY_FUNCTION = []{};
+/* clang-format on */
 
 
 /*****************************************************************************/

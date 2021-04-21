@@ -45,7 +45,7 @@ void Play_Song(const std::vector<Note>& notes, double bpm)
 {
     for(Note note : notes)
     {
-        double duration = LengthFromTempo(note.noteType, bpm);
+        double duration = 1. / LengthFromTempo(note.noteType, bpm);
         double freq = FindFreqFromNote(note.noteValue);
         Recording playedNote = Generate_Sine(freq, duration);
         Playback(playedNote);
