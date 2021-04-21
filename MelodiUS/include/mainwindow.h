@@ -38,6 +38,7 @@ private:
     void ConnectControlSignals();
     void DisconnectControlSignals();
     void SetupMenus();
+    void creditBox();
     void keyPressEvent(QKeyEvent* event);
     void keyReleaseEvent(QKeyEvent* event);
 

@@ -3,3 +3,4 @@ C:\MelodiUS\MelodiUS\release\MelodiUS.exe
 C:\Users\lacp3102\Documents\MelodiUS\MelodiUS\release\MelodiUS.exe
 C:\Users\lacp3102\MelodiUS\MelodiUS\release\MelodiUS.exe
 C:\Users\allc0901\Documents\MelodiUS\MelodiUS\release\MelodiUS.exe
+C:\MelodiUS\MelodiUS\MelodiUS\MelodiUS\release\MelodiUS.exe

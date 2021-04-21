@@ -71,6 +71,7 @@ void UpdatePhonemeThreshold(std::array<std::array<int, 4>, 4> newThreshold);
 void UpdatePhonemeThreshold(Phoneme phoneme, std::array<int, 4> newThreshold);
 void SetFlag(bool voiceFlag);
 [[nodiscard]] std::array<std::array<int, 4>, 4> GetPhonemeThresholds();
+void SetPhonemeCallbackEnabled(bool enabled);
 
 void WriteLED(uint8_t val);
 
