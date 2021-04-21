@@ -2,7 +2,7 @@
 
 #include "globaldef.h"
 #include "note.h"
-#include <iostream>
+#include <math.h>
 
 class NoteWidget
 {
@@ -12,15 +12,18 @@ private:
     QLabel* m_noteHead        = nullptr;
     QLabel* m_legato          = nullptr;
     QLabel* m_diese           = nullptr;
-    QFrame* m_ledger          = nullptr;
-    QWidget* m_ligneDeuxCroche = nullptr;
+    QLabel* m_ligneDeuxCroche = nullptr;
     QLabel* m_ziglouigloui    = nullptr;
+
+    QFrame* m_ledger = nullptr;
+
     int64_t m_tailLength;
 
-    int       m_x;
-    int       m_y;
-    int       theLastOfX;
-    int       theLastOfY;
+    int m_x;
+    int m_y;
+    int theLastOfX;
+    int theLastOfY;
+
     NoteValue theLastNoteValue;
 
     bool deuxCroche;
@@ -70,57 +73,81 @@ public:
         m_noteHead->setGeometry(QRect{m_x, m_y, headPixmap.width(), headPixmap.height()});
         if(note.noteType == NoteType::Croche)
         {
-            if(deuxCroche&&note.deuxiemeDeuxCroche)
+            if(false)
             {
-                m_ligneDeuxCroche = new QFrame(parent);
+                m_ligneDeuxCroche = new QLabel(parent);
                 m_ligneDeuxCroche->setAttribute(Qt::WidgetAttribute::WA_DeleteOnClose);
+                double rotation;
                 if((int)note.getNoteValue() >= 19 && (int)note.getNoteValue() != 45
                    && (int)theLastNoteValue >= 19 && (int)theLastNoteValue != 45)
                 {
-                    QPoint p1(theLastOfX, theLastOfY + 65);
-                    QPoint p2(m_x, m_y + 65);
-                    QPainter h(parent);
-                    h.begin(parent);
-                    h.setPen(Qt::black);
-                    h.drawLine(p1, p2);
-                    std::cout << h.isActive();
+                    if((m_x - theLastOfX) != 0)
+                    {
+                        rotation = (int)tan((theLastOfY - m_y) / (m_x - theLastOfX)) + 90;
+                    }
+                    else
+                    {
+                        rotation = 90;
+                    }
+                    QPixmap z = QPixmap("images/ligneDeDeuxCroche.png");
+                    z         = z.scaled(20, 50, Qt::KeepAspectRatio)
+                          .transformed(QTransform().rotate(rotation));
+                    m_ligneDeuxCroche->setPixmap(z);
+                    m_ligneDeuxCroche->setGeometry(
+                      QRect{theLastOfX + 20, theLastOfY - 6, m_x - theLastOfX, z.height()});
+                    m_ligneDeuxCroche->show();
                 }
                 else if((int)note.getNoteValue() >= 19 && (int)note.getNoteValue() != 45
                         && (int)theLastNoteValue < 19)
                 {
-                    QPoint p1(theLastOfX, theLastOfY + 5);
-                    QPoint p2(m_x, m_y + 65);
-                    QPainter h(parent);
-                    h.begin(parent);
-                    h.setPen(Qt::black);
-                    h.drawLine(p1, p2);
-                    std::cout << h.isActive();
-                    
+                    if((m_x - theLastOfX) != 0)
+                    {
+                        rotation = (int)tan((theLastOfY - m_y) / (m_x - theLastOfX)) + 90;
+                    }
+                    else
+                    {
+                        rotation = 90;
+                    }
+                    QPixmap z = QPixmap("images/ligneDeDeuxCroche.png");
+                    z         = z.scaled(20, 50, Qt::KeepAspectRatio)
+                          .transformed(QTransform().rotate(rotation));
+                    m_ligneDeuxCroche->setPixmap(z);
+                    m_ligneDeuxCroche->setGeometry(
+                      QRect{theLastOfX + 20, theLastOfY - 6, m_x - theLastOfX, z.height()});
+                    m_ligneDeuxCroche->show();
                 }
                 else if((int)note.getNoteValue() < 19 && (int)theLastNoteValue != 45
                         && (int)theLastNoteValue >= 19)
                 {
-                    QPoint p1(theLastOfX, theLastOfY + 65);
-                    QPoint p2(m_x, m_y + 5);
-                    QPainter h(parent);
-                    h.begin(parent);
-                    h.setPen(Qt::black);
-                    h.drawLine(p1, p2);
-                    std::cout << h.isActive();
+                    if((m_x - theLastOfX) != 0)
+                    {
+                        rotation = (int)tan((theLastOfY - m_y) / (m_x - theLastOfX)) + 90;
+                    }
+                    else
+                    {
+                        rotation = 90;
+                    }
+                    QPixmap z = QPixmap("images/ligneDeDeuxCroche.png");
+                    z         = z.scaled(20, 50, Qt::KeepAspectRatio)
+                          .transformed(QTransform().rotate(rotation));
+                    m_ligneDeuxCroche->setPixmap(z);
+                    m_ligneDeuxCroche->setGeometry(
+                      QRect{theLastOfX + 20, theLastOfY - 6, m_x - theLastOfX, z.height()});
+                    m_ligneDeuxCroche->show();
                 }
                 else
                 {
-                    QPoint p1(theLastOfX, theLastOfY + 5);
-                    QPoint p2(m_x, m_y + 5);
-                    QPainter h(parent);
-                    h.begin(parent);
-                    h.setPen(Qt::black);
-                    h.drawLine(p1, p2);
-                    std::cout << h.isActive();
-                    
+                   
+                  
+                    QPixmap z = QPixmap("images/ligneDeDeuxCroche.png");
+                    z         = z.scaled(20, 50, Qt::KeepAspectRatio)
+                          .transformed(QTransform().rotate(95));
+                    m_ligneDeuxCroche->setPixmap(z);
+                    m_ligneDeuxCroche->setGeometry(QRect{theLastOfX + 20, theLastOfY - 6, m_x - theLastOfX, z.height()});
+                    m_ligneDeuxCroche->show();
                 }
-                
-            }else if(!deuxCroche)
+            }
+            else if(true)
             {
                 if((int)note.getNoteValue() >= 19 && (int)note.getNoteValue() != 45)
                 {
@@ -135,11 +162,11 @@ public:
                 else
                 {
                     m_ziglouigloui = new QLabel(parent);
-                    QPixmap z = QPixmap("images/Ziglouigloui.png");
+                    QPixmap z      = QPixmap("images/Ziglouigloui.png");
                     m_ziglouigloui->setAttribute(Qt::WidgetAttribute::WA_DeleteOnClose);
                     z = z.scaled(20, 50, Qt::KeepAspectRatio);
                     m_ziglouigloui->setPixmap(z);
-                    m_ziglouigloui->setGeometry(QRect{m_x+22,m_y-3,z.width(),z.height()});
+                    m_ziglouigloui->setGeometry(QRect{m_x + 22, m_y - 3, z.width(), z.height()});
                     m_ziglouigloui->show();
                 }
             }
@@ -156,7 +183,6 @@ public:
                 m_legato->setGeometry(
                   QRect{theLastOfX + 10, m_y - 25, m_x - theLastOfX, h.height()});
                 m_legato->show();
-                std::cout << m_y << std::endl;
             }
             else
             {
