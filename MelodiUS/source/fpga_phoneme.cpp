@@ -26,12 +26,13 @@ namespace FPGA
 #endif
 
 
+#ifndef LINUX_
 #define READ_CHANNEL(channelNumber)                                                                \
     do                                                                                             \
     {                                                                                              \
         static_assert(channelNumber >= 0 && channelNumber < 4);                                    \
         if(success)                                                                                \
-        {                                                                                          \
+        {																						   \
             success = m_fpga->lireRegistre(Registers::ADC##channelNumber, m_adc[channelNumber]);   \
             if(!success)                                                                           \
             {                                                                                      \
@@ -44,6 +45,9 @@ namespace FPGA
                       << ErrorMsg() << std::endl;                                                  \
         }                                                                                          \
     } while(false)
+#else
+#define READ_CHANNEL(channelNumber)	;
+#endif
 
 
 /*****************************************************************************/
@@ -128,6 +132,7 @@ void Init()
             m_isConnected = false;
 #endif
         }
+#ifndef LINUX_
         else
         {
             struct OnSeFaitPasChierAvecLaLibAdept
@@ -140,6 +145,7 @@ void Init()
             SAFE_DELETE(&m_fpga);
             Init();
         }
+#endif
     }
     catch(...)
     {
@@ -497,7 +503,11 @@ static void CheckButtonPhonemes()
 
     /* Read button register */
     int buttons = 0;
+#ifndef LINUX_
     success     = m_fpga->lireRegistre(Registers::BUTTON, buttons);
+#else
+	success = false;
+#endif
     if(!success)
     {
         std::cerr << "Error while reading FPGA buttons\n" << ErrorMsg() << std::endl;
@@ -542,7 +552,11 @@ static void CallCallback(Phoneme channel)
 static void DisplayADC()
 {
     int  switches = 0;
+#ifndef LINUX_
     bool success  = m_fpga->lireRegistre(Registers::SWITCH, switches);
+#else
+	bool success = false;
+#endif
     if(!success)
     {
         std::cerr << "Error while reading FPGA switches\n" << ErrorMsg() << std::endl;
@@ -558,7 +572,11 @@ static void DisplayADC()
     adc |= adcTemp;
 
     /* Print percentage value */
+#ifndef LINUX_
     success = m_fpga->ecrireRegistre(Registers::AN1, adc);
+#else
+	success = false;
+#endif
     if(!success)
     {
         std::cerr << "Error while writing FPGA 7-segments\n" << ErrorMsg() << std::endl;

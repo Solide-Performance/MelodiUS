@@ -219,7 +219,7 @@ static void recorderStopHandler()
 }
 static bool keyboardStopListener()
 {
-#ifndef LINUX
+#ifndef LINUX_
     return _kbhit() != 0;
 #else
     return false;

@@ -20,6 +20,9 @@ HEADERS += ./include/Partition.h
 HEADERS += ./include/Portee.h
 HEADERS += ./include/song_player.h
 
+HEADERS += ./include/widgets/widget_note.h ./include/widgets/roundbutton.h ./include/widgets/levelled_progressbar.h
+HEADERS += ./include/mainwindow.h ./include/mainwindow_ui.h
+
 # Sources
 SOURCES += ./source/main.cpp
 SOURCES += ./source/fpga_phoneme.cpp
@@ -33,6 +36,8 @@ SOURCES += ./source/tuning.cpp
 SOURCES += ./source/Portee.cpp
 SOURCES += ./source/Partition.cpp
 SOURCES += ./source/song_player.cpp
+
+SOURCES += ./source/mainwindow.cpp
 
 
 # Platform-specific project settings
@@ -58,11 +63,6 @@ win32 {
         LIB          += ./CommunicationFPGA/CommunicationFPGA-release.lib
     }
 
-    HEADERS += ./include/widgets/widget_note.h ./include/widgets/roundbutton.h ./include/widgets/levelled_progressbar.h
-    HEADERS += ./include/mainwindow.h ./include/mainwindow_ui.h
-
-    SOURCES += ./source/mainwindow.cpp
-
     # Precompiled Header
     DEFINES += USING_PC   
     PRECOMPILED_HEADER = ./include/globaldef.h
@@ -70,4 +70,5 @@ win32 {
 
 linux-g++* {
     DEFINES += LINUX_
+    QT      += core gui widgets
 }

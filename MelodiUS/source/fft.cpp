@@ -238,7 +238,7 @@ void FFT(std::vector<complex_t>& x, int depth)
 #pragma omp parallel for
     for(size_t k = 0; k < x.size() / 2; ++k)
     {
-        complex_t t         = std::polar<complex_t::_Ty>(1.0, -2 * pi * k / x.size()) * odd[k];
+        complex_t t         = std::polar<complex_t::value_type>(1.0, -2 * std::numbers::pi * k / x.size()) * odd[k];
         x[k]                = even[k] + t;
         x[k + x.size() / 2] = even[k] - t;
     }
